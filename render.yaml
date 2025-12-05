@@ -1,0 +1,28 @@
+# Render Blueprint Configuration
+# https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: saas-starter
+    runtime: node
+    plan: free # Change to 'starter' or higher for production
+    buildCommand: npm ci && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_PUBLIC_INSTANTDB_APP_ID
+        sync: false # Set manually in Render dashboard
+      - key: INSTANTDB_ADMIN_TOKEN
+        sync: false # Set manually in Render dashboard
+      - key: AUTH_SECRET
+        generateValue: true # Auto-generate a secure value
+      - key: NEXTAUTH_URL
+        fromService:
+          type: web
+          name: saas-starter
+          property: url
+    healthCheckPath: /
+    autoDeploy: true # Auto-deploy on git push
