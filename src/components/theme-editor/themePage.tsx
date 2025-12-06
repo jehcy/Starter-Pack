@@ -1,0 +1,1697 @@
+'use client';
+
+import { useReducer, useEffect, useCallback, useState } from 'react';
+import { useTheme } from 'next-themes';
+import { toast } from 'sonner';
+import {
+  Palette,
+  Type,
+  Space,
+  Circle,
+  SquareIcon,
+  Download,
+  Upload,
+  RotateCcw,
+  Save,
+  Sun,
+  Moon,
+  Paintbrush,
+} from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Separator } from '@/components/ui/separator';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Slider } from '@/components/ui/slider';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+
+import {
+  type BrandTheme,
+  type ColorTokens,
+  type TypographySizeTokens,
+  type TypographyStyleTokens,
+  getDefaultTheme,
+  isValidHex,
+  DEFAULT_LIGHT_COLORS,
+  DEFAULT_DARK_COLORS,
+  DEFAULT_SPACING,
+  DEFAULT_RADIUS,
+  DEFAULT_FONTS,
+  DEFAULT_TYPOGRAPHY_SIZES,
+  DEFAULT_TYPOGRAPHY_STYLES,
+  DEFAULT_BUTTONS,
+} from '@/lib/brand-theme';
+import { saveBrandDoc, applyThemeToGlobals } from '@/app/theme/actions';
+import { ThemePreview } from './ThemePreview';
+import { CssPreviewModal } from './CssPreviewModal';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Helper functions for slider value conversion
+// ─────────────────────────────────────────────────────────────────────────────
+
+function remToNumber(rem: string): number {
+  const match = rem.match(/^([\d.]+)rem$/);
+  return match ? parseFloat(match[1]) : 0;
+}
+
+function numberToRem(num: number): string {
+  return `${num}rem`;
+}
+
+function parseNumber(val: string): number {
+  return parseFloat(val) || 0;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Curated Google Fonts list
+// ─────────────────────────────────────────────────────────────────────────────
+
+interface FontOption {
+  label: string;
+  value: string;
+}
+
+const SANS_FONTS: FontOption[] = [
+  { label: 'Inter', value: 'Inter, system-ui, -apple-system, sans-serif' },
+  { label: 'Roboto', value: 'Roboto, system-ui, sans-serif' },
+  { label: 'Poppins', value: 'Poppins, system-ui, sans-serif' },
+  { label: 'Open Sans', value: '"Open Sans", system-ui, sans-serif' },
+  { label: 'Lato', value: 'Lato, system-ui, sans-serif' },
+  { label: 'Montserrat', value: 'Montserrat, system-ui, sans-serif' },
+  { label: 'Nunito', value: 'Nunito, system-ui, sans-serif' },
+  { label: 'Raleway', value: 'Raleway, system-ui, sans-serif' },
+  { label: 'Sora', value: 'Sora, system-ui, sans-serif' },
+  { label: 'Space Grotesk', value: '"Space Grotesk", system-ui, sans-serif' },
+  { label: 'DM Sans', value: '"DM Sans", system-ui, sans-serif' },
+  { label: 'Plus Jakarta Sans', value: '"Plus Jakarta Sans", system-ui, sans-serif' },
+  { label: 'Outfit', value: 'Outfit, system-ui, sans-serif' },
+  { label: 'Manrope', value: 'Manrope, system-ui, sans-serif' },
+  { label: 'Work Sans', value: '"Work Sans", system-ui, sans-serif' },
+  { label: 'Figtree', value: 'Figtree, system-ui, sans-serif' },
+  { label: 'Geist', value: 'Geist, system-ui, sans-serif' },
+  { label: 'System UI', value: 'system-ui, -apple-system, sans-serif' },
+];
+
+const MONO_FONTS: FontOption[] = [
+  { label: 'JetBrains Mono', value: '"JetBrains Mono", Fira Code, monospace' },
+  { label: 'Fira Code', value: '"Fira Code", monospace' },
+  { label: 'Source Code Pro', value: '"Source Code Pro", monospace' },
+  { label: 'IBM Plex Mono', value: '"IBM Plex Mono", monospace' },
+  { label: 'Roboto Mono', value: '"Roboto Mono", monospace' },
+  { label: 'Ubuntu Mono', value: '"Ubuntu Mono", monospace' },
+  { label: 'Space Mono', value: '"Space Mono", monospace' },
+  { label: 'Geist Mono', value: '"Geist Mono", monospace' },
+  { label: 'SF Mono', value: '"SF Mono", Menlo, Monaco, monospace' },
+];
+
+const HEADING_FONTS: FontOption[] = [
+  { label: 'Inter', value: 'Inter, system-ui, -apple-system, sans-serif' },
+  { label: 'Playfair Display', value: '"Playfair Display", Georgia, serif' },
+  { label: 'Merriweather', value: 'Merriweather, Georgia, serif' },
+  { label: 'Lora', value: 'Lora, Georgia, serif' },
+  { label: 'Poppins', value: 'Poppins, system-ui, sans-serif' },
+  { label: 'Montserrat', value: 'Montserrat, system-ui, sans-serif' },
+  { label: 'Sora', value: 'Sora, system-ui, sans-serif' },
+  { label: 'Space Grotesk', value: '"Space Grotesk", system-ui, sans-serif' },
+  { label: 'DM Sans', value: '"DM Sans", system-ui, sans-serif' },
+  { label: 'Outfit', value: 'Outfit, system-ui, sans-serif' },
+  { label: 'Manrope', value: 'Manrope, system-ui, sans-serif' },
+  { label: 'Plus Jakarta Sans', value: '"Plus Jakarta Sans", system-ui, sans-serif' },
+  { label: 'Bricolage Grotesque', value: '"Bricolage Grotesque", system-ui, sans-serif' },
+  { label: 'Cabinet Grotesk', value: '"Cabinet Grotesk", system-ui, sans-serif' },
+  { label: 'System UI', value: 'system-ui, -apple-system, sans-serif' },
+];
+
+function findFontLabel(fonts: FontOption[], value: string): string {
+  const found = fonts.find((f) => f.value === value);
+  return found?.label ?? 'Custom';
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Typography Size Options
+// ─────────────────────────────────────────────────────────────────────────────
+
+interface TextSizeOption {
+  label: string;
+  value: string;
+}
+
+const HEADING_1_SIZES: TextSizeOption[] = [
+  { label: 'Small (2rem)', value: '2rem' },
+  { label: 'Default (2.25rem)', value: '2.25rem' },
+  { label: 'Large (2.5rem)', value: '2.5rem' },
+  { label: 'XL (3rem)', value: '3rem' },
+  { label: '2XL (3.5rem)', value: '3.5rem' },
+  { label: '3XL (4rem)', value: '4rem' },
+  { label: '4XL (4.5rem)', value: '4.5rem' },
+  { label: '5XL (5rem)', value: '5rem' },
+  { label: '6XL (6rem)', value: '6rem' },
+  { label: '8XL (8rem)', value: '8rem' },
+  { label: '9XL (10rem)', value: '10rem' },
+];
+
+const HEADING_2_SIZES: TextSizeOption[] = [
+  { label: 'Small (1.5rem)', value: '1.5rem' },
+  { label: 'Default (1.875rem)', value: '1.875rem' },
+  { label: 'Large (2rem)', value: '2rem' },
+  { label: 'XL (2.25rem)', value: '2.25rem' },
+  { label: '2XL (2.5rem)', value: '2.5rem' },
+  { label: '3XL (3rem)', value: '3rem' },
+  { label: '4XL (3.5rem)', value: '3.5rem' },
+  { label: '5XL (4rem)', value: '4rem' },
+];
+
+const HEADING_3_SIZES: TextSizeOption[] = [
+  { label: 'Small (1.25rem)', value: '1.25rem' },
+  { label: 'Default (1.5rem)', value: '1.5rem' },
+  { label: 'Large (1.75rem)', value: '1.75rem' },
+  { label: 'XL (1.875rem)', value: '1.875rem' },
+];
+
+const HEADING_4_SIZES: TextSizeOption[] = [
+  { label: 'Small (1rem)', value: '1rem' },
+  { label: 'Default (1.25rem)', value: '1.25rem' },
+  { label: 'Large (1.375rem)', value: '1.375rem' },
+  { label: 'XL (1.5rem)', value: '1.5rem' },
+];
+
+const BODY_TEXT_SIZES: TextSizeOption[] = [
+  { label: 'XS (0.75rem)', value: '0.75rem' },
+  { label: 'Small (0.875rem)', value: '0.875rem' },
+  { label: 'Default (1rem)', value: '1rem' },
+  { label: 'Large (1.125rem)', value: '1.125rem' },
+  { label: 'XL (1.25rem)', value: '1.25rem' },
+];
+
+const BLOCKQUOTE_SIZES: TextSizeOption[] = [
+  { label: 'Small (1rem)', value: '1rem' },
+  { label: 'Default (1.125rem)', value: '1.125rem' },
+  { label: 'Large (1.25rem)', value: '1.25rem' },
+  { label: 'XL (1.5rem)', value: '1.5rem' },
+];
+
+const SMALL_TEXT_SIZES: TextSizeOption[] = [
+  { label: 'XS (0.625rem)', value: '0.625rem' },
+  { label: 'Small (0.75rem)', value: '0.75rem' },
+  { label: 'Default (0.875rem)', value: '0.875rem' },
+  { label: 'Base (1rem)', value: '1rem' },
+];
+
+interface TypographySizeConfig {
+  key: keyof TypographySizeTokens;
+  label: string;
+  description: string;
+  options: TextSizeOption[];
+}
+
+const TYPOGRAPHY_SIZE_CONFIGS: TypographySizeConfig[] = [
+  { key: 'h1', label: 'H1', description: 'Main page titles', options: HEADING_1_SIZES },
+  { key: 'h2', label: 'H2', description: 'Section headings', options: HEADING_2_SIZES },
+  { key: 'h3', label: 'H3', description: 'Sub-section headings', options: HEADING_3_SIZES },
+  { key: 'h4', label: 'H4', description: 'Minor headings', options: HEADING_4_SIZES },
+  { key: 'p', label: 'Paragraph', description: 'Body text', options: BODY_TEXT_SIZES },
+  { key: 'blockquote', label: 'Blockquote', description: 'Quoted text', options: BLOCKQUOTE_SIZES },
+  { key: 'label', label: 'Label', description: 'Form labels', options: SMALL_TEXT_SIZES },
+  { key: 'code', label: 'Code', description: 'Inline code', options: SMALL_TEXT_SIZES },
+  { key: 'table', label: 'Table', description: 'Table cells', options: SMALL_TEXT_SIZES },
+  { key: 'list', label: 'List', description: 'List items', options: BODY_TEXT_SIZES },
+];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Button Font Sizes
+// ─────────────────────────────────────────────────────────────────────────────
+
+interface ButtonSizeOption {
+  label: string;
+  value: string;
+}
+
+const BUTTON_FONT_SIZES: ButtonSizeOption[] = [
+  { label: 'Extra Small', value: '0.75rem' },
+  { label: 'Small', value: '0.875rem' },
+  { label: 'Base', value: '1rem' },
+  { label: 'Large', value: '1.125rem' },
+  { label: 'Extra Large', value: '1.25rem' },
+];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Button Hover Effects
+// ─────────────────────────────────────────────────────────────────────────────
+
+interface HoverEffectOption {
+  label: string;
+  value: string;
+  description: string;
+}
+
+const BUTTON_HOVER_EFFECTS: HoverEffectOption[] = [
+  { label: 'None', value: 'none', description: 'No hover effect' },
+  { label: 'Opacity', value: 'opacity', description: 'Fade to 80% opacity' },
+  { label: 'Lift', value: 'lift', description: 'Lift up with shadow' },
+  { label: 'Scale', value: 'scale', description: 'Slight scale up' },
+  { label: 'Glow', value: 'glow', description: 'Subtle glow effect' },
+];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Button Preview Component with Hover Effects
+// ─────────────────────────────────────────────────────────────────────────────
+
+interface ButtonPreviewProps {
+  label: string;
+  bgColor: string;
+  textColor: string;
+  borderRadius: string;
+  fontWeight: string;
+  fontSize: string;
+  hoverEffect: string;
+}
+
+function ButtonPreview({
+  label,
+  bgColor,
+  textColor,
+  borderRadius,
+  fontWeight,
+  fontSize,
+  hoverEffect,
+}: ButtonPreviewProps) {
+  const getHoverClasses = () => {
+    switch (hoverEffect) {
+      case 'opacity':
+        return 'hover:opacity-80';
+      case 'lift':
+        return 'hover:-translate-y-0.5 hover:shadow-lg';
+      case 'scale':
+        return 'hover:scale-105';
+      case 'glow':
+        return 'hover:shadow-[0_0_15px_rgba(var(--primary-rgb,0,0,0),0.4)]';
+      default:
+        return '';
+    }
+  };
+
+  return (
+    <button
+      className={`px-4 py-2 transition-all duration-200 ${bgColor} ${textColor} ${getHoverClasses()}`}
+      style={{
+        borderRadius,
+        fontWeight,
+        fontSize,
+      }}
+    >
+      {label}
+    </button>
+  );
+}
+
+// Theme reducer actions
+type ThemeAction =
+  | { type: 'SET_THEME'; payload: BrandTheme }
+  | { type: 'SET_NAME'; payload: string }
+  | { type: 'SET_LIGHT_COLOR'; key: keyof ColorTokens; value: string }
+  | { type: 'SET_DARK_COLOR'; key: keyof ColorTokens; value: string }
+  | { type: 'SET_SPACING'; key: string; value: string }
+  | { type: 'SET_RADIUS'; key: string; value: string }
+  | { type: 'SET_FONT'; key: string; value: string }
+  | { type: 'SET_TYPOGRAPHY_SIZE'; key: keyof TypographySizeTokens; value: string }
+  | { type: 'SET_TYPOGRAPHY_STYLE'; key: keyof TypographyStyleTokens; value: string }
+  | { type: 'SET_BUTTON'; key: string; value: string }
+  | { type: 'RESET' }
+  | { type: 'RESET_COLORS' }
+  | { type: 'RESET_SPACING' }
+  | { type: 'RESET_RADIUS' }
+  | { type: 'RESET_FONTS' }
+  | { type: 'RESET_TYPOGRAPHY_SIZES' }
+  | { type: 'RESET_TYPOGRAPHY_STYLES' }
+  | { type: 'RESET_BUTTONS' };
+
+function themeReducer(state: BrandTheme, action: ThemeAction): BrandTheme {
+  switch (action.type) {
+    case 'SET_THEME':
+      return action.payload;
+    case 'SET_NAME':
+      return { ...state, name: action.payload };
+    case 'SET_LIGHT_COLOR':
+      return {
+        ...state,
+        colors: {
+          ...state.colors,
+          light: { ...state.colors.light, [action.key]: action.value },
+        },
+      };
+    case 'SET_DARK_COLOR':
+      return {
+        ...state,
+        colors: {
+          ...state.colors,
+          dark: { ...state.colors.dark, [action.key]: action.value },
+        },
+      };
+    case 'SET_SPACING':
+      return {
+        ...state,
+        spacing: { ...state.spacing, [action.key]: action.value },
+      };
+    case 'SET_RADIUS':
+      return {
+        ...state,
+        radius: { ...state.radius, [action.key]: action.value },
+      };
+    case 'SET_FONT':
+      return {
+        ...state,
+        fonts: { ...state.fonts, [action.key]: action.value },
+      };
+    case 'SET_TYPOGRAPHY_SIZE':
+      return {
+        ...state,
+        typographySizes: { ...state.typographySizes, [action.key]: action.value },
+      };
+    case 'SET_TYPOGRAPHY_STYLE':
+      return {
+        ...state,
+        typographyStyles: { ...state.typographyStyles, [action.key]: action.value },
+      };
+    case 'SET_BUTTON':
+      return {
+        ...state,
+        buttons: { ...state.buttons, [action.key]: action.value },
+      };
+    case 'RESET':
+      return getDefaultTheme();
+    case 'RESET_COLORS':
+      return {
+        ...state,
+        colors: {
+          light: { ...DEFAULT_LIGHT_COLORS },
+          dark: { ...DEFAULT_DARK_COLORS },
+        },
+      };
+    case 'RESET_SPACING':
+      return {
+        ...state,
+        spacing: { ...DEFAULT_SPACING },
+      };
+    case 'RESET_RADIUS':
+      return {
+        ...state,
+        radius: { ...DEFAULT_RADIUS },
+      };
+    case 'RESET_FONTS':
+      return {
+        ...state,
+        fonts: { ...DEFAULT_FONTS },
+      };
+    case 'RESET_TYPOGRAPHY_SIZES':
+      return {
+        ...state,
+        typographySizes: { ...DEFAULT_TYPOGRAPHY_SIZES },
+      };
+    case 'RESET_TYPOGRAPHY_STYLES':
+      return {
+        ...state,
+        typographyStyles: { ...DEFAULT_TYPOGRAPHY_STYLES },
+      };
+    case 'RESET_BUTTONS':
+      return {
+        ...state,
+        buttons: { ...DEFAULT_BUTTONS },
+      };
+    default:
+      return state;
+  }
+}
+
+interface ColorInputProps {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+}
+
+function ColorInput({ label, value, onChange }: ColorInputProps) {
+  const [inputValue, setInputValue] = useState(value);
+
+  useEffect(() => {
+    setInputValue(value);
+  }, [value]);
+
+  const handleTextChange = (newValue: string) => {
+    setInputValue(newValue);
+    if (isValidHex(newValue)) {
+      onChange(newValue);
+    }
+  };
+
+  const handleColorChange = (newValue: string) => {
+    setInputValue(newValue);
+    onChange(newValue);
+  };
+
+  return (
+    <div className="flex items-center gap-2">
+      <div
+        className="size-8 rounded-md border border-input shadow-sm flex-shrink-0 overflow-hidden"
+        style={{ backgroundColor: value }}
+      >
+        <input
+          type="color"
+          value={value}
+          onChange={(e) => handleColorChange(e.target.value)}
+          className="size-10 -m-1 cursor-pointer opacity-0"
+        />
+      </div>
+      <div className="flex-1 min-w-0">
+        <Label className="text-xs text-muted-foreground truncate block">{label}</Label>
+        <Input
+          value={inputValue}
+          onChange={(e) => handleTextChange(e.target.value)}
+          className="h-7 text-xs font-mono"
+          placeholder="#000000"
+        />
+      </div>
+    </div>
+  );
+}
+
+interface ThemePageProps {
+  initialTheme: BrandTheme;
+}
+
+export function ThemePage({ initialTheme }: ThemePageProps) {
+  const [theme, dispatch] = useReducer(themeReducer, initialTheme);
+  const [previewMode, setPreviewMode] = useState<'light' | 'dark'>('light');
+  const [isSaving, setIsSaving] = useState(false);
+  const [isApplying, setIsApplying] = useState(false);
+  const { setTheme: setGlobalTheme } = useTheme();
+
+  const handlePreviewModeChange = useCallback((mode: 'light' | 'dark') => {
+    setPreviewMode(mode);
+    setGlobalTheme(mode);
+  }, [setGlobalTheme]);
+
+  const handleSave = useCallback(async () => {
+    setIsSaving(true);
+    try {
+      const result = await saveBrandDoc(theme);
+      if (result.success) {
+        toast.success('Brand documentation saved!', {
+          description: 'docs/brand.md has been updated.',
+        });
+      } else {
+        toast.error('Failed to save', {
+          description: result.message,
+        });
+      }
+    } catch {
+      toast.error('Failed to save', {
+        description: 'An unexpected error occurred.',
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  }, [theme]);
+
+  const handleExport = useCallback(() => {
+    const json = JSON.stringify(theme, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'brand-theme.json';
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success('Theme exported!');
+  }, [theme]);
+
+  const handleImport = useCallback(() => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    input.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+      try {
+        const text = await file.text();
+        const imported = JSON.parse(text) as Partial<BrandTheme>;
+        // Merge with defaults to handle legacy themes missing new fields
+        const mergedTheme: BrandTheme = {
+          name: imported.name ?? 'Imported Theme',
+          colors: imported.colors ?? getDefaultTheme().colors,
+          spacing: imported.spacing ?? { ...DEFAULT_SPACING },
+          radius: imported.radius ?? { ...DEFAULT_RADIUS },
+          fonts: imported.fonts ?? { ...DEFAULT_FONTS },
+          typographySizes: imported.typographySizes ?? { ...DEFAULT_TYPOGRAPHY_SIZES },
+          typographyStyles: imported.typographyStyles ?? { ...DEFAULT_TYPOGRAPHY_STYLES },
+          buttons: imported.buttons ?? { ...DEFAULT_BUTTONS },
+        };
+        dispatch({ type: 'SET_THEME', payload: mergedTheme });
+        toast.success('Theme imported!');
+      } catch {
+        toast.error('Failed to import', {
+          description: 'Invalid JSON file.',
+        });
+      }
+    };
+    input.click();
+  }, []);
+
+  const handleReset = useCallback(() => {
+    dispatch({ type: 'RESET' });
+    toast.info('Theme reset to defaults');
+  }, []);
+
+  const handleResetColors = useCallback(() => {
+    dispatch({ type: 'RESET_COLORS' });
+    toast.info('Colors reset to defaults');
+  }, []);
+
+  const handleResetSpacing = useCallback(() => {
+    dispatch({ type: 'RESET_SPACING' });
+    toast.info('Spacing reset to defaults');
+  }, []);
+
+  const handleResetRadius = useCallback(() => {
+    dispatch({ type: 'RESET_RADIUS' });
+    toast.info('Radius reset to defaults');
+  }, []);
+
+  const handleResetFonts = useCallback(() => {
+    dispatch({ type: 'RESET_FONTS' });
+    toast.info('Fonts reset to defaults');
+  }, []);
+
+  const handleResetTypographySizes = useCallback(() => {
+    dispatch({ type: 'RESET_TYPOGRAPHY_SIZES' });
+    toast.info('Typography sizes reset to defaults');
+  }, []);
+
+  const handleResetButtons = useCallback(() => {
+    dispatch({ type: 'RESET_BUTTONS' });
+    toast.info('Buttons reset to defaults');
+  }, []);
+
+  const handleApplyToProject = useCallback(async () => {
+    setIsApplying(true);
+    try {
+      const result = await applyThemeToGlobals(theme);
+      if (result.success) {
+        toast.success('Theme applied to globals.css!', {
+          description: 'Refresh to see your changes.',
+        });
+      } else {
+        toast.error('Failed to apply theme', {
+          description: result.message,
+        });
+      }
+    } catch {
+      toast.error('Failed to apply theme', {
+        description: 'An unexpected error occurred.',
+      });
+    } finally {
+      setIsApplying(false);
+    }
+  }, [theme]);
+
+  const colorGroups = [
+    {
+      title: 'Primary Colors',
+      colors: ['primary', 'primaryForeground'] as const,
+    },
+    {
+      title: 'Secondary Colors',
+      colors: ['secondary', 'secondaryForeground'] as const,
+    },
+    {
+      title: 'Accent Colors',
+      colors: ['accent', 'accentForeground'] as const,
+    },
+    {
+      title: 'Base Colors',
+      colors: ['background', 'foreground'] as const,
+    },
+    {
+      title: 'Card Colors',
+      colors: ['card', 'cardForeground'] as const,
+    },
+    {
+      title: 'Popover Colors',
+      colors: ['popover', 'popoverForeground'] as const,
+    },
+    {
+      title: 'Muted Colors',
+      colors: ['muted', 'mutedForeground'] as const,
+    },
+    {
+      title: 'Destructive Colors',
+      colors: ['destructive', 'destructiveForeground'] as const,
+    },
+    {
+      title: 'Border & Input',
+      colors: ['border', 'input', 'ring'] as const,
+    },
+    {
+      title: 'Chart Colors',
+      colors: ['chart1', 'chart2', 'chart3', 'chart4', 'chart5'] as const,
+    },
+  ];
+
+  const formatLabel = (key: string) => {
+    return key
+      .replace(/([A-Z])/g, ' $1')
+      .replace(/^./, (str) => str.toUpperCase())
+      .replace(/(\d)/g, ' $1');
+  };
+
+  return (
+    <div className="flex h-screen">
+      {/* Left sidebar - Controls */}
+      <div className="w-[400px] border-r border-border flex flex-col bg-card min-h-0">
+        {/* Header */}
+        <div className="p-4 border-b border-border">
+          <h1 className="text-xl font-bold">Theme Editor</h1>
+          <p className="text-sm text-muted-foreground">
+            Configure your brand design tokens
+          </p>
+        </div>
+
+        {/* Theme name */}
+        <div className="p-4 border-b border-border">
+          <Label className="text-sm font-medium">Theme Name</Label>
+          <Input
+            value={theme.name}
+            onChange={(e) => dispatch({ type: 'SET_NAME', payload: e.target.value })}
+            className="mt-1.5"
+            placeholder="My Theme"
+          />
+        </div>
+
+        {/* Tabs */}
+        <Tabs defaultValue="colors" className="flex-1 flex flex-col overflow-hidden min-h-0">
+          <TabsList className="mx-4 mt-4 grid grid-cols-5 w-auto">
+            <TabsTrigger value="colors" className="gap-1">
+              <Palette className="size-3.5" />
+              <span className="hidden sm:inline">Colors</span>
+            </TabsTrigger>
+            <TabsTrigger value="spacing" className="gap-1">
+              <Space className="size-3.5" />
+              <span className="hidden sm:inline">Space</span>
+            </TabsTrigger>
+            <TabsTrigger value="radius" className="gap-1">
+              <Circle className="size-3.5" />
+              <span className="hidden sm:inline">Radius</span>
+            </TabsTrigger>
+            <TabsTrigger value="fonts" className="gap-1">
+              <Type className="size-3.5" />
+              <span className="hidden sm:inline">Fonts</span>
+            </TabsTrigger>
+            <TabsTrigger value="buttons" className="gap-1">
+              <SquareIcon className="size-3.5" />
+              <span className="hidden sm:inline">Buttons</span>
+            </TabsTrigger>
+          </TabsList>
+
+          <ScrollArea className="flex-1 min-h-0 overflow-y-auto px-4 pb-4">
+            {/* Colors Tab */}
+            <TabsContent value="colors" className="mt-4 space-y-6">
+              {/* Color mode toggle */}
+              <div className="flex items-center gap-2 p-2 rounded-lg bg-muted">
+                <Button
+                  variant={previewMode === 'light' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => handlePreviewModeChange('light')}
+                  className="flex-1"
+                >
+                  <Sun className="size-4 mr-1.5" />
+                  Light
+                </Button>
+                <Button
+                  variant={previewMode === 'dark' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => handlePreviewModeChange('dark')}
+                  className="flex-1"
+                >
+                  <Moon className="size-4 mr-1.5" />
+                  Dark
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleResetColors}
+                  title="Reset colors to defaults"
+                >
+                  <RotateCcw className="size-4" />
+                  <span className="hidden sm:inline">Reset</span>
+                </Button>
+              </div>
+
+              {colorGroups.map((group) => (
+                <div key={group.title}>
+                  <h3 className="text-sm font-medium mb-3">{group.title}</h3>
+                  <div className="space-y-2">
+                    {group.colors.map((colorKey) => (
+                      <ColorInput
+                        key={colorKey}
+                        label={formatLabel(colorKey)}
+                        value={
+                          previewMode === 'light'
+                            ? theme.colors.light[colorKey as keyof ColorTokens]
+                            : theme.colors.dark[colorKey as keyof ColorTokens]
+                        }
+                        onChange={(value) => {
+                          if (previewMode === 'light') {
+                            dispatch({
+                              type: 'SET_LIGHT_COLOR',
+                              key: colorKey as keyof ColorTokens,
+                              value,
+                            });
+                          } else {
+                            dispatch({
+                              type: 'SET_DARK_COLOR',
+                              key: colorKey as keyof ColorTokens,
+                              value,
+                            });
+                          }
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </TabsContent>
+
+            {/* Spacing Tab */}
+            <TabsContent value="spacing" className="mt-4 space-y-4">
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-sm text-muted-foreground">
+                  Define your spacing scale used throughout the UI.
+                </p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleResetSpacing}
+                  title="Reset spacing to defaults"
+                >
+                  <RotateCcw className="size-4" />
+                  Reset
+                </Button>
+              </div>
+              {Object.entries(theme.spacing).map(([key, value]) => (
+                <div key={key}>
+                  <div className="flex items-center justify-between mb-2">
+                    <Label className="text-sm">{key.toUpperCase()}</Label>
+                    <span className="text-xs font-mono text-muted-foreground">
+                      {value}
+                    </span>
+                  </div>
+                  <Slider
+                    value={[remToNumber(value)]}
+                    onValueChange={([num]) =>
+                      dispatch({ type: 'SET_SPACING', key, value: numberToRem(num) })
+                    }
+                    min={0}
+                    max={6}
+                    step={0.125}
+                    className="w-full"
+                  />
+                </div>
+              ))}
+            </TabsContent>
+
+            {/* Radius Tab */}
+            <TabsContent value="radius" className="mt-4 space-y-4">
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-sm text-muted-foreground">
+                  Border radius values for rounded corners.
+                </p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleResetRadius}
+                  title="Reset radius to defaults"
+                >
+                  <RotateCcw className="size-4" />
+                  Reset
+                </Button>
+              </div>
+              {Object.entries(theme.radius).map(([key, value]) => {
+                // Handle "full" specially (9999px)
+                const isFull = value === '9999px' || key === 'full';
+                const numericValue = isFull ? 3 : remToNumber(value);
+
+                // Get description for each radius
+                const getDescription = (k: string) => {
+                  const descriptions: Record<string, string> = {
+                    none: 'Sharp corners',
+                    sm: 'Subtle rounding',
+                    md: 'Medium rounding',
+                    lg: 'Default rounding',
+                    xl: 'Large rounding',
+                    '2xl': 'Extra large',
+                    full: 'Fully rounded',
+                  };
+                  return descriptions[k] || '';
+                };
+
+                return (
+                  <div key={key}>
+                    <div className="flex items-center justify-between mb-2">
+                      <div>
+                        <Label className="text-sm font-medium">{key.toUpperCase()}</Label>
+                        <p className="text-xs text-muted-foreground">{getDescription(key)}</p>
+                      </div>
+                      <span className="text-xs font-mono text-muted-foreground">
+                        {value}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="flex gap-2 flex-shrink-0">
+                        <div
+                          className="size-10 bg-primary"
+                          style={{ borderRadius: value }}
+                        />
+                        <div
+                          className="size-10 bg-secondary"
+                          style={{ borderRadius: value }}
+                        />
+                      </div>
+                      <Slider
+                        value={[numericValue]}
+                        onValueChange={([num]) => {
+                          // If at max and key is 'full', keep 9999px
+                          if (key === 'full') {
+                            dispatch({ type: 'SET_RADIUS', key, value: '9999px' });
+                          } else {
+                            dispatch({ type: 'SET_RADIUS', key, value: numberToRem(num) });
+                          }
+                        }}
+                        min={0}
+                        max={3}
+                        step={0.125}
+                        className="flex-1"
+                        disabled={key === 'full'}
+                      />
+                    </div>
+                    <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                      <span>0rem</span>
+                      <span>3rem</span>
+                    </div>
+                  </div>
+                );
+              })}
+
+              <Separator className="my-4" />
+
+              {/* Visual Preview Grid */}
+              <div>
+                <Label className="text-sm font-medium mb-3 block">Visual Comparison</Label>
+                <div className="grid grid-cols-4 gap-3 p-4 rounded-lg border border-border bg-muted/30">
+                  {Object.entries(theme.radius).slice(0, 7).map(([key, value]) => (
+                    <div key={key} className="flex flex-col items-center gap-2">
+                      <div
+                        className="w-12 h-12 bg-gradient-to-br from-primary to-primary/60"
+                        style={{ borderRadius: value }}
+                      />
+                      <span className="text-xs font-medium">{key}</span>
+                      <span className="text-xs text-muted-foreground font-mono">{value}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </TabsContent>
+
+            {/* Fonts Tab */}
+            <TabsContent value="fonts" className="mt-4 space-y-4">
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-sm text-muted-foreground">
+                  Select font families from Google Fonts.
+                </p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleResetFonts}
+                  title="Reset fonts to defaults"
+                >
+                  <RotateCcw className="size-4" />
+                  Reset
+                </Button>
+              </div>
+              <div>
+                <Label className="text-sm mb-1.5 block">Sans (Body)</Label>
+                <Select
+                  value={theme.fonts.sans}
+                  onValueChange={(value) =>
+                    dispatch({ type: 'SET_FONT', key: 'sans', value })
+                  }
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select a font">
+                      {findFontLabel(SANS_FONTS, theme.fonts.sans)}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {SANS_FONTS.map((font) => (
+                      <SelectItem key={font.value} value={font.value}>
+                        <span style={{ fontFamily: font.value }}>{font.label}</span>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label className="text-sm mb-1.5 block">Mono (Code)</Label>
+                <Select
+                  value={theme.fonts.mono}
+                  onValueChange={(value) =>
+                    dispatch({ type: 'SET_FONT', key: 'mono', value })
+                  }
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select a font">
+                      {findFontLabel(MONO_FONTS, theme.fonts.mono)}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {MONO_FONTS.map((font) => (
+                      <SelectItem key={font.value} value={font.value}>
+                        <span style={{ fontFamily: font.value }}>{font.label}</span>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label className="text-sm mb-1.5 block">Heading</Label>
+                <Select
+                  value={theme.fonts.heading}
+                  onValueChange={(value) =>
+                    dispatch({ type: 'SET_FONT', key: 'heading', value })
+                  }
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select a font">
+                      {findFontLabel(HEADING_FONTS, theme.fonts.heading)}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {HEADING_FONTS.map((font) => (
+                      <SelectItem key={font.value} value={font.value}>
+                        <span style={{ fontFamily: font.value }}>{font.label}</span>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Typography Sizes Section */}
+              <Separator className="my-4" />
+              
+              <div className="flex items-center justify-between gap-2">
+                <div>
+                  <h3 className="text-sm font-medium">Text Sizes</h3>
+                  <p className="text-xs text-muted-foreground">
+                    Font sizes for typography elements
+                  </p>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleResetTypographySizes}
+                  title="Reset text sizes to defaults"
+                >
+                  <RotateCcw className="size-4" />
+                  Reset
+                </Button>
+              </div>
+
+              <div className="space-y-4 pt-2">
+                {/* H1 Size Slider */}
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <Label className="text-sm">H1 Size</Label>
+                    <span className="text-xs font-mono text-muted-foreground">
+                      {theme.typographySizes.h1}
+                    </span>
+                  </div>
+                  <Slider
+                    value={[remToNumber(theme.typographySizes.h1)]}
+                    onValueChange={([num]) =>
+                      dispatch({ type: 'SET_TYPOGRAPHY_SIZE', key: 'h1', value: numberToRem(num) })
+                    }
+                    min={2}
+                    max={10}
+                    step={0.25}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                    <span>2rem</span>
+                    <span>10rem</span>
+                  </div>
+                </div>
+
+                {/* H2 Size Slider */}
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <Label className="text-sm">H2 Size</Label>
+                    <span className="text-xs font-mono text-muted-foreground">
+                      {theme.typographySizes.h2}
+                    </span>
+                  </div>
+                  <Slider
+                    value={[remToNumber(theme.typographySizes.h2)]}
+                    onValueChange={([num]) =>
+                      dispatch({ type: 'SET_TYPOGRAPHY_SIZE', key: 'h2', value: numberToRem(num) })
+                    }
+                    min={1.5}
+                    max={4}
+                    step={0.125}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                    <span>1.5rem</span>
+                    <span>4rem</span>
+                  </div>
+                </div>
+
+                {/* H3 Size Slider */}
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <Label className="text-sm">H3 Size</Label>
+                    <span className="text-xs font-mono text-muted-foreground">
+                      {theme.typographySizes.h3}
+                    </span>
+                  </div>
+                  <Slider
+                    value={[remToNumber(theme.typographySizes.h3)]}
+                    onValueChange={([num]) =>
+                      dispatch({ type: 'SET_TYPOGRAPHY_SIZE', key: 'h3', value: numberToRem(num) })
+                    }
+                    min={1.25}
+                    max={2}
+                    step={0.125}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                    <span>1.25rem</span>
+                    <span>2rem</span>
+                  </div>
+                </div>
+
+                {/* H4 Size Slider */}
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <Label className="text-sm">H4 Size</Label>
+                    <span className="text-xs font-mono text-muted-foreground">
+                      {theme.typographySizes.h4}
+                    </span>
+                  </div>
+                  <Slider
+                    value={[remToNumber(theme.typographySizes.h4)]}
+                    onValueChange={([num]) =>
+                      dispatch({ type: 'SET_TYPOGRAPHY_SIZE', key: 'h4', value: numberToRem(num) })
+                    }
+                    min={1}
+                    max={1.5}
+                    step={0.125}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                    <span>1rem</span>
+                    <span>1.5rem</span>
+                  </div>
+                </div>
+
+                {/* Paragraph Size Slider */}
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <Label className="text-sm">Paragraph Size</Label>
+                    <span className="text-xs font-mono text-muted-foreground">
+                      {theme.typographySizes.p}
+                    </span>
+                  </div>
+                  <Slider
+                    value={[remToNumber(theme.typographySizes.p)]}
+                    onValueChange={([num]) =>
+                      dispatch({ type: 'SET_TYPOGRAPHY_SIZE', key: 'p', value: numberToRem(num) })
+                    }
+                    min={0.75}
+                    max={1.25}
+                    step={0.125}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                    <span>0.75rem</span>
+                    <span>1.25rem</span>
+                  </div>
+                </div>
+
+                {/* Compact Grid for Remaining Sizes */}
+                <div className="grid grid-cols-2 gap-3 pt-2">
+                  {TYPOGRAPHY_SIZE_CONFIGS.slice(5).map((config) => (
+                    <div key={config.key}>
+                      <Label className="text-xs mb-1 block">
+                        {config.label}
+                        <span className="text-muted-foreground ml-1 font-normal">
+                          ({config.description})
+                        </span>
+                      </Label>
+                      <Select
+                        value={theme.typographySizes[config.key]}
+                        onValueChange={(value) =>
+                          dispatch({ type: 'SET_TYPOGRAPHY_SIZE', key: config.key, value })
+                        }
+                      >
+                        <SelectTrigger className="w-full h-8 text-xs">
+                          <SelectValue placeholder="Select size">
+                            {config.options.find((o) => o.value === theme.typographySizes[config.key])?.label ?? theme.typographySizes[config.key]}
+                          </SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                          {config.options.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              <span className="flex items-center gap-2">
+                                <span style={{ fontSize: option.value, lineHeight: 1.2 }}>Aa</span>
+                                <span className="text-muted-foreground text-xs">{option.label}</span>
+                              </span>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Typography Styles Section */}
+              <Separator className="my-4" />
+              
+              <div className="flex items-center justify-between gap-2">
+                <div>
+                  <h3 className="text-sm font-medium">Typography Styles</h3>
+                  <p className="text-xs text-muted-foreground">
+                    Line height and letter spacing
+                  </p>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    dispatch({ type: 'RESET_TYPOGRAPHY_STYLES' });
+                    toast.info('Typography styles reset to defaults');
+                  }}
+                  title="Reset typography styles to defaults"
+                >
+                  <RotateCcw className="size-4" />
+                  Reset
+                </Button>
+              </div>
+
+              {/* Line Height Slider */}
+              <div className="pt-2">
+                <div className="flex items-center justify-between mb-2">
+                  <Label className="text-sm">Line Height (Body)</Label>
+                  <span className="text-xs font-mono text-muted-foreground">
+                    {theme.typographyStyles.lineHeight}
+                  </span>
+                </div>
+                <Slider
+                  value={[parseFloat(theme.typographyStyles.lineHeight)]}
+                  onValueChange={([num]) =>
+                    dispatch({ type: 'SET_TYPOGRAPHY_STYLE', key: 'lineHeight', value: num.toFixed(2) })
+                  }
+                  min={1}
+                  max={2.5}
+                  step={0.05}
+                  className="w-full"
+                />
+                <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                  <span>Tight (1.0)</span>
+                  <span>Relaxed (2.5)</span>
+                </div>
+              </div>
+
+              {/* H1 Line Height Slider */}
+              <div className="pt-2">
+                <div className="flex items-center justify-between mb-2">
+                  <Label className="text-sm">Line Height (H1)</Label>
+                  <span className="text-xs font-mono text-muted-foreground">
+                    {theme.typographyStyles.lineHeightH1}
+                  </span>
+                </div>
+                <Slider
+                  value={[parseFloat(theme.typographyStyles.lineHeightH1)]}
+                  onValueChange={([num]) =>
+                    dispatch({ type: 'SET_TYPOGRAPHY_STYLE', key: 'lineHeightH1', value: num.toFixed(2) })
+                  }
+                  min={0.8}
+                  max={1.8}
+                  step={0.05}
+                  className="w-full"
+                />
+                <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                  <span>Tight (0.8)</span>
+                  <span>Loose (1.8)</span>
+                </div>
+              </div>
+
+              {/* H2 Line Height Slider */}
+              <div className="pt-2">
+                <div className="flex items-center justify-between mb-2">
+                  <Label className="text-sm">Line Height (H2)</Label>
+                  <span className="text-xs font-mono text-muted-foreground">
+                    {theme.typographyStyles.lineHeightH2}
+                  </span>
+                </div>
+                <Slider
+                  value={[parseFloat(theme.typographyStyles.lineHeightH2)]}
+                  onValueChange={([num]) =>
+                    dispatch({ type: 'SET_TYPOGRAPHY_STYLE', key: 'lineHeightH2', value: num.toFixed(2) })
+                  }
+                  min={0.8}
+                  max={1.8}
+                  step={0.05}
+                  className="w-full"
+                />
+                <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                  <span>Tight (0.8)</span>
+                  <span>Loose (1.8)</span>
+                </div>
+              </div>
+
+              {/* H3 Line Height Slider */}
+              <div className="pt-2">
+                <div className="flex items-center justify-between mb-2">
+                  <Label className="text-sm">Line Height (H3)</Label>
+                  <span className="text-xs font-mono text-muted-foreground">
+                    {theme.typographyStyles.lineHeightH3}
+                  </span>
+                </div>
+                <Slider
+                  value={[parseFloat(theme.typographyStyles.lineHeightH3)]}
+                  onValueChange={([num]) =>
+                    dispatch({ type: 'SET_TYPOGRAPHY_STYLE', key: 'lineHeightH3', value: num.toFixed(2) })
+                  }
+                  min={0.8}
+                  max={1.8}
+                  step={0.05}
+                  className="w-full"
+                />
+                <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                  <span>Tight (0.8)</span>
+                  <span>Loose (1.8)</span>
+                </div>
+              </div>
+
+              {/* Letter Spacing Slider */}
+              <div className="pt-2">
+                <div className="flex items-center justify-between mb-2">
+                  <Label className="text-sm">Letter Spacing</Label>
+                  <span className="text-xs font-mono text-muted-foreground">
+                    {theme.typographyStyles.letterSpacing}em
+                  </span>
+                </div>
+                <Slider
+                  value={[parseFloat(theme.typographyStyles.letterSpacing)]}
+                  onValueChange={([num]) =>
+                    dispatch({ type: 'SET_TYPOGRAPHY_STYLE', key: 'letterSpacing', value: num.toFixed(3) })
+                  }
+                  min={-0.05}
+                  max={0.2}
+                  step={0.005}
+                  className="w-full"
+                />
+                <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                  <span>Tighter (-0.05em)</span>
+                  <span>Wider (0.2em)</span>
+                </div>
+              </div>
+
+              {/* Live Typography Preview */}
+              <div className="pt-4 border-t border-border mt-4">
+                <Label className="text-sm mb-3 block">Preview</Label>
+                <div 
+                  className="p-4 rounded-lg border border-border bg-background"
+                  style={{
+                    lineHeight: theme.typographyStyles.lineHeight,
+                    letterSpacing: `${theme.typographyStyles.letterSpacing}em`,
+                  }}
+                >
+                  <p className="text-base mb-2" style={{ fontFamily: theme.fonts.sans }}>
+                    The quick brown fox jumps over the lazy dog. Pack my box with five dozen liquor jugs.
+                  </p>
+                  <p className="text-sm text-muted-foreground" style={{ fontFamily: theme.fonts.sans }}>
+                    Sphinx of black quartz, judge my vow.
+                  </p>
+                </div>
+              </div>
+            </TabsContent>
+
+            {/* Buttons Tab */}
+            <TabsContent value="buttons" className="mt-4 space-y-4">
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-sm text-muted-foreground">
+                  Default button styling tokens.
+                </p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleResetButtons}
+                  title="Reset buttons to defaults"
+                >
+                  <RotateCcw className="size-4" />
+                  Reset
+                </Button>
+              </div>
+
+              {/* Border Radius Slider */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <Label className="text-sm">Border Radius</Label>
+                  <span className="text-xs font-mono text-muted-foreground">
+                    {theme.buttons.borderRadius}
+                  </span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div
+                    className="size-8 bg-primary flex-shrink-0"
+                    style={{ borderRadius: theme.buttons.borderRadius }}
+                  />
+                  <Slider
+                    value={[remToNumber(theme.buttons.borderRadius)]}
+                    onValueChange={([num]) =>
+                      dispatch({ type: 'SET_BUTTON', key: 'borderRadius', value: numberToRem(num) })
+                    }
+                    min={0}
+                    max={3}
+                    step={0.125}
+                    className="flex-1"
+                  />
+                </div>
+                <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                  <span>Square (0rem)</span>
+                  <span>Very Rounded (3rem)</span>
+                </div>
+              </div>
+              {/* Font Weight Slider */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <Label className="text-sm">Font Weight</Label>
+                  <span className="text-xs font-mono text-muted-foreground">
+                    {theme.buttons.fontWeight}
+                  </span>
+                </div>
+                <Slider
+                  value={[parseNumber(theme.buttons.fontWeight)]}
+                  onValueChange={([num]) =>
+                    dispatch({ type: 'SET_BUTTON', key: 'fontWeight', value: String(num) })
+                  }
+                  min={300}
+                  max={900}
+                  step={100}
+                  className="w-full"
+                />
+                <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                  <span>Light (300)</span>
+                  <span>Bold (900)</span>
+                </div>
+              </div>
+
+              {/* Font Size - Select & Slider */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <Label className="text-sm">Font Size</Label>
+                  <span className="text-xs font-mono text-muted-foreground">
+                    {theme.buttons.fontSize}
+                  </span>
+                </div>
+                <Slider
+                  value={[remToNumber(theme.buttons.fontSize)]}
+                  onValueChange={([num]) =>
+                    dispatch({ type: 'SET_BUTTON', key: 'fontSize', value: numberToRem(num) })
+                  }
+                  min={0.75}
+                  max={1.5}
+                  step={0.125}
+                  className="w-full mb-2"
+                />
+                <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                  <span>XS (0.75rem)</span>
+                  <span>XL (1.5rem)</span>
+                </div>
+                <Select
+                  value={theme.buttons.fontSize}
+                  onValueChange={(value) =>
+                    dispatch({ type: 'SET_BUTTON', key: 'fontSize', value })
+                  }
+                >
+                  <SelectTrigger className="w-full mt-2">
+                    <SelectValue placeholder="Select a size">
+                      {BUTTON_FONT_SIZES.find((s) => s.value === theme.buttons.fontSize)?.label ?? 'Custom'}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {BUTTON_FONT_SIZES.map((size) => (
+                      <SelectItem key={size.value} value={size.value}>
+                        <span className="flex items-center gap-2">
+                          <span style={{ fontSize: size.value }}>{size.label}</span>
+                          <span className="text-muted-foreground text-xs font-mono">{size.value}</span>
+                        </span>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              {/* Hover Effect */}
+              <div>
+                <Label className="text-sm mb-1.5 block">Hover Effect</Label>
+                <Select
+                  value={theme.buttons.hoverEffect}
+                  onValueChange={(value) =>
+                    dispatch({ type: 'SET_BUTTON', key: 'hoverEffect', value })
+                  }
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select hover effect">
+                      {BUTTON_HOVER_EFFECTS.find((e) => e.value === theme.buttons.hoverEffect)?.label ?? 'None'}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {BUTTON_HOVER_EFFECTS.map((effect) => (
+                      <SelectItem key={effect.value} value={effect.value}>
+                        <span className="flex flex-col">
+                          <span>{effect.label}</span>
+                          <span className="text-muted-foreground text-xs">{effect.description}</span>
+                        </span>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <Separator className="my-4" />
+
+              {/* Input Button Specific Settings */}
+              <div>
+                <div className="mb-3">
+                  <Label className="text-sm font-medium">Input Button Settings</Label>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Separate styles for &lt;input type="button"&gt; and &lt;input type="submit"&gt;
+                  </p>
+                </div>
+
+                {/* Input Button Border Radius */}
+                <div className="mb-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <Label className="text-sm">Input Border Radius</Label>
+                    <span className="text-xs font-mono text-muted-foreground">
+                      {theme.buttons.inputBorderRadius}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="size-10 bg-secondary flex-shrink-0"
+                      style={{ borderRadius: theme.buttons.inputBorderRadius }}
+                    />
+                    <Slider
+                      value={[remToNumber(theme.buttons.inputBorderRadius)]}
+                      onValueChange={([num]) =>
+                        dispatch({ type: 'SET_BUTTON', key: 'inputBorderRadius', value: numberToRem(num) })
+                      }
+                      min={0}
+                      max={3}
+                      step={0.125}
+                      className="flex-1"
+                    />
+                  </div>
+                  <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                    <span>Square (0rem)</span>
+                    <span>Very Rounded (3rem)</span>
+                  </div>
+                </div>
+
+                {/* Input Button Font Weight */}
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <Label className="text-sm">Input Font Weight</Label>
+                    <span className="text-xs font-mono text-muted-foreground">
+                      {theme.buttons.inputFontWeight}
+                    </span>
+                  </div>
+                  <Slider
+                    value={[parseNumber(theme.buttons.inputFontWeight)]}
+                    onValueChange={([num]) =>
+                      dispatch({ type: 'SET_BUTTON', key: 'inputFontWeight', value: String(num) })
+                    }
+                    min={300}
+                    max={900}
+                    step={100}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                    <span>Light (300)</span>
+                    <span>Bold (900)</span>
+                  </div>
+                </div>
+              </div>
+
+              <Separator className="my-4" />
+
+              {/* Button Element Types Preview */}
+              <div>
+                <div className="mb-3">
+                  <Label className="text-sm font-medium">Button Element Types</Label>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Test how your button styles apply to different HTML elements
+                  </p>
+                </div>
+                <div className="space-y-3 p-4 rounded-lg border border-border bg-muted/30">
+                  <div>
+                    <Label className="text-xs text-muted-foreground block mb-1.5">&lt;button&gt;</Label>
+                    <ButtonPreview
+                      label="Button Element"
+                      bgColor="bg-primary"
+                      textColor="text-primary-foreground"
+                      borderRadius={theme.buttons.borderRadius}
+                      fontWeight={theme.buttons.fontWeight}
+                      fontSize={theme.buttons.fontSize}
+                      hoverEffect={theme.buttons.hoverEffect}
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs text-muted-foreground block mb-1.5">&lt;button type="submit"&gt;</Label>
+                    <ButtonPreview
+                      label="Submit Button"
+                      bgColor="bg-primary"
+                      textColor="text-primary-foreground"
+                      borderRadius={theme.buttons.borderRadius}
+                      fontWeight={theme.buttons.fontWeight}
+                      fontSize={theme.buttons.fontSize}
+                      hoverEffect={theme.buttons.hoverEffect}
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs text-muted-foreground block mb-1.5">&lt;input type="button"&gt;</Label>
+                    <ButtonPreview
+                      label="Input Button"
+                      bgColor="bg-secondary"
+                      textColor="text-secondary-foreground"
+                      borderRadius={theme.buttons.inputBorderRadius}
+                      fontWeight={theme.buttons.inputFontWeight}
+                      fontSize={theme.buttons.fontSize}
+                      hoverEffect={theme.buttons.hoverEffect}
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs text-muted-foreground block mb-1.5">&lt;input type="submit"&gt;</Label>
+                    <ButtonPreview
+                      label="Input Submit"
+                      bgColor="bg-secondary"
+                      textColor="text-secondary-foreground"
+                      borderRadius={theme.buttons.inputBorderRadius}
+                      fontWeight={theme.buttons.inputFontWeight}
+                      fontSize={theme.buttons.fontSize}
+                      hoverEffect={theme.buttons.hoverEffect}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Button Variants preview */}
+              <div className="pt-4 border-t border-border">
+                <Label className="text-sm mb-3 block">Button Variants (hover to see {theme.buttons.hoverEffect} effect)</Label>
+                <div className="flex flex-wrap gap-2">
+                  <ButtonPreview
+                    label="Primary"
+                    bgColor="bg-primary"
+                    textColor="text-primary-foreground"
+                    borderRadius={theme.buttons.borderRadius}
+                    fontWeight={theme.buttons.fontWeight}
+                    fontSize={theme.buttons.fontSize}
+                    hoverEffect={theme.buttons.hoverEffect}
+                  />
+                  <ButtonPreview
+                    label="Secondary"
+                    bgColor="bg-secondary"
+                    textColor="text-secondary-foreground"
+                    borderRadius={theme.buttons.borderRadius}
+                    fontWeight={theme.buttons.fontWeight}
+                    fontSize={theme.buttons.fontSize}
+                    hoverEffect={theme.buttons.hoverEffect}
+                  />
+                </div>
+              </div>
+            </TabsContent>
+          </ScrollArea>
+        </Tabs>
+
+        {/* Footer actions */}
+        <Separator />
+        <div className="p-4 space-y-2">
+          <div className="flex gap-2">
+            <Button
+              onClick={handleApplyToProject}
+              disabled={isApplying}
+              className="flex-1"
+              variant="default"
+            >
+              <Paintbrush className="size-4 mr-1.5" />
+              {isApplying ? 'Applying...' : 'Apply to project'}
+            </Button>
+            <CssPreviewModal theme={theme} />
+          </div>
+          <div className="flex gap-2">
+            <Button onClick={handleSave} disabled={isSaving} variant="outline" className="flex-1">
+              <Save className="size-4 mr-1.5" />
+              {isSaving ? 'Saving...' : 'Save brand.md'}
+            </Button>
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={handleExport} className="flex-1">
+              <Download className="size-4 mr-1.5" />
+              Export
+            </Button>
+            <Button variant="outline" onClick={handleImport} className="flex-1">
+              <Upload className="size-4 mr-1.5" />
+              Import
+            </Button>
+            <Button variant="ghost" onClick={handleReset}>
+              <RotateCcw className="size-4" />
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Right side - Preview */}
+      <div className="flex-1 overflow-hidden">
+        <ThemePreview theme={theme} mode={previewMode} onModeChange={handlePreviewModeChange} />
+      </div>
+    </div>
+  );
+}
