@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/cards/card';
 import { useState, useEffect } from 'react';
 
 export default function LandingPageV2() {

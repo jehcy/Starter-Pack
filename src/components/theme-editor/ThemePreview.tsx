@@ -31,7 +31,7 @@ import {
 
 import type { BrandTheme, ColorTokens } from '@/lib/brand-theme';
 
-type PreviewPage = 'home' | 'features' | 'pricing' | 'dashboard';
+type PreviewPage = 'home' | 'features' | 'pricing' | 'dashboard' | 'lp';
 
 interface ThemePreviewProps {
   theme: BrandTheme;
@@ -59,6 +59,7 @@ export function ThemePreview({ theme, mode, onModeChange }: ThemePreviewProps) {
 
   const navItems: { label: string; page: PreviewPage }[] = [
     { label: 'Home', page: 'home' },
+    { label: 'LP', page: 'lp' },
     { label: 'Features', page: 'features' },
     { label: 'Pricing', page: 'pricing' },
     { label: 'Dashboard', page: 'dashboard' },
@@ -155,6 +156,7 @@ export function ThemePreview({ theme, mode, onModeChange }: ThemePreviewProps) {
       {/* Page Content */}
       <div className="flex-1">
         {currentPage === 'home' && <HomePage theme={theme} colors={colors} />}
+        {currentPage === 'lp' && <LPPage theme={theme} colors={colors} />}
         {currentPage === 'features' && <FeaturesPage theme={theme} colors={colors} />}
         {currentPage === 'pricing' && <PricingPage theme={theme} colors={colors} />}
         {currentPage === 'dashboard' && <DashboardPage theme={theme} colors={colors} />}
@@ -208,17 +210,18 @@ function HomePage({ theme, colors }: PageProps) {
               </span>
               Now in public beta
             </div>
-            <h1 
+            <h1
               className="font-bold tracking-tight"
-              style={{ 
-                fontFamily: theme.fonts.heading, 
+              style={{
+                fontFamily: theme.fonts.heading,
                 color: colors.foreground,
                 fontSize: theme.typographySizes.h1,
                 lineHeight: theme.typographyStyles.lineHeightH1,
               }}
             >
               Build your SaaS
-              <span 
+              <span
+                key={`home-gradient-${colors.primary}`}
                 className="block mt-2"
                 style={{
                   background: `linear-gradient(to right, ${colors.primary}, ${colors.primary}99)`,
@@ -431,17 +434,18 @@ function FeaturesPage({ theme, colors }: PageProps) {
             >
               Features
             </p>
-            <h1 
+            <h1
               className="mt-2 font-bold tracking-tight"
-              style={{ 
-                fontFamily: theme.fonts.heading, 
+              style={{
+                fontFamily: theme.fonts.heading,
                 color: colors.foreground,
                 fontSize: theme.typographySizes.h1,
                 lineHeight: theme.typographyStyles.lineHeightH1,
               }}
             >
               Powerful Features for
-              <span 
+              <span
+                key={`features-gradient-${colors.primary}`}
                 className="block mt-2"
                 style={{
                   background: `linear-gradient(to right, ${colors.primary}, ${colors.primary}99)`,
@@ -610,17 +614,18 @@ function PricingPage({ theme, colors }: PageProps) {
             >
               Pricing
             </p>
-            <h1 
+            <h1
               className="mt-2 font-bold tracking-tight"
-              style={{ 
-                fontFamily: theme.fonts.heading, 
+              style={{
+                fontFamily: theme.fonts.heading,
                 color: colors.foreground,
                 fontSize: theme.typographySizes.h1,
                 lineHeight: theme.typographyStyles.lineHeightH1,
               }}
             >
               Simple, Transparent
-              <span 
+              <span
+                key={`pricing-gradient-${colors.primary}`}
                 className="block mt-2"
                 style={{
                   background: `linear-gradient(to right, ${colors.primary}, ${colors.primary}99)`,
@@ -971,6 +976,425 @@ function DashboardPage({ theme, colors }: PageProps) {
         </div>
       </div>
     </div>
+  );
+}
+
+function LPPage({ theme, colors }: PageProps) {
+  return (
+    <>
+      {/* Hero Section - Bold Typography */}
+      <section
+        className="relative min-h-[80vh] flex items-center overflow-hidden"
+        style={{
+          background: `radial-gradient(ellipse at top right, ${colors.primary}15, ${colors.background} 60%), radial-gradient(ellipse at bottom left, ${colors.chart2}10, ${colors.background} 60%)`,
+        }}
+      >
+        {/* Grid Pattern */}
+        <div
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage: `linear-gradient(${colors.foreground} 1px, transparent 1px), linear-gradient(90deg, ${colors.foreground} 1px, transparent 1px)`,
+            backgroundSize: '60px 60px'
+          }}
+        />
+
+        <div className="relative max-w-6xl mx-auto px-6 py-20">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="space-y-8">
+              {/* Floating Tag */}
+              <div
+                className="inline-flex items-center gap-3 px-4 py-2"
+                style={{
+                  backgroundColor: `${colors.card}80`,
+                  border: `1px solid ${colors.primary}20`,
+                  borderRadius: '9999px',
+                }}
+              >
+                <span
+                  className="flex h-2 w-2 rounded-full animate-pulse"
+                  style={{ backgroundColor: colors.chart2 }}
+                />
+                <span className="text-sm font-medium" style={{ color: colors.foreground }}>
+                  Introducing v2.0
+                </span>
+              </div>
+
+              {/* Main Headline */}
+              <h1
+                className="font-bold tracking-tight"
+                style={{
+                  fontFamily: theme.fonts.heading,
+                  fontSize: theme.typographySizes.h1,
+                  lineHeight: theme.typographyStyles.lineHeightH1,
+                }}
+              >
+                <span style={{ color: colors.foreground }}>Build</span>
+                <span
+                  className="block mt-2"
+                  style={{
+                    background: `linear-gradient(to right, ${colors.primary}, ${colors.chart1}, ${colors.chart2})`,
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                  }}
+                >
+                  Different
+                </span>
+              </h1>
+
+              <p
+                className="leading-relaxed"
+                style={{
+                  color: colors.mutedForeground,
+                  fontSize: '1.125rem',
+                }}
+              >
+                Stop settling for generic templates. Create distinctive digital experiences
+                that capture attention and convert visitors into loyal customers.
+              </p>
+
+              {/* CTA Buttons */}
+              <div className="flex flex-wrap gap-4 pt-4">
+                <PreviewButton
+                  colors={colors}
+                  radius="9999px"
+                  variant="default"
+                  fontWeight={theme.buttons.fontWeight}
+                  fontSize={theme.buttons.fontSize}
+                  hoverEffect={theme.buttons.hoverEffect}
+                  size="lg"
+                >
+                  Start Free Trial
+                  <ArrowRight className="ml-2 size-5" />
+                </PreviewButton>
+                <PreviewButton
+                  colors={colors}
+                  radius="9999px"
+                  variant="outline"
+                  fontWeight={theme.buttons.fontWeight}
+                  fontSize={theme.buttons.fontSize}
+                  hoverEffect={theme.buttons.hoverEffect}
+                  size="lg"
+                >
+                  Watch Demo
+                </PreviewButton>
+              </div>
+
+              {/* Social Proof */}
+              <div
+                className="flex items-center gap-6 pt-8"
+                style={{ borderTop: `1px solid ${colors.border}50` }}
+              >
+                <div className="flex -space-x-3">
+                  {[colors.chart1, colors.chart2, colors.chart3, colors.chart4, colors.chart5].map((color, i) => (
+                    <div
+                      key={i}
+                      className="h-10 w-10 rounded-full flex items-center justify-center text-xs font-bold"
+                      style={{
+                        backgroundColor: `${color}30`,
+                        border: `2px solid ${colors.background}`,
+                      }}
+                    />
+                  ))}
+                </div>
+                <div className="text-sm">
+                  <span className="font-semibold" style={{ color: colors.foreground }}>2,847+</span>
+                  <span style={{ color: colors.mutedForeground }}> creators building with us</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Hero Visual - Card Stack */}
+            <div className="relative hidden lg:block h-[400px]">
+              {[
+                { title: 'Dashboard', offset: 0, color: colors.primary },
+                { title: 'Analytics', offset: 1, color: colors.chart2 },
+                { title: 'Settings', offset: 2, color: colors.chart1 },
+              ].map((card, index) => (
+                <div
+                  key={card.title}
+                  className="absolute inset-0"
+                  style={{
+                    transform: `translateY(${index * 20}px) translateX(${index * 20}px) scale(${1 - index * 0.05})`,
+                    zIndex: 3 - index,
+                    opacity: 1 - index * 0.2,
+                    backgroundColor: `${card.color}10`,
+                    border: `1px solid ${colors.border}50`,
+                    borderRadius: theme.radius.xl,
+                  }}
+                >
+                  <div className="p-6">
+                    <div className="flex items-center gap-2 mb-4">
+                      <div className="h-3 w-3 rounded-full" style={{ backgroundColor: colors.chart1 }} />
+                      <div className="h-3 w-3 rounded-full" style={{ backgroundColor: colors.chart3 }} />
+                      <div className="h-3 w-3 rounded-full" style={{ backgroundColor: colors.chart2 }} />
+                    </div>
+                    <div className="text-lg font-semibold mb-4" style={{ color: colors.foreground }}>{card.title}</div>
+                    <div className="space-y-3">
+                      {[80, 60, 40].map((w, i) => (
+                        <div key={i} className="h-3 rounded-full" style={{ width: `${w}%`, backgroundColor: `${colors.foreground}10` }} />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Marquee Section */}
+      <section
+        className="py-8 overflow-hidden"
+        style={{
+          backgroundColor: `${colors.muted}20`,
+          borderTop: `1px solid ${colors.border}40`,
+          borderBottom: `1px solid ${colors.border}40`,
+        }}
+      >
+        <div className="flex items-center gap-12 justify-center">
+          {['Next.js 14', 'TypeScript', 'Tailwind CSS', 'React', 'Vercel', 'shadcn/ui'].map((tech) => (
+            <span
+              key={tech}
+              className="text-lg font-medium"
+              style={{ color: `${colors.mutedForeground}60` }}
+            >
+              {tech}
+            </span>
+          ))}
+        </div>
+      </section>
+
+      {/* Features Bento Grid */}
+      <section className="py-24">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <span
+              className="inline-block px-4 py-1.5 text-sm font-semibold tracking-wider uppercase mb-6"
+              style={{
+                backgroundColor: `${colors.primary}10`,
+                color: colors.primary,
+                borderRadius: '9999px',
+              }}
+            >
+              Features
+            </span>
+            <h2
+              className="font-bold tracking-tight mb-6"
+              style={{
+                fontFamily: theme.fonts.heading,
+                color: colors.foreground,
+                fontSize: theme.typographySizes.h2,
+              }}
+            >
+              Everything you need,
+              <br />
+              <span style={{ color: colors.mutedForeground }}>nothing you don't</span>
+            </h2>
+          </div>
+
+          {/* Bento Grid */}
+          <div className="grid md:grid-cols-3 gap-6">
+            {/* Large Card */}
+            <div
+              className="md:col-span-2 p-8"
+              style={{
+                backgroundColor: `${colors.card}80`,
+                border: `1px solid ${colors.border}50`,
+                borderRadius: theme.radius.xl,
+              }}
+            >
+              <div className="flex flex-col md:flex-row gap-8">
+                <div className="flex-1 space-y-4">
+                  <div
+                    className="h-14 w-14 flex items-center justify-center"
+                    style={{
+                      backgroundColor: `${colors.primary}15`,
+                      borderRadius: theme.radius.lg,
+                    }}
+                  >
+                    <Zap className="size-7" style={{ color: colors.primary }} />
+                  </div>
+                  <h3 className="text-2xl font-bold" style={{ color: colors.cardForeground }}>
+                    Lightning Fast Performance
+                  </h3>
+                  <p style={{ color: colors.mutedForeground }}>
+                    Built on Next.js 14 with React Server Components and edge runtime support.
+                  </p>
+                  <div className="flex gap-3 pt-4">
+                    {[{ label: 'LCP', value: '< 1.2s' }, { label: 'FID', value: '< 100ms' }, { label: 'CLS', value: '< 0.1' }].map(m => (
+                      <div
+                        key={m.label}
+                        className="px-3 py-1.5"
+                        style={{
+                          backgroundColor: `${colors.chart2}10`,
+                          border: `1px solid ${colors.chart2}20`,
+                          borderRadius: '9999px',
+                        }}
+                      >
+                        <span className="text-xs" style={{ color: colors.mutedForeground }}>{m.label}: </span>
+                        <span className="text-xs font-semibold" style={{ color: colors.chart2 }}>{m.value}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div
+                  className="w-48 h-32 flex items-end gap-2 p-4"
+                  style={{
+                    backgroundColor: `${colors.primary}05`,
+                    border: `1px solid ${colors.border}50`,
+                    borderRadius: theme.radius.lg,
+                  }}
+                >
+                  {[85, 92, 78, 96, 88, 95, 90].map((h, i) => (
+                    <div
+                      key={i}
+                      className="flex-1"
+                      style={{
+                        height: `${h}%`,
+                        background: `linear-gradient(to top, ${colors.primary}, ${colors.chart2})`,
+                        borderRadius: theme.radius.sm,
+                      }}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Tall Card */}
+            <div
+              className="row-span-2 p-8"
+              style={{
+                backgroundColor: `${colors.card}80`,
+                border: `1px solid ${colors.border}50`,
+                borderRadius: theme.radius.xl,
+              }}
+            >
+              <div
+                className="h-14 w-14 flex items-center justify-center"
+                style={{
+                  backgroundColor: `${colors.chart1}15`,
+                  borderRadius: theme.radius.lg,
+                }}
+              >
+                <Palette className="size-7" style={{ color: colors.chart1 }} />
+              </div>
+              <h3 className="text-2xl font-bold mt-6" style={{ color: colors.cardForeground }}>
+                Design System
+              </h3>
+              <p className="mt-4" style={{ color: colors.mutedForeground }}>
+                A complete design system with customizable tokens for colors, typography, and components.
+              </p>
+              <div className="mt-8 space-y-4">
+                <div className="flex gap-2">
+                  {[colors.primary, colors.chart1, colors.chart2, colors.chart3, colors.chart4].map((c, i) => (
+                    <div
+                      key={i}
+                      className="h-8 w-8"
+                      style={{ backgroundColor: c, borderRadius: theme.radius.md }}
+                    />
+                  ))}
+                </div>
+                <div
+                  className="h-8 w-full"
+                  style={{
+                    background: `linear-gradient(to right, ${colors.primary}, ${colors.chart1}, ${colors.chart2})`,
+                    borderRadius: theme.radius.md,
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Small Cards */}
+            {[
+              { icon: Lock, title: 'Enterprise Security', desc: 'SOC 2 compliant with E2E encryption.', color: colors.chart2 },
+              { icon: Code, title: 'Developer Experience', desc: 'TypeScript-first with full IDE support.', color: colors.chart4 },
+            ].map((item) => (
+              <div
+                key={item.title}
+                className="p-8"
+                style={{
+                  backgroundColor: `${colors.card}80`,
+                  border: `1px solid ${colors.border}50`,
+                  borderRadius: theme.radius.xl,
+                }}
+              >
+                <div
+                  className="h-12 w-12 flex items-center justify-center"
+                  style={{
+                    backgroundColor: `${item.color}15`,
+                    borderRadius: theme.radius.lg,
+                  }}
+                >
+                  <item.icon className="size-6" style={{ color: item.color }} />
+                </div>
+                <h3 className="text-xl font-bold mt-6" style={{ color: colors.cardForeground }}>{item.title}</h3>
+                <p className="mt-3" style={{ color: colors.mutedForeground }}>{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-24">
+        <div className="max-w-6xl mx-auto px-6">
+          <div
+            className="relative overflow-hidden px-8 py-20"
+            style={{
+              backgroundColor: colors.primary,
+              borderRadius: theme.radius.xl,
+            }}
+          >
+            <div
+              className="absolute top-0 right-0 w-96 h-96 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"
+              style={{ backgroundColor: `${colors.primaryForeground}10` }}
+            />
+            <div
+              className="absolute bottom-0 left-0 w-72 h-72 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"
+              style={{ backgroundColor: `${colors.chart2}20` }}
+            />
+
+            <div className="relative text-center">
+              <h2
+                className="font-bold tracking-tight mb-6"
+                style={{
+                  color: colors.primaryForeground,
+                  fontFamily: theme.fonts.heading,
+                  fontSize: theme.typographySizes.h2,
+                }}
+              >
+                Ready to build
+                <br />
+                something amazing?
+              </h2>
+              <p
+                className="mx-auto mb-10"
+                style={{
+                  color: `${colors.primaryForeground}cc`,
+                  fontSize: theme.typographySizes.p,
+                }}
+              >
+                Join thousands of developers shipping faster with our starter pack.
+              </p>
+              <div className="flex gap-4 justify-center">
+                <PreviewButton
+                  colors={colors}
+                  radius="9999px"
+                  variant="secondary"
+                  fontWeight={theme.buttons.fontWeight}
+                  fontSize={theme.buttons.fontSize}
+                  hoverEffect={theme.buttons.hoverEffect}
+                  size="lg"
+                >
+                  Get Started Now
+                  <ArrowRight className="ml-2 size-5" />
+                </PreviewButton>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </>
   );
 }
 

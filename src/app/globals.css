@@ -175,13 +175,13 @@ h1, h2, h3 {
   --font-heading: Inter, system-ui, -apple-system, sans-serif;
 
   /* Brand Typography Sizes */
-  --text-h1: 5.25rem;
+  --text-h1: 4.5rem;
   --text-h2: 1.875rem;
   --text-h3: 1.5rem;
   --text-h4: 1.25rem;
   --text-p: 1rem;
   --text-blockquote: 1.125rem;
-  --text-label: 0.75rem;
+  --text-label: 0.875rem;
   --text-code: 0.875rem;
   --text-table: 0.875rem;
   --text-list: 1rem;
@@ -194,12 +194,10 @@ h1, h2, h3 {
   --letter-spacing: 0em;
 
   /* Brand Buttons */
-  --button-radius: 2.25rem;
+  --button-radius: 0.5rem;
   --button-font-weight: 500;
   --button-font-size: 0.875rem;
   --button-hover-effect: opacity;
-
-  /* Input Button Specific Styles */
   --input-button-radius: 0.5rem;
   --input-button-font-weight: 500;
 
@@ -213,8 +211,8 @@ h1, h2, h3 {
   /* Brand Dark Mode Colors - from brand.md */
   --background: #09090b;
   --foreground: #fafafa;
-  --primary: #fafafa;
-  --primary-foreground: #18181b;
+  --primary: #225367;
+  --primary-foreground: #ffffff;
   --secondary: #27272a;
   --secondary-foreground: #fafafa;
   --accent: #27272a;

@@ -19,8 +19,8 @@ import {
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -485,9 +485,20 @@ interface ThemePageProps {
   initialTheme: BrandTheme;
 }
 
+type ActiveSection = 'colors' | 'spacing' | 'radius' | 'fonts' | 'buttons';
+
+const NAV_ITEMS: { id: ActiveSection; icon: typeof Palette; label: string }[] = [
+  { id: 'colors', icon: Palette, label: 'Colors' },
+  { id: 'spacing', icon: Space, label: 'Space' },
+  { id: 'radius', icon: Circle, label: 'Radius' },
+  { id: 'fonts', icon: Type, label: 'Fonts' },
+  { id: 'buttons', icon: SquareIcon, label: 'Buttons' },
+];
+
 export function ThemePage({ initialTheme }: ThemePageProps) {
   const [theme, dispatch] = useReducer(themeReducer, initialTheme);
   const [previewMode, setPreviewMode] = useState<'light' | 'dark'>('light');
+  const [activeSection, setActiveSection] = useState<ActiveSection>('colors');
   const [isSaving, setIsSaving] = useState(false);
   const [isApplying, setIsApplying] = useState(false);
   const { setTheme: setGlobalTheme } = useTheme();
@@ -671,57 +682,78 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
   };
 
   return (
-    <div className="flex h-screen">
-      {/* Left sidebar - Controls */}
-      <div className="w-[400px] border-r border-border flex flex-col bg-card min-h-0">
-        {/* Header */}
-        <div className="p-4 border-b border-border">
-          <h1 className="text-xl font-bold">Theme Editor</h1>
-          <p className="text-sm text-muted-foreground">
-            Configure your brand design tokens
-          </p>
-        </div>
-
-        {/* Theme name */}
-        <div className="p-4 border-b border-border">
-          <Label className="text-sm font-medium">Theme Name</Label>
+    <div className="flex flex-col h-screen">
+      {/* Top Header Bar */}
+      <header className="h-14 border-b border-border bg-card px-4 flex items-center justify-between shrink-0">
+        <div className="flex items-center gap-3">
+          <span className="font-semibold text-sm text-muted-foreground">Theme Editor</span>
           <Input
             value={theme.name}
             onChange={(e) => dispatch({ type: 'SET_NAME', payload: e.target.value })}
-            className="mt-1.5"
-            placeholder="My Theme"
+            className="w-48 h-8"
+            placeholder="Theme name"
           />
         </div>
+        <div className="flex items-center gap-1">
+          <Button
+            onClick={handleApplyToProject}
+            disabled={isApplying}
+            size="sm"
+            variant="default"
+          >
+            <Paintbrush className="size-4 mr-1.5" />
+            {isApplying ? 'Applying...' : 'Apply to project'}
+          </Button>
+          <CssPreviewModal theme={theme} />
+          <Button onClick={handleSave} disabled={isSaving} variant="ghost" size="sm" title="Save brand.md">
+            <Save className="size-4" />
+          </Button>
+          <Button variant="ghost" size="sm" onClick={handleExport} title="Export theme">
+            <Download className="size-4" />
+          </Button>
+          <Button variant="ghost" size="sm" onClick={handleImport} title="Import theme">
+            <Upload className="size-4" />
+          </Button>
+          <Button variant="ghost" size="sm" onClick={handleReset} title="Reset all">
+            <RotateCcw className="size-4" />
+          </Button>
+        </div>
+      </header>
 
-        {/* Tabs */}
-        <Tabs defaultValue="colors" className="flex-1 flex flex-col overflow-hidden min-h-0">
-          <TabsList className="mx-4 mt-4 grid grid-cols-5 w-auto">
-            <TabsTrigger value="colors" className="gap-1">
-              <Palette className="size-3.5" />
-              <span className="hidden sm:inline">Colors</span>
-            </TabsTrigger>
-            <TabsTrigger value="spacing" className="gap-1">
-              <Space className="size-3.5" />
-              <span className="hidden sm:inline">Space</span>
-            </TabsTrigger>
-            <TabsTrigger value="radius" className="gap-1">
-              <Circle className="size-3.5" />
-              <span className="hidden sm:inline">Radius</span>
-            </TabsTrigger>
-            <TabsTrigger value="fonts" className="gap-1">
-              <Type className="size-3.5" />
-              <span className="hidden sm:inline">Fonts</span>
-            </TabsTrigger>
-            <TabsTrigger value="buttons" className="gap-1">
-              <SquareIcon className="size-3.5" />
-              <span className="hidden sm:inline">Buttons</span>
-            </TabsTrigger>
-          </TabsList>
+      {/* Main 3-Column Layout */}
+      <div className="flex flex-1 overflow-hidden min-h-0">
+        {/* Left Navigation */}
+        <nav className="w-[72px] border-r border-border bg-card flex flex-col items-center py-3 gap-1 shrink-0">
+          {NAV_ITEMS.map((item) => {
+            const Icon = item.icon;
+            return (
+              <button
+                key={item.id}
+                onClick={() => setActiveSection(item.id)}
+                className={cn(
+                  'w-full flex flex-col items-center gap-1 py-2 px-1 rounded-md transition-colors mx-1',
+                  activeSection === item.id
+                    ? 'bg-primary text-primary-foreground'
+                    : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                )}
+              >
+                <Icon className="h-[18px] w-[18px]" />
+                <span className="text-[10px] font-medium">{item.label}</span>
+              </button>
+            );
+          })}
+        </nav>
 
-          <ScrollArea className="flex-1 min-h-0 overflow-y-auto px-4 pb-4">
-            {/* Colors Tab */}
-            <TabsContent value="colors" className="mt-4 space-y-6">
-              {/* Color mode toggle */}
+        {/* Center - Preview */}
+        <main className="flex-1 overflow-hidden">
+          <ThemePreview theme={theme} mode={previewMode} onModeChange={handlePreviewModeChange} />
+        </main>
+
+        {/* Right Sidebar - Settings */}
+        <aside className="w-[350px] border-l border-border bg-card flex flex-col shrink-0 overflow-hidden min-h-0">
+          {/* Fixed Color Mode Toggle - Only visible in Colors section */}
+          {activeSection === 'colors' && (
+            <div className="p-4 pb-0 border-b border-border bg-card shrink-0">
               <div className="flex items-center gap-2 p-2 rounded-lg bg-muted">
                 <Button
                   variant={previewMode === 'light' ? 'default' : 'ghost'}
@@ -751,6 +783,14 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
                   <span className="hidden sm:inline">Reset</span>
                 </Button>
               </div>
+            </div>
+          )}
+
+          <ScrollArea className="flex-1 h-full">
+            <div className="p-4 pb-6 space-y-6">
+              {/* Colors Section */}
+              {activeSection === 'colors' && (
+                <div className="space-y-6">
 
               {colorGroups.map((group) => (
                 <div key={group.title}>
@@ -785,10 +825,12 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
                   </div>
                 </div>
               ))}
-            </TabsContent>
+                </div>
+              )}
 
-            {/* Spacing Tab */}
-            <TabsContent value="spacing" className="mt-4 space-y-4">
+              {/* Spacing Section */}
+              {activeSection === 'spacing' && (
+                <div className="space-y-4">
               <div className="flex items-center justify-between gap-2">
                 <p className="text-sm text-muted-foreground">
                   Define your spacing scale used throughout the UI.
@@ -823,10 +865,12 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
                   />
                 </div>
               ))}
-            </TabsContent>
+                </div>
+              )}
 
-            {/* Radius Tab */}
-            <TabsContent value="radius" className="mt-4 space-y-4">
+              {/* Radius Section */}
+              {activeSection === 'radius' && (
+                <div className="space-y-4">
               <div className="flex items-center justify-between gap-2">
                 <p className="text-sm text-muted-foreground">
                   Border radius values for rounded corners.
@@ -925,10 +969,12 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
                   ))}
                 </div>
               </div>
-            </TabsContent>
+                </div>
+              )}
 
-            {/* Fonts Tab */}
-            <TabsContent value="fonts" className="mt-4 space-y-4">
+              {/* Fonts Section */}
+              {activeSection === 'fonts' && (
+                <div className="space-y-4">
               <div className="flex items-center justify-between gap-2">
                 <p className="text-sm text-muted-foreground">
                   Select font families from Google Fonts.
@@ -1351,10 +1397,12 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
                   </p>
                 </div>
               </div>
-            </TabsContent>
+                </div>
+              )}
 
-            {/* Buttons Tab */}
-            <TabsContent value="buttons" className="mt-4 space-y-4">
+              {/* Buttons Section */}
+              {activeSection === 'buttons' && (
+                <div className="space-y-4">
               <div className="flex items-center justify-between gap-2">
                 <p className="text-sm text-muted-foreground">
                   Default button styling tokens.
@@ -1647,50 +1695,11 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
                   />
                 </div>
               </div>
-            </TabsContent>
+                </div>
+              )}
+            </div>
           </ScrollArea>
-        </Tabs>
-
-        {/* Footer actions */}
-        <Separator />
-        <div className="p-4 space-y-2">
-          <div className="flex gap-2">
-            <Button
-              onClick={handleApplyToProject}
-              disabled={isApplying}
-              className="flex-1"
-              variant="default"
-            >
-              <Paintbrush className="size-4 mr-1.5" />
-              {isApplying ? 'Applying...' : 'Apply to project'}
-            </Button>
-            <CssPreviewModal theme={theme} />
-          </div>
-          <div className="flex gap-2">
-            <Button onClick={handleSave} disabled={isSaving} variant="outline" className="flex-1">
-              <Save className="size-4 mr-1.5" />
-              {isSaving ? 'Saving...' : 'Save brand.md'}
-            </Button>
-          </div>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={handleExport} className="flex-1">
-              <Download className="size-4 mr-1.5" />
-              Export
-            </Button>
-            <Button variant="outline" onClick={handleImport} className="flex-1">
-              <Upload className="size-4 mr-1.5" />
-              Import
-            </Button>
-            <Button variant="ghost" onClick={handleReset}>
-              <RotateCcw className="size-4" />
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      {/* Right side - Preview */}
-      <div className="flex-1 overflow-hidden">
-        <ThemePreview theme={theme} mode={previewMode} onModeChange={handlePreviewModeChange} />
+        </aside>
       </div>
     </div>
   );

@@ -82,21 +82,23 @@ If the user provides new design inspiration or a screenshot:
 
 ### Shadcn Components
 - Always use shadcn components from `@/components/ui/`
+- **Card components** are located in `@/components/cards/` - all new card components should be added here
 - Components are configured in `components.json` with style: "new-york"
 - Components automatically use CSS variables from `globals.css`
 
 ### Component Structure
 1. Import shadcn components from `@/components/ui/[component-name]`
-2. Use Tailwind classes for layout and spacing
-3. Reference design tokens from `globals.css` via Tailwind utilities
-4. Never add `style={{}}` props or inline CSS
+2. Import card components from `@/components/cards/[component-name]`
+3. Use Tailwind classes for layout and spacing
+4. Reference design tokens from `globals.css` via Tailwind utilities
+5. Never add `style={{}}` props or inline CSS
 
 ## Examples
 
 ### ✅ Correct Approach
 ```tsx
 import { Button } from "@/components/ui/button"
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/cards/card"
 
 export function FeatureSection() {
   return (
