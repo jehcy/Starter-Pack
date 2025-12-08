@@ -90,7 +90,7 @@ export function ThemePreview({ theme, mode, onModeChange }: ThemePreviewProps) {
           borderColor: colors.border,
         }}
       >
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+        <div className="w-full mx-auto px-6 h-16 flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center gap-8">
             <div className="flex items-center gap-2">
@@ -119,7 +119,7 @@ export function ThemePreview({ theme, mode, onModeChange }: ThemePreviewProps) {
                   style={{
                     color: currentPage === item.page ? colors.foreground : colors.mutedForeground,
                     backgroundColor: currentPage === item.page ? colors.muted : 'transparent',
-                    borderRadius: theme.radius.md,
+                    borderRadius: theme.buttons.borderRadius,
                   }}
                 >
                   {item.label}
@@ -143,10 +143,24 @@ export function ThemePreview({ theme, mode, onModeChange }: ThemePreviewProps) {
             >
               {mode === 'light' ? <Moon className="size-4" /> : <Sun className="size-4" />}
             </button>
-            <PreviewButton colors={colors} radius={theme.radius.md} variant="ghost">
+            <PreviewButton
+              colors={colors}
+              radius={theme.buttons.borderRadius}
+              variant="ghost"
+              fontWeight={theme.buttons.fontWeight}
+              fontSize={theme.buttons.fontSize}
+              hoverEffect={theme.buttons.hoverEffect}
+            >
               <Bell className="size-4" />
             </PreviewButton>
-            <PreviewButton colors={colors} radius={theme.radius.md} variant="default">
+            <PreviewButton
+              colors={colors}
+              radius={theme.buttons.borderRadius}
+              variant="default"
+              fontWeight={theme.buttons.fontWeight}
+              fontSize={theme.buttons.fontSize}
+              hoverEffect={theme.buttons.hoverEffect}
+            >
               Get Started
             </PreviewButton>
           </div>
@@ -774,11 +788,25 @@ function DashboardPage({ theme, colors }: PageProps) {
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <PreviewButton colors={colors} radius={theme.radius.md} variant="outline">
+            <PreviewButton
+              colors={colors}
+              radius={theme.buttons.borderRadius}
+              variant="outline"
+              fontWeight={theme.buttons.fontWeight}
+              fontSize={theme.buttons.fontSize}
+              hoverEffect={theme.buttons.hoverEffect}
+            >
               <FileText className="size-4 mr-1.5" />
               Export
             </PreviewButton>
-            <PreviewButton colors={colors} radius={theme.radius.md} variant="default">
+            <PreviewButton
+              colors={colors}
+              radius={theme.buttons.borderRadius}
+              variant="default"
+              fontWeight={theme.buttons.fontWeight}
+              fontSize={theme.buttons.fontSize}
+              hoverEffect={theme.buttons.hoverEffect}
+            >
               <Plus className="size-4 mr-1.5" />
               Create
             </PreviewButton>
@@ -814,9 +842,9 @@ function DashboardPage({ theme, colors }: PageProps) {
                 </p>
               </div>
               <div className="flex gap-1">
-                <PreviewButton colors={colors} radius={theme.radius.md} variant="ghost" size="sm">Week</PreviewButton>
-                <PreviewButton colors={colors} radius={theme.radius.md} variant="secondary" size="sm">Month</PreviewButton>
-                <PreviewButton colors={colors} radius={theme.radius.md} variant="ghost" size="sm">Year</PreviewButton>
+                <PreviewButton colors={colors} radius={theme.buttons.borderRadius} variant="ghost" size="sm" fontWeight={theme.buttons.fontWeight} fontSize={theme.buttons.fontSize} hoverEffect={theme.buttons.hoverEffect}>Week</PreviewButton>
+                <PreviewButton colors={colors} radius={theme.buttons.borderRadius} variant="secondary" size="sm" fontWeight={theme.buttons.fontWeight} fontSize={theme.buttons.fontSize} hoverEffect={theme.buttons.hoverEffect}>Month</PreviewButton>
+                <PreviewButton colors={colors} radius={theme.buttons.borderRadius} variant="ghost" size="sm" fontWeight={theme.buttons.fontWeight} fontSize={theme.buttons.fontSize} hoverEffect={theme.buttons.hoverEffect}>Year</PreviewButton>
               </div>
             </div>
             {/* Fake Chart */}
@@ -869,9 +897,9 @@ function DashboardPage({ theme, colors }: PageProps) {
                 Quick Actions
               </h4>
               <div className="space-y-2">
-                <QuickActionItem colors={colors} radius={theme.radius.md} icon={Mail} label="Send Report" />
-                <QuickActionItem colors={colors} radius={theme.radius.md} icon={Users} label="Invite Team" />
-                <QuickActionItem colors={colors} radius={theme.radius.md} icon={Settings} label="Settings" />
+                <QuickActionItem colors={colors} radius={theme.buttons.borderRadius} icon={Mail} label="Send Report" />
+                <QuickActionItem colors={colors} radius={theme.buttons.borderRadius} icon={Users} label="Invite Team" />
+                <QuickActionItem colors={colors} radius={theme.buttons.borderRadius} icon={Settings} label="Settings" />
               </div>
             </div>
           </div>
@@ -1030,6 +1058,7 @@ function LPPage({ theme, colors }: PageProps) {
               >
                 <span style={{ color: colors.foreground }}>Build</span>
                 <span
+                  key={`lp-gradient-${colors.primary}-${colors.chart1}-${colors.chart2}`}
                   className="block mt-2"
                   style={{
                     background: `linear-gradient(to right, ${colors.primary}, ${colors.chart1}, ${colors.chart2})`,

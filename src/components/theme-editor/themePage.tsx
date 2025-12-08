@@ -12,7 +12,7 @@ import {
   Download,
   Upload,
   RotateCcw,
-  Save,
+  FolderDown,
   Sun,
   Moon,
   Paintbrush,
@@ -49,9 +49,10 @@ import {
   DEFAULT_TYPOGRAPHY_STYLES,
   DEFAULT_BUTTONS,
 } from '@/lib/brand-theme';
-import { saveBrandDoc, applyThemeToGlobals } from '@/app/theme/actions';
+import { applyThemeToGlobals } from '@/app/theme/actions';
 import { ThemePreview } from './ThemePreview';
 import { CssPreviewModal } from './CssPreviewModal';
+import { generateStarterProject, slugify } from '@/lib/project-generator';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Helper functions for slider value conversion
@@ -499,7 +500,7 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
   const [theme, dispatch] = useReducer(themeReducer, initialTheme);
   const [previewMode, setPreviewMode] = useState<'light' | 'dark'>('light');
   const [activeSection, setActiveSection] = useState<ActiveSection>('colors');
-  const [isSaving, setIsSaving] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
   const [isApplying, setIsApplying] = useState(false);
   const { setTheme: setGlobalTheme } = useTheme();
 
@@ -508,25 +509,25 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
     setGlobalTheme(mode);
   }, [setGlobalTheme]);
 
-  const handleSave = useCallback(async () => {
-    setIsSaving(true);
+  const handleDownloadStarter = useCallback(async () => {
+    setIsGenerating(true);
     try {
-      const result = await saveBrandDoc(theme);
-      if (result.success) {
-        toast.success('Brand documentation saved!', {
-          description: 'docs/brand.md has been updated.',
-        });
-      } else {
-        toast.error('Failed to save', {
-          description: result.message,
-        });
-      }
+      const blob = await generateStarterProject(theme);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${slugify(theme.name || 'my-theme')}-starter.zip`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.success('Starter project downloaded!', {
+        description: 'Extract the ZIP and run npm install to get started.',
+      });
     } catch {
-      toast.error('Failed to save', {
+      toast.error('Failed to generate project', {
         description: 'An unexpected error occurred.',
       });
     } finally {
-      setIsSaving(false);
+      setIsGenerating(false);
     }
   }, [theme]);
 
@@ -614,8 +615,8 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
     try {
       const result = await applyThemeToGlobals(theme);
       if (result.success) {
-        toast.success('Theme applied to globals.css!', {
-          description: 'Refresh to see your changes.',
+        toast.success('Theme applied to project!', {
+          description: 'Updated globals.css and brand.md. Refresh to see your changes.',
         });
       } else {
         toast.error('Failed to apply theme', {
@@ -705,8 +706,8 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
             {isApplying ? 'Applying...' : 'Apply to project'}
           </Button>
           <CssPreviewModal theme={theme} />
-          <Button onClick={handleSave} disabled={isSaving} variant="ghost" size="sm" title="Save brand.md">
-            <Save className="size-4" />
+          <Button onClick={handleDownloadStarter} disabled={isGenerating} variant="ghost" size="sm" title="Download starter project">
+            <FolderDown className="size-4" />
           </Button>
           <Button variant="ghost" size="sm" onClick={handleExport} title="Export theme">
             <Download className="size-4" />

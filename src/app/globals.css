@@ -126,9 +126,9 @@ h1, h2, h3 {
 
 :root {
   /* Brand Light Mode Colors - from brand.md */
-  --background: #ffffff;
+  --background: #f2f2f2;
   --foreground: #09090b;
-  --primary: #18181b;
+  --primary: #18813d;
   --primary-foreground: #fafafa;
   --secondary: #f4f4f5;
   --secondary-foreground: #18181b;
@@ -194,7 +194,7 @@ h1, h2, h3 {
   --letter-spacing: 0em;
 
   /* Brand Buttons */
-  --button-radius: 0.5rem;
+  --button-radius: 0.375rem;
   --button-font-weight: 500;
   --button-font-size: 0.875rem;
   --button-hover-effect: opacity;
@@ -209,10 +209,10 @@ h1, h2, h3 {
 
 .dark {
   /* Brand Dark Mode Colors - from brand.md */
-  --background: #09090b;
+  --background: #131316;
   --foreground: #fafafa;
-  --primary: #225367;
-  --primary-foreground: #ffffff;
+  --primary: #65fb8a;
+  --primary-foreground: #18181b;
   --secondary: #27272a;
   --secondary-foreground: #fafafa;
   --accent: #27272a;

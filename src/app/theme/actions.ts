@@ -197,6 +197,7 @@ export async function applyThemeToProject(theme: BrandTheme): Promise<ApplyTheme
 /**
  * Apply the brand theme by directly overwriting globals.css
  * Replaces the :root and .dark blocks with the new theme values
+ * Also updates docs/brand.md with the theme documentation
  */
 export async function applyThemeToGlobals(theme: BrandTheme): Promise<ApplyThemeResult> {
   try {
@@ -219,9 +220,20 @@ export async function applyThemeToGlobals(theme: BrandTheme): Promise<ApplyTheme
     // Write the updated CSS back to globals.css
     await writeFile(globalsPath, updatedCss, 'utf-8');
 
+    // Also update docs/brand.md with the theme documentation
+    const markdown = generateBrandMarkdown(theme);
+    const docsPath = join(process.cwd(), 'docs');
+    const brandMdPath = join(docsPath, 'brand.md');
+
+    // Ensure docs directory exists
+    await mkdir(docsPath, { recursive: true });
+
+    // Write the markdown file
+    await writeFile(brandMdPath, markdown, 'utf-8');
+
     return {
       success: true,
-      message: 'Theme applied to globals.css successfully',
+      message: 'Theme applied to globals.css and brand.md successfully',
     };
   } catch (error) {
     console.error('Failed to apply theme to globals.css:', error);
