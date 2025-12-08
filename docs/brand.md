@@ -16,9 +16,9 @@ Design tokens and guidelines for consistent UI across all pages.
 
 | Token | HEX | CSS Variable |
 | ----- | --- | ------------ |
-| `background` | `#f2f2f2` | `--background` |
+| `background` | `#f5f5f5` | `--background` |
 | `foreground` | `#09090b` | `--foreground` |
-| `primary` | `#18813d` | `--primary` |
+| `primary` | `#18181b` | `--primary` |
 | `primaryForeground` | `#fafafa` | `--primary-foreground` |
 | `secondary` | `#f4f4f5` | `--secondary` |
 | `secondaryForeground` | `#18181b` | `--secondary-foreground` |
@@ -45,9 +45,9 @@ Design tokens and guidelines for consistent UI across all pages.
 
 | Token | HEX | CSS Variable |
 | ----- | --- | ------------ |
-| `background` | `#131316` | `--background` |
+| `background` | `#09090b` | `--background` |
 | `foreground` | `#fafafa` | `--foreground` |
-| `primary` | `#65fb8a` | `--primary` |
+| `primary` | `#fafafa` | `--primary` |
 | `primaryForeground` | `#18181b` | `--primary-foreground` |
 | `secondary` | `#27272a` | `--secondary` |
 | `secondaryForeground` | `#fafafa` | `--secondary-foreground` |
@@ -140,7 +140,7 @@ Design tokens and guidelines for consistent UI across all pages.
 
 | Property | Value |
 | -------- | ----- |
-| `borderRadius` | `0.375rem` |
+| `borderRadius` | `0.25rem` |
 | `fontWeight` | `500` |
 
 ---
@@ -152,9 +152,9 @@ Design tokens and guidelines for consistent UI across all pages.
   "name": "Default Theme",
   "colors": {
     "light": {
-      "background": "#f2f2f2",
+      "background": "#f5f5f5",
       "foreground": "#09090b",
-      "primary": "#18813d",
+      "primary": "#18181b",
       "primaryForeground": "#fafafa",
       "secondary": "#f4f4f5",
       "secondaryForeground": "#18181b",
@@ -178,9 +178,9 @@ Design tokens and guidelines for consistent UI across all pages.
       "chart5": "#f4a462"
     },
     "dark": {
-      "background": "#131316",
+      "background": "#09090b",
       "foreground": "#fafafa",
-      "primary": "#65fb8a",
+      "primary": "#fafafa",
       "primaryForeground": "#18181b",
       "secondary": "#27272a",
       "secondaryForeground": "#fafafa",
@@ -246,7 +246,7 @@ Design tokens and guidelines for consistent UI across all pages.
     "letterSpacing": "0"
   },
   "buttons": {
-    "borderRadius": "0.375rem",
+    "borderRadius": "0.25rem",
     "fontWeight": "500",
     "fontSize": "0.875rem",
     "hoverEffect": "opacity",
