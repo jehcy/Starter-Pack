@@ -550,6 +550,11 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
     }
   }, [currentTheme]);
 
+  // Auto-save theme to localStorage on every change
+  useEffect(() => {
+    saveThemeToStorage(theme);
+  }, [theme]);
+
   const handlePreviewModeChange = useCallback((mode: 'light' | 'dark') => {
     setPreviewMode(mode);
     setGlobalTheme(mode);
