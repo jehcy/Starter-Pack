@@ -61,7 +61,7 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
 
         {/* Form Container */}
         <main className="flex flex-1 items-center justify-center p-6 lg:p-12">
-          <div className="w-full max-w-md">{children}</div>
+          <div className="w-full py-12">{children}</div>
         </main>
 
         {/* Footer */}
