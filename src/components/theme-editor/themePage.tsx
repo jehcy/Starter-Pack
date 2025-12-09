@@ -23,7 +23,6 @@ import {
   Braces,
   BookOpen,
   HelpCircle,
-  X,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -78,6 +77,7 @@ import {
 import { ThemePreview } from './ThemePreview';
 import { CssPreviewModal } from './CssPreviewModal';
 import { PresetPicker } from './PresetPicker';
+import { UserMenuDropdown } from './UserMenuDropdown';
 import { generateStarterProject, slugify } from '@/lib/project-generator';
 import { applyThemeToGlobals } from '@/app/theme/actions';
 import { useThemeEditorTour } from '@/hooks/useThemeEditorTour';
@@ -910,9 +910,7 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
           <Button variant="ghost" size="sm" onClick={handleReset} title="Reset all">
             <RotateCcw className="size-4" />
           </Button>
-          <Button variant="ghost" size="sm" onClick={() => router.push('/')} title="Close editor">
-            <X className="size-4" />
-          </Button>
+          <UserMenuDropdown />
         </div>
       </header>
 

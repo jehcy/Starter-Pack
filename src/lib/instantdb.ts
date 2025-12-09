@@ -32,6 +32,19 @@ export interface WorkspaceMember {
   joinedAt: number;
 }
 
+export type UserType = 'free' | 'paid' | 'admin';
+
+export interface UserProfile {
+  id: string;
+  userId: string;
+  email: string;
+  displayName: string | null;
+  avatarUrl: string | null;
+  userType: UserType;
+  createdAt: number;
+  updatedAt: number;
+}
+
 /**
  * Initialize InstantDB client
  *
