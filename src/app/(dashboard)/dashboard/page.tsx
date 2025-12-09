@@ -9,7 +9,7 @@ export default function DashboardPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-          <p className="text-muted-foreground">Welcome back, John! Here&apos;s what&apos;s happening.</p>
+          <p className="text-muted-foreground">Welcome back, Johny! Here&apos;s what&apos;s happening.</p>
         </div>
         <Button className="rounded-xl gap-2" asChild>
           <Link href="/dashboard/projects">
