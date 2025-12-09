@@ -202,9 +202,14 @@ export async function applyThemeToProject(theme: BrandTheme): Promise<ApplyTheme
 export async function applyThemeToGlobals(theme: BrandTheme): Promise<ApplyThemeResult> {
   try {
     const globalsPath = join(process.cwd(), 'src', 'app', 'globals.css');
+    const docsPath = join(process.cwd(), 'docs');
+    const brandMdPath = join(docsPath, 'brand.md');
 
-    // Read the current globals.css
-    const currentCss = await readFile(globalsPath, 'utf-8');
+    // Perform all operations in parallel for better performance
+    const [currentCss] = await Promise.all([
+      readFile(globalsPath, 'utf-8'),
+      mkdir(docsPath, { recursive: true }), // Ensure docs directory exists early
+    ]);
 
     // Generate the new :root and .dark blocks
     const { root, dark } = generateGlobalsCss(theme);
@@ -217,19 +222,14 @@ export async function applyThemeToGlobals(theme: BrandTheme): Promise<ApplyTheme
     const darkRegex = /\.dark\s*\{[\s\S]*?\n\}/;
     updatedCss = updatedCss.replace(darkRegex, dark);
 
-    // Write the updated CSS back to globals.css
-    await writeFile(globalsPath, updatedCss, 'utf-8');
-
-    // Also update docs/brand.md with the theme documentation
+    // Generate markdown
     const markdown = generateBrandMarkdown(theme);
-    const docsPath = join(process.cwd(), 'docs');
-    const brandMdPath = join(docsPath, 'brand.md');
 
-    // Ensure docs directory exists
-    await mkdir(docsPath, { recursive: true });
-
-    // Write the markdown file
-    await writeFile(brandMdPath, markdown, 'utf-8');
+    // Write both files in parallel for faster execution
+    await Promise.all([
+      writeFile(globalsPath, updatedCss, 'utf-8'),
+      writeFile(brandMdPath, markdown, 'utf-8'),
+    ]);
 
     return {
       success: true,

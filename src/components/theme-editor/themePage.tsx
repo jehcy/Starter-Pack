@@ -66,6 +66,7 @@ import {
   DEFAULT_TYPOGRAPHY_STYLES,
   DEFAULT_BUTTONS,
   saveThemeToStorage,
+  applyThemeToDOM,
 } from '@/lib/brand-theme';
 import {
   generateTokensJson,
@@ -679,6 +680,9 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
   );
 
   const handleApplyStyle = useCallback(async () => {
+    // Apply theme to DOM immediately for instant visual feedback
+    applyThemeToDOM(theme);
+
     setIsApplying(true);
     try {
       if (isDevelopment) {
@@ -912,33 +916,6 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
         </div>
       </header>
 
-      {/* Skeleton Loading Overlay */}
-      {isApplying && (
-        <div className="absolute inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center">
-          <div className="bg-card border border-border rounded-lg p-8 shadow-xl max-w-md w-full mx-4">
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="size-12 rounded-full border-2 border-primary border-t-transparent animate-spin" />
-                <div className="flex-1 space-y-2">
-                  <Skeleton className="h-4 w-3/4" />
-                  <Skeleton className="h-3 w-full" />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Skeleton className="h-3 w-full" />
-                <Skeleton className="h-3 w-5/6" />
-                <Skeleton className="h-3 w-4/6" />
-              </div>
-              <div className="pt-2 text-center">
-                <p className="text-sm font-medium text-foreground">Applying your style...</p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Updating globals.css and brand.md
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Main 3-Column Layout */}
       <div className="flex flex-1 overflow-hidden min-h-0">

@@ -552,3 +552,57 @@ export function saveThemeToStorage(theme: BrandTheme): void {
     console.error('Failed to save theme to localStorage');
   }
 }
+
+/**
+ * Apply theme variables directly to the DOM for instant visual feedback
+ * This applies the theme to the current page immediately without waiting for file writes
+ */
+export function applyThemeToDOM(theme: BrandTheme): void {
+  if (typeof window === 'undefined') return;
+
+  const root = document.documentElement;
+  const isDark = root.classList.contains('dark');
+  const colors = isDark ? theme.colors.dark : theme.colors.light;
+
+  // Apply color variables
+  Object.entries(colors).forEach(([key, value]) => {
+    const cssVar = COLOR_TO_CSS_VAR[key as keyof ColorTokens];
+    root.style.setProperty(`--${cssVar}`, value);
+  });
+
+  // Apply spacing variables
+  Object.entries(theme.spacing).forEach(([key, value]) => {
+    root.style.setProperty(`--spacing-${key}`, value);
+  });
+
+  // Apply radius variables
+  root.style.setProperty('--radius', theme.radius.lg);
+  Object.entries(theme.radius).forEach(([key, value]) => {
+    root.style.setProperty(`--radius-${key}`, value);
+  });
+
+  // Apply font variables
+  root.style.setProperty('--font-sans', theme.fonts.sans);
+  root.style.setProperty('--font-mono', theme.fonts.mono);
+  root.style.setProperty('--font-heading', theme.fonts.heading);
+
+  // Apply typography size variables
+  Object.entries(theme.typographySizes).forEach(([key, value]) => {
+    root.style.setProperty(`--text-${key}`, value);
+  });
+
+  // Apply typography style variables
+  root.style.setProperty('--line-height', theme.typographyStyles.lineHeight);
+  root.style.setProperty('--line-height-h1', theme.typographyStyles.lineHeightH1);
+  root.style.setProperty('--line-height-h2', theme.typographyStyles.lineHeightH2);
+  root.style.setProperty('--line-height-h3', theme.typographyStyles.lineHeightH3);
+  root.style.setProperty('--letter-spacing', `${theme.typographyStyles.letterSpacing}em`);
+
+  // Apply button variables
+  root.style.setProperty('--button-radius', theme.buttons.borderRadius);
+  root.style.setProperty('--button-font-weight', theme.buttons.fontWeight);
+  root.style.setProperty('--button-font-size', theme.buttons.fontSize);
+  root.style.setProperty('--button-hover-effect', theme.buttons.hoverEffect);
+  root.style.setProperty('--input-button-radius', theme.buttons.inputBorderRadius);
+  root.style.setProperty('--input-button-font-weight', theme.buttons.inputFontWeight);
+}
