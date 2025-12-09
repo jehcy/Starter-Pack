@@ -194,7 +194,7 @@ h1, h2, h3 {
   --letter-spacing: 0em;
 
   /* Brand Buttons */
-  --button-radius: 0.5rem;
+  --button-radius: 3rem;
   --button-font-weight: 500;
   --button-font-size: 0.875rem;
   --button-hover-effect: opacity;
@@ -211,9 +211,9 @@ h1, h2, h3 {
   /* Brand Dark Mode Colors - from brand.md */
   --background: #020617;
   --foreground: #f8fafc;
-  --primary: #60a5fa;
-  --primary-foreground: #082f49;
-  --secondary: #1e293b;
+  --primary: #2e8cff;
+  --primary-foreground: #1a1a1a;
+  --secondary: #2f4c79;
   --secondary-foreground: #e2e8f0;
   --accent: #3b82f6;
   --accent-foreground: #eff6ff;
@@ -221,11 +221,11 @@ h1, h2, h3 {
   --muted-foreground: #64748b;
   --destructive: #991b1b;
   --destructive-foreground: #fef2f2;
-  --card: #020617;
+  --card: #0b1128;
   --card-foreground: #f8fafc;
   --popover: #020617;
   --popover-foreground: #f8fafc;
-  --border: #0f172a;
+  --border: #142348;
   --input: #0f172a;
   --ring: #60a5fa;
   --chart-1: #60a5fa;

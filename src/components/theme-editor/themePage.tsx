@@ -2,6 +2,7 @@
 
 import { useReducer, useEffect, useCallback, useState } from 'react';
 import { useTheme } from 'next-themes';
+import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { useAuthGate } from '@/hooks/useAuthGate';
 import {
@@ -22,6 +23,7 @@ import {
   Braces,
   BookOpen,
   HelpCircle,
+  X,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -525,6 +527,7 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
   const [theme, dispatch] = useReducer(themeReducer, initialTheme);
   const { theme: currentTheme, setTheme: setGlobalTheme } = useTheme();
   const { requireAuth, AuthGateModalComponent } = useAuthGate();
+  const router = useRouter();
   const [previewMode, setPreviewMode] = useState<'light' | 'dark'>(() => {
     // Auto-detect current theme, default to dark
     return (currentTheme === 'light' || currentTheme === 'dark') ? currentTheme : 'dark';
@@ -902,6 +905,9 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
           </Button>
           <Button variant="ghost" size="sm" onClick={handleReset} title="Reset all">
             <RotateCcw className="size-4" />
+          </Button>
+          <Button variant="ghost" size="sm" onClick={() => router.push('/')} title="Close editor">
+            <X className="size-4" />
           </Button>
         </div>
       </header>

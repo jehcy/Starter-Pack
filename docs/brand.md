@@ -47,9 +47,9 @@ Design tokens and guidelines for consistent UI across all pages.
 | ----- | --- | ------------ |
 | `background` | `#020617` | `--background` |
 | `foreground` | `#f8fafc` | `--foreground` |
-| `primary` | `#60a5fa` | `--primary` |
-| `primaryForeground` | `#082f49` | `--primary-foreground` |
-| `secondary` | `#1e293b` | `--secondary` |
+| `primary` | `#2e8cff` | `--primary` |
+| `primaryForeground` | `#1a1a1a` | `--primary-foreground` |
+| `secondary` | `#2f4c79` | `--secondary` |
 | `secondaryForeground` | `#e2e8f0` | `--secondary-foreground` |
 | `accent` | `#3b82f6` | `--accent` |
 | `accentForeground` | `#eff6ff` | `--accent-foreground` |
@@ -57,11 +57,11 @@ Design tokens and guidelines for consistent UI across all pages.
 | `mutedForeground` | `#64748b` | `--muted-foreground` |
 | `destructive` | `#991b1b` | `--destructive` |
 | `destructiveForeground` | `#fef2f2` | `--destructive-foreground` |
-| `card` | `#020617` | `--card` |
+| `card` | `#0b1128` | `--card` |
 | `cardForeground` | `#f8fafc` | `--card-foreground` |
 | `popover` | `#020617` | `--popover` |
 | `popoverForeground` | `#f8fafc` | `--popover-foreground` |
-| `border` | `#0f172a` | `--border` |
+| `border` | `#142348` | `--border` |
 | `input` | `#0f172a` | `--input` |
 | `ring` | `#60a5fa` | `--ring` |
 | `chart1` | `#60a5fa` | `--chart1` |
@@ -140,7 +140,7 @@ Design tokens and guidelines for consistent UI across all pages.
 
 | Property | Value |
 | -------- | ----- |
-| `borderRadius` | `0.5rem` |
+| `borderRadius` | `3rem` |
 | `fontWeight` | `500` |
 
 ---
@@ -180,9 +180,9 @@ Design tokens and guidelines for consistent UI across all pages.
     "dark": {
       "background": "#020617",
       "foreground": "#f8fafc",
-      "primary": "#60a5fa",
-      "primaryForeground": "#082f49",
-      "secondary": "#1e293b",
+      "primary": "#2e8cff",
+      "primaryForeground": "#1a1a1a",
+      "secondary": "#2f4c79",
       "secondaryForeground": "#e2e8f0",
       "accent": "#3b82f6",
       "accentForeground": "#eff6ff",
@@ -190,11 +190,11 @@ Design tokens and guidelines for consistent UI across all pages.
       "mutedForeground": "#64748b",
       "destructive": "#991b1b",
       "destructiveForeground": "#fef2f2",
-      "card": "#020617",
+      "card": "#0b1128",
       "cardForeground": "#f8fafc",
       "popover": "#020617",
       "popoverForeground": "#f8fafc",
-      "border": "#0f172a",
+      "border": "#142348",
       "input": "#0f172a",
       "ring": "#60a5fa",
       "chart1": "#60a5fa",
@@ -246,7 +246,7 @@ Design tokens and guidelines for consistent UI across all pages.
     "letterSpacing": "0"
   },
   "buttons": {
-    "borderRadius": "0.5rem",
+    "borderRadius": "3rem",
     "fontWeight": "500",
     "fontSize": "0.875rem",
     "hoverEffect": "opacity",
