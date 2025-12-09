@@ -971,7 +971,7 @@ function generateNextEnvDts(): string {
 `;
 }
 
-function generateBrandSkill(): string {
+export function generateBrandSkill(): string {
   return `# /brand - UI Designer Command
 
 You are a UI designer specializing in creating consistent, brand-aligned interfaces using the project's design system.

@@ -13,6 +13,13 @@ import {
   FolderDown,
   Sun,
   Moon,
+  ChevronDown,
+  Package,
+  FileJson,
+  FileCode,
+  FileText,
+  Braces,
+  BookOpen,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -22,6 +29,7 @@ import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Select,
   SelectContent,
@@ -29,6 +37,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 import {
   type BrandTheme,
@@ -45,10 +61,20 @@ import {
   DEFAULT_TYPOGRAPHY_SIZES,
   DEFAULT_TYPOGRAPHY_STYLES,
   DEFAULT_BUTTONS,
+  saveThemeToStorage,
 } from '@/lib/brand-theme';
+import {
+  generateTokensJson,
+  generateTailwindConfigZip,
+  generateShadcnThemeTs,
+  generateGlobalsCssFile,
+  generateBrandSkill,
+} from '@/lib/theme-exports';
 import { ThemePreview } from './ThemePreview';
 import { CssPreviewModal } from './CssPreviewModal';
+import { PresetPicker } from './PresetPicker';
 import { generateStarterProject, slugify } from '@/lib/project-generator';
+import { applyThemeToGlobals } from '@/app/theme/actions';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Helper functions for slider value conversion
@@ -501,6 +527,10 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
   });
   const [activeSection, setActiveSection] = useState<ActiveSection>('colors');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isApplying, setIsApplying] = useState(false);
+
+  // Detect if running in development mode
+  const isDevelopment = process.env.NODE_ENV === 'development';
 
   // Sync preview mode with current theme when it changes externally
   useEffect(() => {
@@ -535,6 +565,121 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
       setIsGenerating(false);
     }
   }, [theme]);
+
+  const handleDownloadTokensJson = useCallback(async () => {
+    try {
+      const content = generateTokensJson(theme);
+      const blob = new Blob([content], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${slugify(theme.name || 'my-theme')}-tokens.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.success('Design tokens downloaded!');
+    } catch {
+      toast.error('Failed to generate tokens');
+    }
+  }, [theme]);
+
+  const handleDownloadTailwindConfig = useCallback(async () => {
+    setIsGenerating(true);
+    try {
+      const blob = await generateTailwindConfigZip(theme);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${slugify(theme.name || 'my-theme')}-tailwind-config.zip`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.success('Tailwind config downloaded!', {
+        description: 'Includes both v3 and v4 configurations.',
+      });
+    } catch {
+      toast.error('Failed to generate Tailwind config');
+    } finally {
+      setIsGenerating(false);
+    }
+  }, [theme]);
+
+  const handleDownloadShadcnTheme = useCallback(async () => {
+    try {
+      const content = generateShadcnThemeTs(theme);
+      const blob = new Blob([content], { type: 'text/typescript' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${slugify(theme.name || 'my-theme')}-theme.ts`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.success('shadcn/ui theme file downloaded!');
+    } catch {
+      toast.error('Failed to generate theme file');
+    }
+  }, [theme]);
+
+  const handleDownloadGlobalsCss = useCallback(async () => {
+    try {
+      const content = generateGlobalsCssFile(theme);
+      const blob = new Blob([content], { type: 'text/css' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${slugify(theme.name || 'my-theme')}-globals.css`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.success('CSS variables file downloaded!');
+    } catch {
+      toast.error('Failed to generate CSS');
+    }
+  }, [theme]);
+
+  const handleDownloadBrandSkill = useCallback(async () => {
+    try {
+      const content = generateBrandSkill();
+      const blob = new Blob([content], { type: 'text/markdown' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'brand-skill.md';
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.success('Brand skill markdown downloaded!');
+    } catch {
+      toast.error('Failed to generate brand skill');
+    }
+  }, []);
+
+  const handleApplyStyle = useCallback(async () => {
+    setIsApplying(true);
+    try {
+      if (isDevelopment) {
+        // Development: write to files
+        const result = await applyThemeToGlobals(theme);
+        if (result.success) {
+          toast.success('Style applied!', {
+            description: 'globals.css and brand.md updated',
+            duration: 3000,
+          });
+        } else {
+          toast.error('Failed to apply style', { description: result.message });
+        }
+      } else {
+        // Production: save to localStorage
+        saveThemeToStorage(theme);
+        toast.success('Style saved!', {
+          description: 'Saved to browser storage',
+          duration: 3000,
+        });
+      }
+    } catch (error) {
+      toast.error('Failed to apply style', {
+        description: error instanceof Error ? error.message : 'Unknown error',
+      });
+    } finally {
+      setIsApplying(false);
+    }
+  }, [theme, isDevelopment]);
 
   const handleReset = useCallback(() => {
     dispatch({ type: 'RESET' });
@@ -622,11 +767,12 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
   };
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="relative flex flex-col h-screen">
       {/* Top Header Bar */}
       <header className="h-14 border-b border-border bg-card px-4 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-3">
           <span className="font-semibold text-sm text-muted-foreground">Theme Editor</span>
+          <PresetPicker onSelect={(preset) => dispatch({ type: 'SET_THEME', payload: preset.theme })} />
           <Input
             value={theme.name}
             onChange={(e) => dispatch({ type: 'SET_NAME', payload: e.target.value })}
@@ -636,20 +782,124 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
         </div>
         <div className="flex items-center gap-1">
           <Button
-            onClick={handleDownloadStarter}
-            disabled={isGenerating}
+            onClick={handleApplyStyle}
+            disabled={isApplying}
             size="sm"
             variant="default"
           >
-            <FolderDown className="size-4 mr-1.5" />
-            {isGenerating ? 'Downloading...' : 'Download your Style'}
+            {isApplying ? 'Applying...' : 'Apply your style'}
           </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button disabled={isGenerating} size="sm" variant="outline">
+                <FolderDown className="size-4 mr-1.5" />
+                {isGenerating ? 'Downloading...' : 'Download'}
+                <ChevronDown className="size-3.5 ml-1.5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuLabel>Export Options</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+
+              <DropdownMenuItem onClick={handleDownloadStarter}>
+                <Package className="size-4 mr-2" />
+                <div className="flex flex-col">
+                  <span className="font-medium">Starter Pack</span>
+                  <span className="text-xs text-muted-foreground">
+                    Full Next.js project ZIP
+                  </span>
+                </div>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem onClick={handleDownloadTailwindConfig}>
+                <FileCode className="size-4 mr-2" />
+                <div className="flex flex-col">
+                  <span className="font-medium">Tailwind Config</span>
+                  <span className="text-xs text-muted-foreground">
+                    v3 + v4 configurations
+                  </span>
+                </div>
+              </DropdownMenuItem>
+
+              <DropdownMenuSeparator />
+
+              <DropdownMenuItem onClick={handleDownloadTokensJson}>
+                <Braces className="size-4 mr-2" />
+                <div className="flex flex-col">
+                  <span className="font-medium">tokens.json</span>
+                  <span className="text-xs text-muted-foreground">
+                    Design tokens in JSON
+                  </span>
+                </div>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem onClick={handleDownloadShadcnTheme}>
+                <FileJson className="size-4 mr-2" />
+                <div className="flex flex-col">
+                  <span className="font-medium">theme.ts</span>
+                  <span className="text-xs text-muted-foreground">
+                    shadcn/ui theme file
+                  </span>
+                </div>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem onClick={handleDownloadGlobalsCss}>
+                <FileText className="size-4 mr-2" />
+                <div className="flex flex-col">
+                  <span className="font-medium">globals.css</span>
+                  <span className="text-xs text-muted-foreground">
+                    CSS variables only
+                  </span>
+                </div>
+              </DropdownMenuItem>
+
+              <DropdownMenuSeparator />
+
+              <DropdownMenuItem onClick={handleDownloadBrandSkill}>
+                <BookOpen className="size-4 mr-2" />
+                <div className="flex flex-col">
+                  <span className="font-medium">brand-skill.md</span>
+                  <span className="text-xs text-muted-foreground">
+                    AI assistant instructions
+                  </span>
+                </div>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <CssPreviewModal theme={theme} />
           <Button variant="ghost" size="sm" onClick={handleReset} title="Reset all">
             <RotateCcw className="size-4" />
           </Button>
         </div>
       </header>
+
+      {/* Skeleton Loading Overlay */}
+      {isApplying && (
+        <div className="absolute inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center">
+          <div className="bg-card border border-border rounded-lg p-8 shadow-xl max-w-md w-full mx-4">
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="size-12 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+                <div className="flex-1 space-y-2">
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-3 w-full" />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Skeleton className="h-3 w-full" />
+                <Skeleton className="h-3 w-5/6" />
+                <Skeleton className="h-3 w-4/6" />
+              </div>
+              <div className="pt-2 text-center">
+                <p className="text-sm font-medium text-foreground">Applying your style...</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Updating globals.css and brand.md
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Main 3-Column Layout */}
       <div className="flex flex-1 overflow-hidden min-h-0">
