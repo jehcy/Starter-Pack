@@ -6,7 +6,7 @@ Design tokens and guidelines for consistent UI across all pages.
 
 ---
 
-## Theme: Midnight
+## Theme: Ocean
 
 ---
 
@@ -16,59 +16,59 @@ Design tokens and guidelines for consistent UI across all pages.
 
 | Token | HEX | CSS Variable |
 | ----- | --- | ------------ |
-| `background` | `#f8fafc` | `--background` |
-| `foreground` | `#020617` | `--foreground` |
-| `primary` | `#1e293b` | `--primary` |
-| `primaryForeground` | `#f1f5f9` | `--primary-foreground` |
-| `secondary` | `#cbd5e1` | `--secondary` |
-| `secondaryForeground` | `#0f172a` | `--secondary-foreground` |
-| `accent` | `#334155` | `--accent` |
-| `accentForeground` | `#f8fafc` | `--accent-foreground` |
-| `muted` | `#e2e8f0` | `--muted` |
-| `mutedForeground` | `#475569` | `--muted-foreground` |
+| `background` | `#ffffff` | `--background` |
+| `foreground` | `#0f172a` | `--foreground` |
+| `primary` | `#0ea5e9` | `--primary` |
+| `primaryForeground` | `#f0f9ff` | `--primary-foreground` |
+| `secondary` | `#e0f2fe` | `--secondary` |
+| `secondaryForeground` | `#0c4a6e` | `--secondary-foreground` |
+| `accent` | `#06b6d4` | `--accent` |
+| `accentForeground` | `#f0fdfa` | `--accent-foreground` |
+| `muted` | `#f1f5f9` | `--muted` |
+| `mutedForeground` | `#64748b` | `--muted-foreground` |
 | `destructive` | `#ef4444` | `--destructive` |
 | `destructiveForeground` | `#fef2f2` | `--destructive-foreground` |
 | `card` | `#ffffff` | `--card` |
-| `cardForeground` | `#020617` | `--card-foreground` |
+| `cardForeground` | `#0f172a` | `--card-foreground` |
 | `popover` | `#ffffff` | `--popover` |
-| `popoverForeground` | `#020617` | `--popover-foreground` |
-| `border` | `#cbd5e1` | `--border` |
-| `input` | `#cbd5e1` | `--input` |
-| `ring` | `#1e293b` | `--ring` |
-| `chart1` | `#475569` | `--chart1` |
-| `chart2` | `#334155` | `--chart2` |
-| `chart3` | `#1e293b` | `--chart3` |
-| `chart4` | `#0f172a` | `--chart4` |
-| `chart5` | `#020617` | `--chart5` |
+| `popoverForeground` | `#0f172a` | `--popover-foreground` |
+| `border` | `#e2e8f0` | `--border` |
+| `input` | `#e2e8f0` | `--input` |
+| `ring` | `#0ea5e9` | `--ring` |
+| `chart1` | `#0ea5e9` | `--chart1` |
+| `chart2` | `#06b6d4` | `--chart2` |
+| `chart3` | `#22d3ee` | `--chart3` |
+| `chart4` | `#0891b2` | `--chart4` |
+| `chart5` | `#155e75` | `--chart5` |
 
 ### Dark Mode Colors
 
 | Token | HEX | CSS Variable |
 | ----- | --- | ------------ |
-| `background` | `#020617` | `--background` |
-| `foreground` | `#f8fafc` | `--foreground` |
-| `primary` | `#2e8cff` | `--primary` |
-| `primaryForeground` | `#1a1a1a` | `--primary-foreground` |
-| `secondary` | `#2f4c79` | `--secondary` |
-| `secondaryForeground` | `#e2e8f0` | `--secondary-foreground` |
-| `accent` | `#3b82f6` | `--accent` |
-| `accentForeground` | `#eff6ff` | `--accent-foreground` |
-| `muted` | `#0f172a` | `--muted` |
-| `mutedForeground` | `#64748b` | `--muted-foreground` |
-| `destructive` | `#991b1b` | `--destructive` |
+| `background` | `#0f172a` | `--background` |
+| `foreground` | `#f0f9ff` | `--foreground` |
+| `primary` | `#38bdf8` | `--primary` |
+| `primaryForeground` | `#082f49` | `--primary-foreground` |
+| `secondary` | `#1e3a5f` | `--secondary` |
+| `secondaryForeground` | `#e0f2fe` | `--secondary-foreground` |
+| `accent` | `#22d3ee` | `--accent` |
+| `accentForeground` | `#083344` | `--accent-foreground` |
+| `muted` | `#1e293b` | `--muted` |
+| `mutedForeground` | `#94a3b8` | `--muted-foreground` |
+| `destructive` | `#7f1d1d` | `--destructive` |
 | `destructiveForeground` | `#fef2f2` | `--destructive-foreground` |
-| `card` | `#0b1128` | `--card` |
-| `cardForeground` | `#f8fafc` | `--card-foreground` |
-| `popover` | `#020617` | `--popover` |
-| `popoverForeground` | `#f8fafc` | `--popover-foreground` |
-| `border` | `#142348` | `--border` |
-| `input` | `#0f172a` | `--input` |
-| `ring` | `#60a5fa` | `--ring` |
-| `chart1` | `#60a5fa` | `--chart1` |
-| `chart2` | `#3b82f6` | `--chart2` |
-| `chart3` | `#2563eb` | `--chart3` |
-| `chart4` | `#1d4ed8` | `--chart4` |
-| `chart5` | `#1e40af` | `--chart5` |
+| `card` | `#0f172a` | `--card` |
+| `cardForeground` | `#f0f9ff` | `--card-foreground` |
+| `popover` | `#0f172a` | `--popover` |
+| `popoverForeground` | `#f0f9ff` | `--popover-foreground` |
+| `border` | `#1e293b` | `--border` |
+| `input` | `#1e293b` | `--input` |
+| `ring` | `#38bdf8` | `--ring` |
+| `chart1` | `#38bdf8` | `--chart1` |
+| `chart2` | `#22d3ee` | `--chart2` |
+| `chart3` | `#06b6d4` | `--chart3` |
+| `chart4` | `#0891b2` | `--chart4` |
+| `chart5` | `#155e75` | `--chart5` |
 
 ---
 
@@ -140,7 +140,7 @@ Design tokens and guidelines for consistent UI across all pages.
 
 | Property | Value |
 | -------- | ----- |
-| `borderRadius` | `3rem` |
+| `borderRadius` | `0.5rem` |
 | `fontWeight` | `500` |
 
 ---
@@ -149,59 +149,59 @@ Design tokens and guidelines for consistent UI across all pages.
 
 ```json
 {
-  "name": "Midnight",
+  "name": "Ocean",
   "colors": {
     "light": {
-      "background": "#f8fafc",
-      "foreground": "#020617",
-      "primary": "#1e293b",
-      "primaryForeground": "#f1f5f9",
-      "secondary": "#cbd5e1",
-      "secondaryForeground": "#0f172a",
-      "accent": "#334155",
-      "accentForeground": "#f8fafc",
-      "muted": "#e2e8f0",
-      "mutedForeground": "#475569",
+      "background": "#ffffff",
+      "foreground": "#0f172a",
+      "primary": "#0ea5e9",
+      "primaryForeground": "#f0f9ff",
+      "secondary": "#e0f2fe",
+      "secondaryForeground": "#0c4a6e",
+      "accent": "#06b6d4",
+      "accentForeground": "#f0fdfa",
+      "muted": "#f1f5f9",
+      "mutedForeground": "#64748b",
       "destructive": "#ef4444",
       "destructiveForeground": "#fef2f2",
       "card": "#ffffff",
-      "cardForeground": "#020617",
+      "cardForeground": "#0f172a",
       "popover": "#ffffff",
-      "popoverForeground": "#020617",
-      "border": "#cbd5e1",
-      "input": "#cbd5e1",
-      "ring": "#1e293b",
-      "chart1": "#475569",
-      "chart2": "#334155",
-      "chart3": "#1e293b",
-      "chart4": "#0f172a",
-      "chart5": "#020617"
+      "popoverForeground": "#0f172a",
+      "border": "#e2e8f0",
+      "input": "#e2e8f0",
+      "ring": "#0ea5e9",
+      "chart1": "#0ea5e9",
+      "chart2": "#06b6d4",
+      "chart3": "#22d3ee",
+      "chart4": "#0891b2",
+      "chart5": "#155e75"
     },
     "dark": {
-      "background": "#020617",
-      "foreground": "#f8fafc",
-      "primary": "#2e8cff",
-      "primaryForeground": "#1a1a1a",
-      "secondary": "#2f4c79",
-      "secondaryForeground": "#e2e8f0",
-      "accent": "#3b82f6",
-      "accentForeground": "#eff6ff",
-      "muted": "#0f172a",
-      "mutedForeground": "#64748b",
-      "destructive": "#991b1b",
+      "background": "#0f172a",
+      "foreground": "#f0f9ff",
+      "primary": "#38bdf8",
+      "primaryForeground": "#082f49",
+      "secondary": "#1e3a5f",
+      "secondaryForeground": "#e0f2fe",
+      "accent": "#22d3ee",
+      "accentForeground": "#083344",
+      "muted": "#1e293b",
+      "mutedForeground": "#94a3b8",
+      "destructive": "#7f1d1d",
       "destructiveForeground": "#fef2f2",
-      "card": "#0b1128",
-      "cardForeground": "#f8fafc",
-      "popover": "#020617",
-      "popoverForeground": "#f8fafc",
-      "border": "#142348",
-      "input": "#0f172a",
-      "ring": "#60a5fa",
-      "chart1": "#60a5fa",
-      "chart2": "#3b82f6",
-      "chart3": "#2563eb",
-      "chart4": "#1d4ed8",
-      "chart5": "#1e40af"
+      "card": "#0f172a",
+      "cardForeground": "#f0f9ff",
+      "popover": "#0f172a",
+      "popoverForeground": "#f0f9ff",
+      "border": "#1e293b",
+      "input": "#1e293b",
+      "ring": "#38bdf8",
+      "chart1": "#38bdf8",
+      "chart2": "#22d3ee",
+      "chart3": "#06b6d4",
+      "chart4": "#0891b2",
+      "chart5": "#155e75"
     }
   },
   "spacing": {
@@ -246,7 +246,7 @@ Design tokens and guidelines for consistent UI across all pages.
     "letterSpacing": "0"
   },
   "buttons": {
-    "borderRadius": "3rem",
+    "borderRadius": "0.5rem",
     "fontWeight": "500",
     "fontSize": "0.875rem",
     "hoverEffect": "opacity",

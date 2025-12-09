@@ -83,8 +83,8 @@ export default function LandingPageV2() {
                   ))}
                 </div>
                 <div className="text-sm">
-                  <span className="font-semibold text-foreground">Built by developers,</span>
-                  <span className="text-muted-foreground"> for vibe coders</span>
+                  <span className="font-semibold text-foreground">Customize every color,</span>
+                  <span className="text-muted-foreground"> code your vibe</span>
                 </div>
               </div>
             </div>
