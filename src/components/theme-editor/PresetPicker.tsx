@@ -21,6 +21,7 @@ export function PresetPicker({ onSelect }: PresetPickerProps) {
     <Popover>
       <PopoverTrigger asChild>
         <Button
+          data-tour="preset-picker"
           variant="outline"
           size="sm"
           className="h-8 px-2.5"

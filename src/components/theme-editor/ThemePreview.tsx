@@ -110,7 +110,7 @@ export function ThemePreview({ theme, mode, onModeChange }: ThemePreviewProps) {
             </div>
             
             {/* Nav Items */}
-            <nav className="hidden md:flex items-center gap-1">
+            <nav data-tour="preview-tabs" className="hidden md:flex items-center gap-1">
               {navItems.map((item) => (
                 <button
                   key={item.label}

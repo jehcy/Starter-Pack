@@ -16,6 +16,7 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area';
 import type { BrandTheme } from '@/lib/brand-theme';
 import { generateCssPreview } from '@/lib/brand-theme';
+import { useAuthGate } from '@/hooks/useAuthGate';
 
 interface CssPreviewModalProps {
   theme: BrandTheme;
@@ -70,9 +71,10 @@ function highlightCss(css: string) {
 
 export function CssPreviewModal({ theme }: CssPreviewModalProps) {
   const [isCopied, setIsCopied] = useState(false);
+  const { requireAuth, AuthGateModalComponent } = useAuthGate();
   const cssPreview = generateCssPreview(theme);
 
-  const handleCopy = async () => {
+  const handleCopy = requireAuth(async () => {
     try {
       await navigator.clipboard.writeText(cssPreview);
       setIsCopied(true);
@@ -81,10 +83,11 @@ export function CssPreviewModal({ theme }: CssPreviewModalProps) {
     } catch {
       toast.error('Failed to copy CSS');
     }
-  };
+  }, 'copy CSS to clipboard');
 
   return (
     <Sheet>
+      {AuthGateModalComponent}
       <SheetTrigger asChild>
         <Button variant="outline" size="icon" title="View CSS">
           <Code className="size-4" />

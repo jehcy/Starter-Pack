@@ -3,6 +3,7 @@
 import { useReducer, useEffect, useCallback, useState } from 'react';
 import { useTheme } from 'next-themes';
 import { toast } from 'sonner';
+import { useAuthGate } from '@/hooks/useAuthGate';
 import {
   Palette,
   Type,
@@ -20,6 +21,7 @@ import {
   FileText,
   Braces,
   BookOpen,
+  HelpCircle,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -75,6 +77,7 @@ import { CssPreviewModal } from './CssPreviewModal';
 import { PresetPicker } from './PresetPicker';
 import { generateStarterProject, slugify } from '@/lib/project-generator';
 import { applyThemeToGlobals } from '@/app/theme/actions';
+import { useThemeEditorTour } from '@/hooks/useThemeEditorTour';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Helper functions for slider value conversion
@@ -521,6 +524,7 @@ const NAV_ITEMS: { id: ActiveSection; icon: typeof Palette; label: string }[] = 
 export function ThemePage({ initialTheme }: ThemePageProps) {
   const [theme, dispatch] = useReducer(themeReducer, initialTheme);
   const { theme: currentTheme, setTheme: setGlobalTheme } = useTheme();
+  const { requireAuth, AuthGateModalComponent } = useAuthGate();
   const [previewMode, setPreviewMode] = useState<'light' | 'dark'>(() => {
     // Auto-detect current theme, default to dark
     return (currentTheme === 'light' || currentTheme === 'dark') ? currentTheme : 'dark';
@@ -531,6 +535,9 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
 
   // Detect if running in development mode
   const isDevelopment = process.env.NODE_ENV === 'development';
+
+  // Initialize theme editor tour
+  const { startTour } = useThemeEditorTour();
 
   // Sync preview mode with current theme when it changes externally
   useEffect(() => {
@@ -544,111 +551,129 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
     setGlobalTheme(mode);
   }, [setGlobalTheme]);
 
-  const handleDownloadStarter = useCallback(async () => {
-    setIsGenerating(true);
-    try {
-      const blob = await generateStarterProject(theme);
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${slugify(theme.name || 'my-theme')}-starter.zip`;
-      a.click();
-      URL.revokeObjectURL(url);
-      toast.success('Starter project downloaded!', {
-        description: 'Extract the ZIP and run npm install to get started.',
-      });
-    } catch {
-      toast.error('Failed to generate project', {
-        description: 'An unexpected error occurred.',
-      });
-    } finally {
-      setIsGenerating(false);
-    }
-  }, [theme]);
+  const handleDownloadStarter = useCallback(
+    requireAuth(async () => {
+      setIsGenerating(true);
+      try {
+        const blob = await generateStarterProject(theme);
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${slugify(theme.name || 'my-theme')}-starter.zip`;
+        a.click();
+        URL.revokeObjectURL(url);
+        toast.success('Starter project downloaded!', {
+          description: 'Extract the ZIP and run npm install to get started.',
+        });
+      } catch {
+        toast.error('Failed to generate project', {
+          description: 'An unexpected error occurred.',
+        });
+      } finally {
+        setIsGenerating(false);
+      }
+    }, 'download the Starter Pack'),
+    [theme, requireAuth]
+  );
 
-  const handleDownloadTokensJson = useCallback(async () => {
-    try {
-      const content = generateTokensJson(theme);
-      const blob = new Blob([content], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${slugify(theme.name || 'my-theme')}-tokens.json`;
-      a.click();
-      URL.revokeObjectURL(url);
-      toast.success('Design tokens downloaded!');
-    } catch {
-      toast.error('Failed to generate tokens');
-    }
-  }, [theme]);
+  const handleDownloadTokensJson = useCallback(
+    requireAuth(async () => {
+      try {
+        const content = generateTokensJson(theme);
+        const blob = new Blob([content], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${slugify(theme.name || 'my-theme')}-tokens.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        toast.success('Design tokens downloaded!');
+      } catch {
+        toast.error('Failed to generate tokens');
+      }
+    }, 'download design tokens'),
+    [theme, requireAuth]
+  );
 
-  const handleDownloadTailwindConfig = useCallback(async () => {
-    setIsGenerating(true);
-    try {
-      const blob = await generateTailwindConfigZip(theme);
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${slugify(theme.name || 'my-theme')}-tailwind-config.zip`;
-      a.click();
-      URL.revokeObjectURL(url);
-      toast.success('Tailwind config downloaded!', {
-        description: 'Includes both v3 and v4 configurations.',
-      });
-    } catch {
-      toast.error('Failed to generate Tailwind config');
-    } finally {
-      setIsGenerating(false);
-    }
-  }, [theme]);
+  const handleDownloadTailwindConfig = useCallback(
+    requireAuth(async () => {
+      setIsGenerating(true);
+      try {
+        const blob = await generateTailwindConfigZip(theme);
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${slugify(theme.name || 'my-theme')}-tailwind-config.zip`;
+        a.click();
+        URL.revokeObjectURL(url);
+        toast.success('Tailwind config downloaded!', {
+          description: 'Includes both v3 and v4 configurations.',
+        });
+      } catch {
+        toast.error('Failed to generate Tailwind config');
+      } finally {
+        setIsGenerating(false);
+      }
+    }, 'download Tailwind config'),
+    [theme, requireAuth]
+  );
 
-  const handleDownloadShadcnTheme = useCallback(async () => {
-    try {
-      const content = generateShadcnThemeTs(theme);
-      const blob = new Blob([content], { type: 'text/typescript' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${slugify(theme.name || 'my-theme')}-theme.ts`;
-      a.click();
-      URL.revokeObjectURL(url);
-      toast.success('shadcn/ui theme file downloaded!');
-    } catch {
-      toast.error('Failed to generate theme file');
-    }
-  }, [theme]);
+  const handleDownloadShadcnTheme = useCallback(
+    requireAuth(async () => {
+      try {
+        const content = generateShadcnThemeTs(theme);
+        const blob = new Blob([content], { type: 'text/typescript' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${slugify(theme.name || 'my-theme')}-theme.ts`;
+        a.click();
+        URL.revokeObjectURL(url);
+        toast.success('shadcn/ui theme file downloaded!');
+      } catch {
+        toast.error('Failed to generate theme file');
+      }
+    }, 'download theme file'),
+    [theme, requireAuth]
+  );
 
-  const handleDownloadGlobalsCss = useCallback(async () => {
-    try {
-      const content = generateGlobalsCssFile(theme);
-      const blob = new Blob([content], { type: 'text/css' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${slugify(theme.name || 'my-theme')}-globals.css`;
-      a.click();
-      URL.revokeObjectURL(url);
-      toast.success('CSS variables file downloaded!');
-    } catch {
-      toast.error('Failed to generate CSS');
-    }
-  }, [theme]);
+  const handleDownloadGlobalsCss = useCallback(
+    requireAuth(async () => {
+      try {
+        const content = generateGlobalsCssFile(theme);
+        const blob = new Blob([content], { type: 'text/css' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${slugify(theme.name || 'my-theme')}-globals.css`;
+        a.click();
+        URL.revokeObjectURL(url);
+        toast.success('CSS variables file downloaded!');
+      } catch {
+        toast.error('Failed to generate CSS');
+      }
+    }, 'download CSS file'),
+    [theme, requireAuth]
+  );
 
-  const handleDownloadBrandSkill = useCallback(async () => {
-    try {
-      const content = generateBrandSkill();
-      const blob = new Blob([content], { type: 'text/markdown' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'brand-skill.md';
-      a.click();
-      URL.revokeObjectURL(url);
-      toast.success('Brand skill markdown downloaded!');
-    } catch {
-      toast.error('Failed to generate brand skill');
-    }
-  }, []);
+  const handleDownloadBrandSkill = useCallback(
+    requireAuth(async () => {
+      try {
+        const content = generateBrandSkill();
+        const blob = new Blob([content], { type: 'text/markdown' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'brand-skill.md';
+        a.click();
+        URL.revokeObjectURL(url);
+        toast.success('Brand skill markdown downloaded!');
+      } catch {
+        toast.error('Failed to generate brand skill');
+      }
+    }, 'download brand guidelines'),
+    [requireAuth]
+  );
 
   const handleApplyStyle = useCallback(async () => {
     setIsApplying(true);
@@ -768,12 +793,14 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
 
   return (
     <div className="relative flex flex-col h-screen">
+      {AuthGateModalComponent}
       {/* Top Header Bar */}
       <header className="h-14 border-b border-border bg-card px-4 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-3">
           <span className="font-semibold text-sm text-muted-foreground">Theme Editor</span>
           <PresetPicker onSelect={(preset) => dispatch({ type: 'SET_THEME', payload: preset.theme })} />
           <Input
+            data-tour="theme-name-input"
             value={theme.name}
             onChange={(e) => dispatch({ type: 'SET_NAME', payload: e.target.value })}
             className="w-48 h-8"
@@ -782,6 +809,7 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
         </div>
         <div className="flex items-center gap-1">
           <Button
+            data-tour="apply-button"
             onClick={handleApplyStyle}
             disabled={isApplying}
             size="sm"
@@ -791,7 +819,7 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button disabled={isGenerating} size="sm" variant="outline">
+              <Button data-tour="download-dropdown" disabled={isGenerating} size="sm" variant="outline">
                 <FolderDown className="size-4 mr-1.5" />
                 {isGenerating ? 'Downloading...' : 'Download'}
                 <ChevronDown className="size-3.5 ml-1.5" />
@@ -866,7 +894,12 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <CssPreviewModal theme={theme} />
+          <div data-tour="css-preview-button">
+            <CssPreviewModal theme={theme} />
+          </div>
+          <Button variant="ghost" size="sm" onClick={startTour} title="Start walkthrough">
+            <HelpCircle className="size-4" />
+          </Button>
           <Button variant="ghost" size="sm" onClick={handleReset} title="Reset all">
             <RotateCcw className="size-4" />
           </Button>
@@ -907,9 +940,14 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
         <nav className="w-[72px] border-r border-border bg-card flex flex-col items-center py-3 gap-1 shrink-0">
           {NAV_ITEMS.map((item) => {
             const Icon = item.icon;
+            const tourAttribute =
+              item.id === 'colors' ? 'nav-colors' :
+              item.id === 'fonts' ? 'nav-fonts' :
+              item.id === 'buttons' ? 'nav-buttons' : undefined;
             return (
               <button
                 key={item.id}
+                data-tour={tourAttribute}
                 onClick={() => setActiveSection(item.id)}
                 className={cn(
                   'w-full flex flex-col items-center gap-1 py-2 px-1 rounded-md transition-colors mx-1',
@@ -926,7 +964,7 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
         </nav>
 
         {/* Center - Preview */}
-        <main className="flex-1 overflow-hidden">
+        <main data-tour="preview-area" className="flex-1 overflow-hidden">
           <ThemePreview theme={theme} mode={previewMode} onModeChange={handlePreviewModeChange} />
         </main>
 
@@ -935,7 +973,7 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
           {/* Fixed Color Mode Toggle - Only visible in Colors section */}
           {activeSection === 'colors' && (
             <div className="p-4 pb-0 border-b border-border bg-card shrink-0">
-              <div className="flex items-center gap-2 p-2 rounded-lg bg-muted">
+              <div data-tour="light-dark-toggle" className="flex items-center gap-2 p-2 rounded-lg bg-muted">
                 <Button
                   variant={previewMode === 'light' ? 'default' : 'ghost'}
                   size="sm"
@@ -978,30 +1016,31 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
                   <h3 className="text-sm font-medium mb-3">{group.title}</h3>
                   <div className="space-y-2">
                     {group.colors.map((colorKey) => (
-                      <ColorInput
-                        key={colorKey}
-                        label={formatLabel(colorKey)}
-                        value={
-                          previewMode === 'light'
-                            ? theme.colors.light[colorKey as keyof ColorTokens]
-                            : theme.colors.dark[colorKey as keyof ColorTokens]
-                        }
-                        onChange={(value) => {
-                          if (previewMode === 'light') {
-                            dispatch({
-                              type: 'SET_LIGHT_COLOR',
-                              key: colorKey as keyof ColorTokens,
-                              value,
-                            });
-                          } else {
-                            dispatch({
-                              type: 'SET_DARK_COLOR',
-                              key: colorKey as keyof ColorTokens,
-                              value,
-                            });
+                      <div key={colorKey} data-tour={colorKey === 'primary' ? 'primary-color' : undefined}>
+                        <ColorInput
+                          label={formatLabel(colorKey)}
+                          value={
+                            previewMode === 'light'
+                              ? theme.colors.light[colorKey as keyof ColorTokens]
+                              : theme.colors.dark[colorKey as keyof ColorTokens]
                           }
-                        }}
-                      />
+                          onChange={(value) => {
+                            if (previewMode === 'light') {
+                              dispatch({
+                                type: 'SET_LIGHT_COLOR',
+                                key: colorKey as keyof ColorTokens,
+                                value,
+                              });
+                            } else {
+                              dispatch({
+                                type: 'SET_DARK_COLOR',
+                                key: colorKey as keyof ColorTokens,
+                                value,
+                              });
+                            }
+                          }}
+                        />
+                      </div>
                     ))}
                   </div>
                 </div>

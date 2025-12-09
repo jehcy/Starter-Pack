@@ -1,0 +1,98 @@
+/**
+ * Custom driver.js theme to match shadcn/ui design system
+ */
+
+/* Override driver.js popover styles */
+.driver-popover {
+  background-color: hsl(var(--popover)) !important;
+  color: hsl(var(--popover-foreground)) !important;
+  border-radius: var(--radius-lg) !important;
+  border: 1px solid hsl(var(--border)) !important;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1) !important;
+}
+
+/* Title styling */
+.driver-popover-title {
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  color: hsl(var(--popover-foreground)) !important;
+  margin-bottom: 0.5rem !important;
+}
+
+/* Description styling */
+.driver-popover-description {
+  font-size: 0.875rem !important;
+  line-height: 1.5 !important;
+  color: hsl(var(--muted-foreground)) !important;
+}
+
+/* Progress text */
+.driver-popover-progress-text {
+  font-size: 0.75rem !important;
+  color: hsl(var(--muted-foreground)) !important;
+}
+
+/* Button styling */
+.driver-popover-next-btn,
+.driver-popover-prev-btn {
+  background-color: hsl(var(--primary)) !important;
+  color: hsl(var(--primary-foreground)) !important;
+  border-radius: var(--radius) !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  padding: 0.5rem 1rem !important;
+  border: none !important;
+  transition: opacity 0.2s !important;
+}
+
+.driver-popover-next-btn:hover,
+.driver-popover-prev-btn:hover {
+  opacity: 0.9 !important;
+}
+
+.driver-popover-prev-btn {
+  background-color: transparent !important;
+  color: hsl(var(--muted-foreground)) !important;
+}
+
+.driver-popover-prev-btn:hover {
+  background-color: hsl(var(--muted)) !important;
+  color: hsl(var(--foreground)) !important;
+}
+
+/* Close button */
+.driver-popover-close-btn {
+  color: hsl(var(--muted-foreground)) !important;
+  opacity: 0.7 !important;
+  transition: opacity 0.2s !important;
+}
+
+.driver-popover-close-btn:hover {
+  opacity: 1 !important;
+}
+
+/* Arrow styling */
+.driver-popover-arrow-side-left,
+.driver-popover-arrow-side-right,
+.driver-popover-arrow-side-top,
+.driver-popover-arrow-side-bottom {
+  border-color: hsl(var(--popover)) !important;
+}
+
+/* Overlay */
+.driver-overlay {
+  background-color: rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Active element highlight */
+.driver-active-element {
+  border-radius: var(--radius-md) !important;
+}
+
+/* Footer styling */
+.driver-popover-footer {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-top: 1rem !important;
+}
