@@ -127,29 +127,29 @@ h1, h2, h3 {
 :root {
   /* Brand Light Mode Colors - from brand.md */
   --background: #ffffff;
-  --foreground: #4c0519;
-  --primary: #f43f5e;
-  --primary-foreground: #fff1f2;
-  --secondary: #fecdd3;
-  --secondary-foreground: #881337;
-  --accent: #fb7185;
-  --accent-foreground: #fff1f2;
+  --foreground: #0f172a;
+  --primary: #0ea5e9;
+  --primary-foreground: #f0f9ff;
+  --secondary: #e0f2fe;
+  --secondary-foreground: #0c4a6e;
+  --accent: #06b6d4;
+  --accent-foreground: #f0fdfa;
   --muted: #f1f5f9;
   --muted-foreground: #64748b;
   --destructive: #ef4444;
   --destructive-foreground: #fef2f2;
   --card: #ffffff;
-  --card-foreground: #4c0519;
+  --card-foreground: #0f172a;
   --popover: #ffffff;
-  --popover-foreground: #4c0519;
+  --popover-foreground: #0f172a;
   --border: #e2e8f0;
   --input: #e2e8f0;
-  --ring: #f43f5e;
-  --chart-1: #fb7185;
-  --chart-2: #f43f5e;
-  --chart-3: #e11d48;
-  --chart-4: #be123c;
-  --chart-5: #9f1239;
+  --ring: #0ea5e9;
+  --chart-1: #0ea5e9;
+  --chart-2: #06b6d4;
+  --chart-3: #22d3ee;
+  --chart-4: #0891b2;
+  --chart-5: #155e75;
 
   /* Brand Spacing */
   --spacing-xs: 0.25rem;
@@ -209,30 +209,30 @@ h1, h2, h3 {
 
 .dark {
   /* Brand Dark Mode Colors - from brand.md */
-  --background: #4c0519;
-  --foreground: #fff1f2;
-  --primary: #fb7185;
-  --primary-foreground: #881337;
-  --secondary: #5a1f30;
-  --secondary-foreground: #fecdd3;
-  --accent: #f43f5e;
-  --accent-foreground: #fff1f2;
-  --muted: #1e293b;
+  --background: #0d172b;
+  --foreground: #f0f9ff;
+  --primary: #38bdf8;
+  --primary-foreground: #082f49;
+  --secondary: #1e3a5f;
+  --secondary-foreground: #e0f2fe;
+  --accent: #22d3ee;
+  --accent-foreground: #083344;
+  --muted: #121e35;
   --muted-foreground: #94a3b8;
   --destructive: #7f1d1d;
   --destructive-foreground: #fef2f2;
-  --card: #4c0519;
-  --card-foreground: #fff1f2;
-  --popover: #4c0519;
-  --popover-foreground: #fff1f2;
-  --border: #1e293b;
-  --input: #1e293b;
-  --ring: #fb7185;
-  --chart-1: #fb7185;
-  --chart-2: #f43f5e;
-  --chart-3: #e11d48;
-  --chart-4: #be123c;
-  --chart-5: #9f1239;
+  --card: #19243e;
+  --card-foreground: #f0f9ff;
+  --popover: #0f172a;
+  --popover-foreground: #f0f9ff;
+  --border: #13243e;
+  --input: #051124;
+  --ring: #38bdf8;
+  --chart-1: #38bdf8;
+  --chart-2: #22d3ee;
+  --chart-3: #06b6d4;
+  --chart-4: #0891b2;
+  --chart-5: #155e75;
 
   /* Dark Mode Button Hover */
   --button-hover-shadow: none;
