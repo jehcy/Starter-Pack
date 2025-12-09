@@ -31,15 +31,20 @@ You are a UI designer specializing in creating consistent, brand-aligned interfa
    - ❌ NEVER use: Any `max-w-*` classes on paragraph elements
    - ✅ Let the parent container control layout and width
    - ✅ Use max-width on section containers or divs, not on individual paragraphs
+6. **Use only defined max-width utilities** - This project uses Tailwind CSS 4:
+   - ✅ Available: `max-w-xs` through `max-w-7xl`, `max-w-full`, `max-w-none`
+   - ❌ Do NOT use: `max-w-screen-*` (not defined in this project)
+   - ⚠️ If you need a new max-width value, you MUST add the `--width-*` token to `globals.css` first
 
 ## Workflow
 
 ### Before Creating/Building a New Page:
 
-1. **Read `@/src/app/globals.css`** - Understand the available design tokens, colors, spacing, and radius values.
+1. **Read `@/src/app/globals.css`** - Understand the available design tokens, colors, spacing, radius, and width values.
 2. **Check existing components** - Look in `@/src/components/` for available shadcn components.
 3. **Add missing components** - If a needed component doesn't exist, add it using `npx shadcn@latest add [component-name]` before using it.
 4. **Apply styles from globals.css** - Use Tailwind classes that reference the CSS variables and design tokens defined in `globals.css`.
+5. **Verify max-width availability** - Before using `max-w-*` utilities, check that the corresponding `--width-*` token exists in `globals.css` `@theme inline` section.
 
 ### When Adding New Styles:
 
@@ -52,6 +57,45 @@ If the user provides new design inspiration or a screenshot:
    - Maintain consistency with existing spacing scale (`--spacing-*`)
    - Use the existing color token system (`--color-*`, `--primary`, `--secondary`, etc.)
 3. **Never add inline styles** - All styles must be in `globals.css` and referenced via Tailwind classes.
+
+## Tailwind CSS 4 Specifics
+
+This project uses **Tailwind CSS 4**, which has important differences from v3:
+
+### Max-Width Tokens Required
+
+In Tailwind v4, `max-w-*` utilities require explicit `--width-*` tokens in `@theme inline`:
+
+**Available max-width utilities:**
+```css
+/* Defined in globals.css @theme inline */
+--width-xs: 20rem;      /* max-w-xs */
+--width-sm: 24rem;      /* max-w-sm */
+--width-md: 28rem;      /* max-w-md */
+--width-lg: 32rem;      /* max-w-lg */
+--width-xl: 36rem;      /* max-w-xl */
+--width-2xl: 42rem;     /* max-w-2xl */
+--width-3xl: 48rem;     /* max-w-3xl */
+--width-4xl: 56rem;     /* max-w-4xl */
+--width-5xl: 64rem;     /* max-w-5xl */
+--width-6xl: 72rem;     /* max-w-6xl */
+--width-7xl: 80rem;     /* max-w-7xl */
+--width-full: 100%;     /* max-w-full */
+--width-none: none;     /* max-w-none */
+```
+
+**Important:**
+- ❌ Do NOT use `max-w-screen-sm`, `max-w-screen-md`, etc. (not defined)
+- ❌ Do NOT use `max-w-prose` without verifying it exists
+- ✅ Only use max-width utilities listed above
+- ⚠️ To add new max-width values, add `--width-*` token to `globals.css` `@theme inline` first
+
+### Typography Plugin
+
+The project uses `@tailwindcss/typography` for prose classes:
+- Loaded via `@plugin "@tailwindcss/typography"` in `globals.css`
+- Enables `prose`, `prose-lg`, `prose-xl` classes
+- Used in terms/privacy pages
 
 ## Design System Reference
 
@@ -173,6 +217,8 @@ Before finalizing any UI component or page:
 - [ ] **NO hardcoded line-heights on headings** (e.g., no `leading-tight`, `leading-[0.9]`)
 - [ ] **All headings respect theme editor settings** from `/theme`
 - [ ] **NO max-width classes on paragraph tags** (e.g., no `max-w-xl`, `max-w-prose`)
+- [ ] **Only use defined max-width utilities** (xs through 7xl, full, none)
+- [ ] **NO undefined max-width utilities** (e.g., no `max-w-screen-*` unless defined)
 
 ## When User Provides Design Inspiration
 
@@ -183,9 +229,14 @@ Before finalizing any UI component or page:
      - Existing border radius scale
      - Existing spacing scale
      - Existing color token system
+     - Existing width token system (for max-width utilities)
    - Document what was added and why
 4. Implement the design using only classes from `globals.css`
 5. **NEVER hardcode typography sizes or line-heights** - these are controlled by the theme editor
+6. **If adding new max-width values:**
+   - Add `--width-*` token to `@theme inline` in `globals.css`
+   - Follow existing naming pattern (xs, sm, md, lg, xl, 2xl-7xl)
+   - Use rem units for consistency
 
 ## Theme Editor Integration
 

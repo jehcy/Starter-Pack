@@ -51,6 +51,19 @@ The project has a visual theme editor at `/theme` that controls typography, colo
 
 **Container utility:** Use `container-wide` class for consistent page-width containers.
 
+### Max-Width Utilities (Tailwind CSS 4)
+
+This project uses **Tailwind CSS 4** which requires explicit width tokens for max-width utilities to work properly.
+
+**Available max-width utilities:**
+- `max-w-xs`, `max-w-sm`, `max-w-md`, `max-w-lg`, `max-w-xl`
+- `max-w-2xl`, `max-w-3xl`, `max-w-4xl`, `max-w-5xl`, `max-w-6xl`, `max-w-7xl`
+- `max-w-full`, `max-w-none`
+
+These are defined in `globals.css` via `--width-*` tokens in the `@theme inline` section. In Tailwind v4, max-width utilities use these width tokens instead of spacing tokens.
+
+**Important:** If you add new max-width utilities, you MUST define the corresponding `--width-*` token in `globals.css` `@theme inline` section, otherwise the utility won't work.
+
 ## ESLint Rules
 - `@typescript-eslint/no-explicit-any`: error
 - `@typescript-eslint/no-unused-vars`: error (prefix with `_` to ignore)
@@ -103,6 +116,7 @@ The project has a visual theme editor at `/theme` that controls typography, colo
 ### UI & Styling
 - **Component Library:** shadcn/ui (new-york style)
 - **Styling:** Tailwind CSS 4
+- **Typography Plugin:** @tailwindcss/typography (required for prose classes)
 - **Icons:** Lucide React
 - **Theming:** next-themes (dark/light mode)
 - **Animations:** tw-animate-css
@@ -119,6 +133,46 @@ Dialog, Label, Scroll Area, Select, Separator, Slider, Slot, Tabs, Tooltip
 - **Linting:** ESLint 9 with Next.js config
 - **Formatting:** Prettier with Tailwind plugin
 - **Build:** Turbopack (Next.js default)
+
+## Tailwind CSS 4 Setup
+
+This project uses **Tailwind CSS 4** which has different configuration requirements compared to v3:
+
+### Configuration Files
+- **No `tailwind.config.js`** - Tailwind v4 uses a config-free approach
+- **CSS-based configuration** - All theme tokens are in `src/app/globals.css` using `@theme inline`
+- **PostCSS only** - Configuration is in `postcss.config.mjs`
+
+### Required Setup in `globals.css`
+
+```css
+@import "tailwindcss";
+@import "tw-animate-css";
+@plugin "@tailwindcss/typography";
+
+@theme inline {
+  /* All design tokens defined here */
+  /* Including --width-* tokens for max-width utilities */
+}
+```
+
+### Key Differences from Tailwind v3
+
+1. **Max-width utilities** - Require explicit `--width-*` tokens in `@theme inline`
+2. **Typography plugin** - Must be loaded with `@plugin` directive, not `@import`
+3. **No config file** - All customization happens in CSS via `@theme`
+4. **Width tokens** - In v3, max-w used container sizing; in v4, they use width tokens
+
+### Common Issues & Solutions
+
+**Issue:** `max-w-*` utilities not working
+**Solution:** Add `--width-*` tokens to `@theme inline` section in `globals.css`
+
+**Issue:** `prose` classes not working
+**Solution:** Install `@tailwindcss/typography` and add `@plugin "@tailwindcss/typography"` to `globals.css`
+
+**Issue:** Build errors about missing width values
+**Solution:** Ensure all used max-width utilities have corresponding `--width-*` tokens defined
 
 ## Data Architecture
 
