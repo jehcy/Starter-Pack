@@ -102,10 +102,10 @@ export function ThemePreview({ theme, mode, onModeChange }: ThemePreviewProps) {
                   borderRadius: theme.radius.md,
                 }}
               >
-                S
+                V
               </div>
               <span className="font-semibold" style={{ color: colors.foreground, fontFamily: theme.fonts.heading }}>
-                SaaS Starter
+                VibeCN
               </span>
             </div>
             
@@ -222,7 +222,7 @@ function HomePage({ theme, colors }: PageProps) {
                   style={{ backgroundColor: colors.primary }}
                 />
               </span>
-              Now in public beta
+              Optimized for AI
             </div>
             <h1
               className="font-bold tracking-tight"
@@ -233,7 +233,7 @@ function HomePage({ theme, colors }: PageProps) {
                 lineHeight: theme.typographyStyles.lineHeightH1,
               }}
             >
-              Build your SaaS
+              Build Fast with
               <span
                 key={`home-gradient-${colors.primary}`}
                 className="block mt-2"
@@ -243,7 +243,7 @@ function HomePage({ theme, colors }: PageProps) {
                   WebkitTextFillColor: 'transparent',
                 }}
               >
-                faster than ever
+                Fewer Tokens
               </span>
             </h1>
             <p 
@@ -253,8 +253,7 @@ function HomePage({ theme, colors }: PageProps) {
                 fontSize: theme.typographySizes.p,
               }}
             >
-              A modern starter template with authentication, database integration, and beautiful UI
-              components. Ship your product in days, not months.
+              Token-optimized UI components designed for AI efficiency. Ship production-ready interfaces faster using clear, structured code that minimizes context and maximizes output quality.
             </p>
             <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
               <PreviewButton 
@@ -266,7 +265,7 @@ function HomePage({ theme, colors }: PageProps) {
                 hoverEffect={theme.buttons.hoverEffect}
                 size="lg"
               >
-                Get Started Free
+                Save your Style
                 <ArrowRight className="ml-2 size-4" />
               </PreviewButton>
               <PreviewButton 
@@ -278,7 +277,7 @@ function HomePage({ theme, colors }: PageProps) {
                 hoverEffect={theme.buttons.hoverEffect}
                 size="lg"
               >
-                View Documentation
+                Start Customizing
               </PreviewButton>
             </div>
           </div>
@@ -298,10 +297,10 @@ function HomePage({ theme, colors }: PageProps) {
             className="mb-8 text-center text-sm font-medium uppercase tracking-wider"
             style={{ color: colors.mutedForeground }}
           >
-            Trusted by developers worldwide
+            Built by developers, for vibe coders
           </p>
           <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6 opacity-60">
-            {['Vercel', 'Next.js', 'Tailwind', 'Shadcn', 'TypeScript', 'React'].map((name) => (
+            {['Next.js 14', 'TypeScript', 'Tailwind CSS', 'React Server Components', 'Vercel', 'shadcn/ui'].map((name) => (
               <span 
                 key={name} 
                 className="text-lg font-semibold"
@@ -345,12 +344,12 @@ function HomePage({ theme, colors }: PageProps) {
             </p>
           </div>
           <div className="mx-auto mt-16 grid max-w-5xl gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            <FeatureCard theme={theme} colors={colors} icon={Zap} title="Next.js 14" description="App Router, Server Components, and the latest React features." />
-            <FeatureCard theme={theme} colors={colors} icon={Code} title="TypeScript" description="Full type safety across your entire codebase." />
-            <FeatureCard theme={theme} colors={colors} icon={Palette} title="Tailwind CSS" description="Utility-first CSS with dark mode support." />
-            <FeatureCard theme={theme} colors={colors} icon={Database} title="InstantDB" description="Real-time database with instant sync." />
-            <FeatureCard theme={theme} colors={colors} icon={Lock} title="Authentication" description="Secure auth flows with protected routes." />
-            <FeatureCard theme={theme} colors={colors} icon={Smartphone} title="Responsive" description="Mobile-first design on all screen sizes." />
+            <FeatureCard theme={theme} colors={colors} icon={Zap} title="AI-First Components" description="Pre-built pages and layouts AI assistants understand instantly." />
+            <FeatureCard theme={theme} colors={colors} icon={Code} title="Token-Efficient" description="Flat structures and clear naming reduce context overhead." />
+            <FeatureCard theme={theme} colors={colors} icon={Palette} title="Visual Theme Editor" description="Live customization with instant preview across your app." />
+            <FeatureCard theme={theme} colors={colors} icon={Database} title="InstantDB Ready" description="Type-safe real-time queries with pre-configured schema." />
+            <FeatureCard theme={theme} colors={colors} icon={Lock} title="Auth Pre-wired" description="OAuth with Google/GitHub ready out of the box." />
+            <FeatureCard theme={theme} colors={colors} icon={Smartphone} title="Responsive Patterns" description="Mobile-first layouts with predictable breakpoints." />
           </div>
         </div>
       </section>
@@ -365,10 +364,10 @@ function HomePage({ theme, colors }: PageProps) {
       >
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            <StatItem colors={colors} value="10k+" label="Developers" />
-            <StatItem colors={colors} value="50+" label="Components" />
-            <StatItem colors={colors} value="99.9%" label="Uptime" />
-            <StatItem colors={colors} value="24/7" label="Support" />
+            <StatItem colors={colors} value="70%" label="Fewer Tokens" />
+            <StatItem colors={colors} value="Instant" label="AI Onboarding" />
+            <StatItem colors={colors} value="100%" label="Type Safe" />
+            <StatItem colors={colors} value="Real-time" label="Sync" />
           </div>
         </div>
       </section>
@@ -398,7 +397,7 @@ function HomePage({ theme, colors }: PageProps) {
                   fontSize: theme.typographySizes.h2,
                 }}
               >
-                Ready to get started?
+                Ready to build differently?
               </h2>
               <p 
                 className="mx-auto mt-4 max-w-4xl"
@@ -407,7 +406,7 @@ function HomePage({ theme, colors }: PageProps) {
                   fontSize: theme.typographySizes.p,
                 }}
               >
-                Create your account and start building in minutes. No credit card required.
+                Join developers building production-ready UIs with AI assistance. Start free today.
               </p>
               <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
                 <PreviewButton 
@@ -419,7 +418,7 @@ function HomePage({ theme, colors }: PageProps) {
                   hoverEffect={theme.buttons.hoverEffect}
                   size="lg"
                 >
-                  Start Building Today
+                  Get Started Free
                 </PreviewButton>
               </div>
             </div>
@@ -457,7 +456,7 @@ function FeaturesPage({ theme, colors }: PageProps) {
                 lineHeight: theme.typographyStyles.lineHeightH1,
               }}
             >
-              Powerful Features for
+              Engineered for
               <span
                 key={`features-gradient-${colors.primary}`}
                 className="block mt-2"
@@ -467,7 +466,7 @@ function FeaturesPage({ theme, colors }: PageProps) {
                   WebkitTextFillColor: 'transparent',
                 }}
               >
-                Modern Applications
+                AI-Assisted Development
               </span>
             </h1>
             <p 
@@ -477,7 +476,7 @@ function FeaturesPage({ theme, colors }: PageProps) {
                 fontSize: theme.typographySizes.p,
               }}
             >
-              Everything you need to build, launch, and scale your SaaS product with confidence.
+              Every architectural decision optimized for vibe coding. Faster comprehension, fewer tokens, better results.
             </p>
           </div>
         </div>
@@ -487,21 +486,21 @@ function FeaturesPage({ theme, colors }: PageProps) {
       <section className="py-24">
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid gap-8 lg:grid-cols-2">
-            <LargeFeatureCard 
-              theme={theme} 
-              colors={colors} 
-              icon={Zap} 
-              title="Next.js 14 App Router"
-              description="Built on the latest Next.js with server components, streaming, and the new app directory structure."
-              features={['Server Components', 'Streaming SSR', 'File-based routing', 'API Routes']}
+            <LargeFeatureCard
+              theme={theme}
+              colors={colors}
+              icon={Zap}
+              title="AI-Optimized Architecture"
+              description="Flat directory structures, explicit file naming, and comprehensive design guide. AI assistants generate consistent UI without chasing design decisions."
+              features={['Brand.md guide', 'Explicit exports', 'Flat structure', 'Type inference']}
             />
-            <LargeFeatureCard 
-              theme={theme} 
-              colors={colors} 
-              icon={Code} 
-              title="TypeScript First"
-              description="Full type safety across your entire codebase with strict TypeScript configuration."
-              features={['Strict mode enabled', 'Type inference', 'IDE integration', 'Error prevention']}
+            <LargeFeatureCard
+              theme={theme}
+              colors={colors}
+              icon={Code}
+              title="Token-Efficient Patterns"
+              description="Predictable component APIs, consistent styling patterns, and self-documenting code. Get more done before hitting context limits."
+              features={['Consistent APIs', 'Design tokens', 'JSDoc comments', 'Minimal abstractions']}
             />
           </div>
         </div>
@@ -538,12 +537,12 @@ function FeaturesPage({ theme, colors }: PageProps) {
             </p>
           </div>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            <FeatureCard theme={theme} colors={colors} icon={Palette} title="Tailwind CSS" description="Utility-first CSS framework with dark mode support and custom theming." />
-            <FeatureCard theme={theme} colors={colors} icon={Database} title="shadcn/ui Components" description="Beautiful, accessible, and customizable components built with Radix UI." />
-            <FeatureCard theme={theme} colors={colors} icon={Database} title="InstantDB Integration" description="Real-time database with instant sync, offline support, and optimistic updates." />
-            <FeatureCard theme={theme} colors={colors} icon={Lock} title="Authentication Ready" description="Secure authentication flows with protected routes and session management." />
-            <FeatureCard theme={theme} colors={colors} icon={Settings} title="Theme Editor" description="Built-in visual theme editor to customize colors, spacing, and typography." />
-            <FeatureCard theme={theme} colors={colors} icon={Smartphone} title="Responsive Design" description="Mobile-first approach with beautiful layouts on all screen sizes." />
+            <FeatureCard theme={theme} colors={colors} icon={Palette} title="Tailwind CSS" description="Design tokens as CSS variables. AI tools generate consistent styles without color mismatches." />
+            <FeatureCard theme={theme} colors={colors} icon={Database} title="shadcn/ui" description="Composable components with explicit props. AI assistants scaffold new UI predictably." />
+            <FeatureCard theme={theme} colors={colors} icon={Database} title="InstantDB" description="Type-safe real-time queries. Pre-configured schema patterns for rapid feature development." />
+            <FeatureCard theme={theme} colors={colors} icon={Lock} title="Auth Ready" description="OAuth with Google/GitHub pre-wired. Skip the boilerplate, ship the feature." />
+            <FeatureCard theme={theme} colors={colors} icon={Settings} title="Theme Editor" description="Visual customization with instant preview. Design tokens AI tools can reference." />
+            <FeatureCard theme={theme} colors={colors} icon={Smartphone} title="Responsive" description="Mobile-first layouts with consistent breakpoints. Predictable responsive patterns." />
           </div>
         </div>
       </section>
@@ -567,7 +566,7 @@ function FeaturesPage({ theme, colors }: PageProps) {
                   fontSize: theme.typographySizes.h2,
                 }}
               >
-                Optimized for speed
+                Optimized for Comprehension
               </h2>
               <p 
                 className="mt-4 leading-relaxed"
@@ -576,13 +575,12 @@ function FeaturesPage({ theme, colors }: PageProps) {
                   fontSize: theme.typographySizes.p,
                 }}
               >
-                Built with performance in mind from the ground up. Every component is optimized
-                for the best possible user experience.
+                Every architectural decision optimized for AI assistants to understand and extend your codebase efficiently.
               </p>
               <ul className="mt-8 space-y-4">
-                <PerformanceItem colors={colors} theme={theme} title="100/100 Lighthouse Score" description="Achieve perfect performance scores out of the box" />
-                <PerformanceItem colors={colors} theme={theme} title="Edge-ready deployment" description="Deploy to the edge for ultra-low latency worldwide" />
-                <PerformanceItem colors={colors} theme={theme} title="Automatic code splitting" description="Only load the JavaScript you need, when you need it" />
+                <PerformanceItem colors={colors} theme={theme} title="70% fewer tokens" description="Flat structures and explicit exports reduce context overhead" />
+                <PerformanceItem colors={colors} theme={theme} title="Instant AI onboarding" description="Brand.md provides complete design system guidance in one file" />
+                <PerformanceItem colors={colors} theme={theme} title="Predictable patterns" description="Consistent conventions AI tools recognize and extend" />
               </ul>
             </div>
             <div className="relative">
@@ -637,7 +635,7 @@ function PricingPage({ theme, colors }: PageProps) {
                 lineHeight: theme.typographyStyles.lineHeightH1,
               }}
             >
-              Simple, Transparent
+              Simple pricing for
               <span
                 key={`pricing-gradient-${colors.primary}`}
                 className="block mt-2"
@@ -647,7 +645,7 @@ function PricingPage({ theme, colors }: PageProps) {
                   WebkitTextFillColor: 'transparent',
                 }}
               >
-                Pricing
+                Vibe coders
               </span>
             </h1>
             <p 
@@ -657,7 +655,7 @@ function PricingPage({ theme, colors }: PageProps) {
                 fontSize: theme.typographySizes.p,
               }}
             >
-              Choose the plan that works best for you. All plans include a 14-day free trial.
+              Start free while we're in early access. Pro is coming soon for builders who want AI-generated themes and deeper config.
             </p>
           </div>
         </div>
@@ -666,59 +664,30 @@ function PricingPage({ theme, colors }: PageProps) {
       {/* Pricing Cards */}
       <section className="py-16">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="mx-auto grid max-w-5xl gap-8 lg:grid-cols-3">
-            <PricingCard 
+          <div className="mx-auto grid max-w-4xl gap-8 lg:grid-cols-2">
+            <PricingCard
               theme={theme}
               colors={colors}
-              name="Starter"
+              name="Free"
               price="$0"
               period="/month"
-              description="Perfect for side projects"
-              features={[
-                { text: 'Up to 3 projects', included: true },
-                { text: '1,000 API requests/month', included: true },
-                { text: 'Community support', included: true },
-                { text: 'Custom domains', included: false },
-                { text: 'Team collaboration', included: false },
-              ]}
-              buttonText="Get Started"
+              description="Perfect for getting your design system ready before you start coding. Unlimited theme tweaks, brand setup, and React starter pack downloads. Sign in required to save and clone projects."
+              features={[]}
+              buttonText="Start for free"
               buttonVariant="outline"
             />
-            <PricingCard 
+            <PricingCard
               theme={theme}
               colors={colors}
               name="Pro"
-              price="$29"
+              price="$7"
               period="/month"
-              description="For growing teams"
-              features={[
-                { text: 'Unlimited projects', included: true },
-                { text: '100,000 API requests/month', included: true },
-                { text: 'Priority support', included: true },
-                { text: 'Custom domains', included: true },
-                { text: 'Team collaboration', included: true },
-              ]}
-              buttonText="Start Free Trial"
+              description="For heavy Vibe coders who want automation and control. AI-generated themes from prompts and brand references. Upcoming MCP-powered config to plug VibeCN into your stack."
+              features={[]}
+              buttonText="Pro plan coming soon"
               buttonVariant="default"
               highlighted
-              badge="Most Popular"
-            />
-            <PricingCard 
-              theme={theme}
-              colors={colors}
-              name="Enterprise"
-              price="Custom"
-              period=""
-              description="For large organizations"
-              features={[
-                { text: 'Everything in Pro', included: true },
-                { text: 'Unlimited API requests', included: true },
-                { text: 'Dedicated support', included: true },
-                { text: 'SLA guarantee', included: true },
-                { text: 'Custom integrations', included: true },
-              ]}
-              buttonText="Contact Sales"
-              buttonVariant="outline"
+              badge="Coming soon"
             />
           </div>
         </div>
@@ -755,10 +724,10 @@ function PricingPage({ theme, colors }: PageProps) {
             </p>
           </div>
           <div className="mx-auto max-w-3xl space-y-4">
-            <FaqItem theme={theme} colors={colors} question="Can I change plans later?" answer="Yes, you can upgrade or downgrade your plan at any time. Changes take effect immediately." />
-            <FaqItem theme={theme} colors={colors} question="What payment methods do you accept?" answer="We accept all major credit cards, PayPal, and bank transfers for enterprise customers." />
-            <FaqItem theme={theme} colors={colors} question="Is there a free trial?" answer="Yes, all paid plans come with a 14-day free trial. No credit card required to start." />
-            <FaqItem theme={theme} colors={colors} question="Do you offer refunds?" answer="Yes, we offer a 30-day money-back guarantee if you're not satisfied." />
+            <FaqItem theme={theme} colors={colors} question="Is this really free?" answer="Yes. The core VibeCN starter is MIT licensed. Clone it, modify it, ship it. Pro and Enterprise tiers offer additional components and support." />
+            <FaqItem theme={theme} colors={colors} question="What's in Brand.md?" answer="A comprehensive brand design guide that helps AI assistants maintain consistency across your UI. Includes design tokens, component patterns, and styling conventions to ensure every AI-generated element matches your brand." />
+            <FaqItem theme={theme} colors={colors} question="Does this work with other AI tools?" answer="Yes! Customize your design in the theme editor, then download your theme config and Brand.md file. These files work with any AI assistant - Cursor, GitHub Copilot, GPT, and more - ensuring consistent UI generation across all your AI tools." />
+            <FaqItem theme={theme} colors={colors} question="Can I change plans later?" answer="Yes, you can upgrade or downgrade your plan at any time. Changes take effect immediately, and we'll prorate the difference." />
           </div>
         </div>
       </section>
@@ -1043,7 +1012,7 @@ function LPPage({ theme, colors }: PageProps) {
                   style={{ backgroundColor: colors.chart2 }}
                 />
                 <span className="text-sm font-medium" style={{ color: colors.foreground }}>
-                  Introducing v2.0
+                  Optimized for AI
                 </span>
               </div>
 
@@ -1056,7 +1025,7 @@ function LPPage({ theme, colors }: PageProps) {
                   lineHeight: theme.typographyStyles.lineHeightH1,
                 }}
               >
-                <span style={{ color: colors.foreground }}>Build</span>
+                <span style={{ color: colors.foreground }}>Build Fast with</span>
                 <span
                   key={`lp-gradient-${colors.primary}-${colors.chart1}-${colors.chart2}`}
                   className="block mt-2"
@@ -1066,7 +1035,7 @@ function LPPage({ theme, colors }: PageProps) {
                     WebkitTextFillColor: 'transparent',
                   }}
                 >
-                  Different
+                  Fewer Tokens
                 </span>
               </h1>
 
@@ -1077,8 +1046,7 @@ function LPPage({ theme, colors }: PageProps) {
                   fontSize: '1.125rem',
                 }}
               >
-                Stop settling for generic templates. Create distinctive digital experiences
-                that capture attention and convert visitors into loyal customers.
+                Token-optimized UI components designed for AI efficiency. Ship production-ready interfaces faster using clear, structured code that minimizes context and maximizes output quality.
               </p>
 
               {/* CTA Buttons */}
@@ -1092,7 +1060,7 @@ function LPPage({ theme, colors }: PageProps) {
                   hoverEffect={theme.buttons.hoverEffect}
                   size="lg"
                 >
-                  Start Free Trial
+                  Save your Style
                   <ArrowRight className="ml-2 size-5" />
                 </PreviewButton>
                 <PreviewButton
@@ -1104,7 +1072,7 @@ function LPPage({ theme, colors }: PageProps) {
                   hoverEffect={theme.buttons.hoverEffect}
                   size="lg"
                 >
-                  Watch Demo
+                  Start Customizing
                 </PreviewButton>
               </div>
 
@@ -1126,8 +1094,8 @@ function LPPage({ theme, colors }: PageProps) {
                   ))}
                 </div>
                 <div className="text-sm">
-                  <span className="font-semibold" style={{ color: colors.foreground }}>2,847+</span>
-                  <span style={{ color: colors.mutedForeground }}> creators building with us</span>
+                  <span className="font-semibold" style={{ color: colors.foreground }}>Built by developers,</span>
+                  <span style={{ color: colors.mutedForeground }}> for vibe coders</span>
                 </div>
               </div>
             </div>
@@ -1181,7 +1149,7 @@ function LPPage({ theme, colors }: PageProps) {
         }}
       >
         <div className="flex items-center gap-12 justify-center">
-          {['Next.js 14', 'TypeScript', 'Tailwind CSS', 'React', 'Vercel', 'shadcn/ui'].map((tech) => (
+          {['Next.js 14', 'TypeScript', 'Tailwind CSS', 'React Server Components', 'Edge Runtime', 'Vercel', 'shadcn/ui'].map((tech) => (
             <span
               key={tech}
               className="text-lg font-medium"
@@ -1244,10 +1212,10 @@ function LPPage({ theme, colors }: PageProps) {
                     <Zap className="size-7" style={{ color: colors.primary }} />
                   </div>
                   <h3 className="text-2xl font-bold" style={{ color: colors.cardForeground }}>
-                    Lightning Fast Performance
+                    AI-First Component Library
                   </h3>
                   <p style={{ color: colors.mutedForeground }}>
-                    Built on Next.js 14 with React Server Components and edge runtime support.
+                    Pre-built authentication pages, settings panels, and dashboard layouts that AI assistants understand instantly. From concept to production-ready UI in minutes, not hours.
                   </p>
                   <div className="flex gap-3 pt-4">
                     {[{ label: 'LCP', value: '< 1.2s' }, { label: 'FID', value: '< 100ms' }, { label: 'CLS', value: '< 0.1' }].map(m => (
@@ -1308,10 +1276,10 @@ function LPPage({ theme, colors }: PageProps) {
                 <Palette className="size-7" style={{ color: colors.chart1 }} />
               </div>
               <h3 className="text-2xl font-bold mt-6" style={{ color: colors.cardForeground }}>
-                Design System
+                Visual Theme Editor
               </h3>
               <p className="mt-4" style={{ color: colors.mutedForeground }}>
-                A complete design system with customizable tokens for colors, typography, and components.
+                Live theme customization with instant preview. Adjust colors, typography, spacing, and radius - all changes propagate through your entire application automatically.
               </p>
               <div className="mt-8 space-y-4">
                 <div className="flex gap-2">
@@ -1335,8 +1303,8 @@ function LPPage({ theme, colors }: PageProps) {
 
             {/* Small Cards */}
             {[
-              { icon: Lock, title: 'Enterprise Security', desc: 'SOC 2 compliant with E2E encryption.', color: colors.chart2 },
-              { icon: Code, title: 'Developer Experience', desc: 'TypeScript-first with full IDE support.', color: colors.chart4 },
+              { icon: Lock, title: 'Polished UI Out of the Box', desc: 'Glassmorphic effects, smooth animations, and refined interactions. Every component designed for modern SaaS applications.', color: colors.chart2 },
+              { icon: Code, title: 'Token-Optimized Structure', desc: 'Flat file organization and clear naming conventions. AI reads your codebase efficiently, generating consistent, on-brand components every time.', color: colors.chart4 },
             ].map((item) => (
               <div
                 key={item.title}
@@ -1392,9 +1360,7 @@ function LPPage({ theme, colors }: PageProps) {
                   fontSize: theme.typographySizes.h2,
                 }}
               >
-                Ready to build
-                <br />
-                something amazing?
+                Ready to build differently?
               </h2>
               <p
                 className="mx-auto mb-10"
@@ -1403,7 +1369,7 @@ function LPPage({ theme, colors }: PageProps) {
                   fontSize: theme.typographySizes.p,
                 }}
               >
-                Join thousands of developers shipping faster with our starter pack.
+                Join developers building production-ready UIs with AI assistance. Start free today.
               </p>
               <div className="flex gap-4 justify-center">
                 <PreviewButton
@@ -1415,7 +1381,7 @@ function LPPage({ theme, colors }: PageProps) {
                   hoverEffect={theme.buttons.hoverEffect}
                   size="lg"
                 >
-                  Get Started Now
+                  Get Started Free
                   <ArrowRight className="ml-2 size-5" />
                 </PreviewButton>
               </div>
@@ -1534,14 +1500,14 @@ function PreviewFooter({ theme, colors }: PageProps) {
                   borderRadius: theme.radius.md,
                 }}
               >
-                S
+                V
               </div>
               <span className="font-semibold" style={{ color: colors.foreground, fontFamily: theme.fonts.heading }}>
-                SaaS Starter
+                VibeCN
               </span>
             </div>
             <p className="text-sm mb-4" style={{ color: colors.mutedForeground }}>
-              Build beautiful SaaS products faster with our modern starter kit.
+              Token-optimized UI components designed for AI efficiency. Build production-ready interfaces faster.
             </p>
             <div className="flex items-center gap-3">
               <a href="#" className="p-2 transition-colors hover:opacity-80" style={{ backgroundColor: colors.muted, borderRadius: theme.radius.md, color: colors.mutedForeground }}>
@@ -1595,7 +1561,7 @@ function PreviewFooter({ theme, colors }: PageProps) {
 
         {/* Bottom Bar */}
         <div className="border-t pt-8 mt-8 flex items-center justify-between" style={{ borderColor: colors.border }}>
-          <p className="text-sm" style={{ color: colors.mutedForeground }}>© 2025 SaaS Starter. All rights reserved.</p>
+          <p className="text-sm" style={{ color: colors.mutedForeground }}>© 2025 VibeCN. All rights reserved.</p>
           <div className="flex items-center gap-4">
             <a href="#" className="text-sm transition-colors hover:opacity-80" style={{ color: colors.mutedForeground }}>Privacy</a>
             <a href="#" className="text-sm transition-colors hover:opacity-80" style={{ color: colors.mutedForeground }}>Terms</a>

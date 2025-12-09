@@ -9,13 +9,10 @@ import {
   Space,
   Circle,
   SquareIcon,
-  Download,
-  Upload,
   RotateCcw,
   FolderDown,
   Sun,
   Moon,
-  Paintbrush,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -49,7 +46,6 @@ import {
   DEFAULT_TYPOGRAPHY_STYLES,
   DEFAULT_BUTTONS,
 } from '@/lib/brand-theme';
-import { applyThemeToGlobals } from '@/app/theme/actions';
 import { ThemePreview } from './ThemePreview';
 import { CssPreviewModal } from './CssPreviewModal';
 import { generateStarterProject, slugify } from '@/lib/project-generator';
@@ -505,7 +501,6 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
   });
   const [activeSection, setActiveSection] = useState<ActiveSection>('colors');
   const [isGenerating, setIsGenerating] = useState(false);
-  const [isApplying, setIsApplying] = useState(false);
 
   // Sync preview mode with current theme when it changes externally
   useEffect(() => {
@@ -541,50 +536,6 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
     }
   }, [theme]);
 
-  const handleExport = useCallback(() => {
-    const json = JSON.stringify(theme, null, 2);
-    const blob = new Blob([json], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'brand-theme.json';
-    a.click();
-    URL.revokeObjectURL(url);
-    toast.success('Theme exported!');
-  }, [theme]);
-
-  const handleImport = useCallback(() => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.json';
-    input.onchange = async (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0];
-      if (!file) return;
-      try {
-        const text = await file.text();
-        const imported = JSON.parse(text) as Partial<BrandTheme>;
-        // Merge with defaults to handle legacy themes missing new fields
-        const mergedTheme: BrandTheme = {
-          name: imported.name ?? 'Imported Theme',
-          colors: imported.colors ?? getDefaultTheme().colors,
-          spacing: imported.spacing ?? { ...DEFAULT_SPACING },
-          radius: imported.radius ?? { ...DEFAULT_RADIUS },
-          fonts: imported.fonts ?? { ...DEFAULT_FONTS },
-          typographySizes: imported.typographySizes ?? { ...DEFAULT_TYPOGRAPHY_SIZES },
-          typographyStyles: imported.typographyStyles ?? { ...DEFAULT_TYPOGRAPHY_STYLES },
-          buttons: imported.buttons ?? { ...DEFAULT_BUTTONS },
-        };
-        dispatch({ type: 'SET_THEME', payload: mergedTheme });
-        toast.success('Theme imported!');
-      } catch {
-        toast.error('Failed to import', {
-          description: 'Invalid JSON file.',
-        });
-      }
-    };
-    input.click();
-  }, []);
-
   const handleReset = useCallback(() => {
     dispatch({ type: 'RESET' });
     toast.info('Theme reset to defaults');
@@ -619,28 +570,6 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
     dispatch({ type: 'RESET_BUTTONS' });
     toast.info('Buttons reset to defaults');
   }, []);
-
-  const handleApplyToProject = useCallback(async () => {
-    setIsApplying(true);
-    try {
-      const result = await applyThemeToGlobals(theme);
-      if (result.success) {
-        toast.success('Theme applied to project!', {
-          description: 'Updated globals.css and brand.md. Refresh to see your changes.',
-        });
-      } else {
-        toast.error('Failed to apply theme', {
-          description: result.message,
-        });
-      }
-    } catch {
-      toast.error('Failed to apply theme', {
-        description: 'An unexpected error occurred.',
-      });
-    } finally {
-      setIsApplying(false);
-    }
-  }, [theme]);
 
   const colorGroups = [
     {
@@ -707,24 +636,15 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
         </div>
         <div className="flex items-center gap-1">
           <Button
-            onClick={handleApplyToProject}
-            disabled={isApplying}
+            onClick={handleDownloadStarter}
+            disabled={isGenerating}
             size="sm"
             variant="default"
           >
-            <Paintbrush className="size-4 mr-1.5" />
-            {isApplying ? 'Applying...' : 'Apply to project'}
+            <FolderDown className="size-4 mr-1.5" />
+            {isGenerating ? 'Downloading...' : 'Download your Style'}
           </Button>
           <CssPreviewModal theme={theme} />
-          <Button onClick={handleDownloadStarter} disabled={isGenerating} variant="ghost" size="sm" title="Download starter project">
-            <FolderDown className="size-4" />
-          </Button>
-          <Button variant="ghost" size="sm" onClick={handleExport} title="Export theme">
-            <Download className="size-4" />
-          </Button>
-          <Button variant="ghost" size="sm" onClick={handleImport} title="Import theme">
-            <Upload className="size-4" />
-          </Button>
           <Button variant="ghost" size="sm" onClick={handleReset} title="Reset all">
             <RotateCcw className="size-4" />
           </Button>

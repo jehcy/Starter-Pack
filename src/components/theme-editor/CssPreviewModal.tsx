@@ -6,13 +6,13 @@ import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogDescription,
-} from '@/components/ui/dialog';
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+  SheetTrigger,
+} from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import type { BrandTheme } from '@/lib/brand-theme';
 import { generateCssPreview } from '@/lib/brand-theme';
@@ -37,45 +37,49 @@ export function CssPreviewModal({ theme }: CssPreviewModalProps) {
   };
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
+    <Sheet>
+      <SheetTrigger asChild>
         <Button variant="outline" size="icon" title="View CSS">
           <Code className="size-4" />
         </Button>
-      </DialogTrigger>
-      <DialogContent className="max-h-[80vh]">
-        <DialogHeader>
-          <DialogTitle className="flex items-center justify-between">
-            <span>CSS Preview</span>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleCopy}
-              className="gap-1.5"
-            >
-              {isCopied ? (
-                <>
-                  <Check className="size-3.5" />
-                  Copied
-                </>
-              ) : (
-                <>
-                  <Copy className="size-3.5" />
-                  Copy
-                </>
-              )}
-            </Button>
-          </DialogTitle>
-          <DialogDescription>
-            This CSS will be written to globals.css when you apply the theme.
-          </DialogDescription>
-        </DialogHeader>
-        <ScrollArea className="h-[60vh] rounded-md border bg-muted/50">
-          <pre className="p-4 text-sm font-mono text-foreground whitespace-pre overflow-x-auto">
-            <code>{cssPreview}</code>
-          </pre>
-        </ScrollArea>
-      </DialogContent>
-    </Dialog>
+      </SheetTrigger>
+      <SheetContent side="right" className="w-full sm:max-w-2xl p-0">
+        <div className="flex h-full flex-col">
+          <SheetHeader className="border-b p-6">
+            <div className="flex items-start justify-between gap-4">
+              <div className="space-y-1 flex-1">
+                <SheetTitle>CSS Preview</SheetTitle>
+                <SheetDescription>
+                  This CSS will be written to globals.css when you apply the theme.
+                </SheetDescription>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleCopy}
+                className="gap-1.5 shrink-0"
+              >
+                {isCopied ? (
+                  <>
+                    <Check className="size-3.5" />
+                    Copied
+                  </>
+                ) : (
+                  <>
+                    <Copy className="size-3.5" />
+                    Copy
+                  </>
+                )}
+              </Button>
+            </div>
+          </SheetHeader>
+          <ScrollArea className="flex-1 p-6">
+            <pre className="rounded-md border bg-muted/50 p-4 text-sm font-mono text-foreground">
+              <code className="whitespace-pre">{cssPreview}</code>
+            </pre>
+          </ScrollArea>
+        </div>
+      </SheetContent>
+    </Sheet>
   );
 }
