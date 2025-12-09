@@ -28,7 +28,7 @@ export default function LandingPageV2() {
           />
         </div>
 
-        <div className="w-full max-w-7xl mx-auto px-6 lg:px-8">
+        <div className="container-wide">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="space-y-8">
               {/* Floating Tag */}
@@ -257,7 +257,7 @@ function HeroVisual() {
   ];
 
   return (
-    <div className="relative ml-20 w-2/3 max-w-[500px] min-h-[400px] md:min-h-[500px]">
+    <div className="relative w-full max-w-[500px] min-h-[400px] md:min-h-[500px] mx-auto lg:mx-0">
       {screenshots.map((screenshot, index) => (
         <div
           key={screenshot.src}

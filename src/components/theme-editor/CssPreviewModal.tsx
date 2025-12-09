@@ -21,6 +21,53 @@ interface CssPreviewModalProps {
   theme: BrandTheme;
 }
 
+function highlightCss(css: string) {
+  const lines = css.split('\n');
+  return lines.map((line, index) => {
+    // Comments
+    if (line.trim().startsWith('/*')) {
+      return (
+        <div key={index} className="text-green-500">
+          {line}
+        </div>
+      );
+    }
+
+    // Selectors (lines with { at the end)
+    if (line.includes('{')) {
+      return (
+        <div key={index} className="text-yellow-400">
+          {line}
+        </div>
+      );
+    }
+
+    // Closing braces
+    if (line.trim() === '}') {
+      return (
+        <div key={index} className="text-yellow-400">
+          {line}
+        </div>
+      );
+    }
+
+    // Properties and values
+    if (line.includes(':')) {
+      const [property, ...valueParts] = line.split(':');
+      const value = valueParts.join(':');
+      return (
+        <div key={index}>
+          <span className="text-cyan-400">{property}:</span>
+          <span className="text-orange-400">{value}</span>
+        </div>
+      );
+    }
+
+    // Default (empty lines, etc.)
+    return <div key={index}>{line || '\u00A0'}</div>;
+  });
+}
+
 export function CssPreviewModal({ theme }: CssPreviewModalProps) {
   const [isCopied, setIsCopied] = useState(false);
   const cssPreview = generateCssPreview(theme);
@@ -43,21 +90,23 @@ export function CssPreviewModal({ theme }: CssPreviewModalProps) {
           <Code className="size-4" />
         </Button>
       </SheetTrigger>
-      <SheetContent side="right" className="w-full sm:max-w-2xl p-0">
+      <SheetContent side="right" className="sm:max-w-3xl p-0">
         <div className="flex h-full flex-col">
           <SheetHeader className="border-b p-6">
-            <div className="flex items-start justify-between gap-4">
-              <div className="space-y-1 flex-1">
-                <SheetTitle>CSS Preview</SheetTitle>
-                <SheetDescription>
-                  This CSS will be written to globals.css when you apply the theme.
-                </SheetDescription>
-              </div>
+            <div className="space-y-1">
+              <SheetTitle>CSS Preview</SheetTitle>
+              <SheetDescription>
+                This CSS will be written to globals.css when you apply the theme.
+              </SheetDescription>
+            </div>
+          </SheetHeader>
+          <ScrollArea className="flex-1 p-6">
+            <div className="relative">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={handleCopy}
-                className="gap-1.5 shrink-0"
+                className="absolute top-2 right-2 gap-1.5 z-10"
               >
                 {isCopied ? (
                   <>
@@ -71,12 +120,10 @@ export function CssPreviewModal({ theme }: CssPreviewModalProps) {
                   </>
                 )}
               </Button>
+              <pre className="rounded-md border bg-muted/50 p-4 text-sm font-mono overflow-auto max-h-[calc(100vh-12rem)]">
+                <code className="block">{highlightCss(cssPreview)}</code>
+              </pre>
             </div>
-          </SheetHeader>
-          <ScrollArea className="flex-1 p-6">
-            <pre className="rounded-md border bg-muted/50 p-4 text-sm font-mono text-foreground">
-              <code className="whitespace-pre">{cssPreview}</code>
-            </pre>
           </ScrollArea>
         </div>
       </SheetContent>
