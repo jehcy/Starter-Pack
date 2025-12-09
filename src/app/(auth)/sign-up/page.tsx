@@ -78,7 +78,7 @@ export default function SignUpPage() {
         {/* Google OAuth */}
         <Button
           variant="outline"
-          className="h-12 rounded-xl"
+          className="h-12 rounded-xl mx-auto"
           disabled={googleLoading || !googleAuthUrl}
           onClick={handleGoogleSignUp}
         >
@@ -110,7 +110,7 @@ export default function SignUpPage() {
         {/* GitHub OAuth */}
         <Button
           variant="outline"
-          className="h-12 rounded-xl"
+          className="h-12 rounded-xl mx-auto"
           disabled={githubLoading || !githubAuthUrl}
           onClick={handleGitHubSignUp}
         >

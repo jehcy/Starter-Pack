@@ -78,7 +78,7 @@ export default function SignInPage() {
         {/* Google OAuth */}
         <Button
           variant="outline"
-          className="h-12 rounded-xl"
+          className="h-12 rounded-xl mx-auto"
           disabled={googleLoading || !googleAuthUrl}
           onClick={handleGoogleSignIn}
         >
@@ -110,7 +110,7 @@ export default function SignInPage() {
         {/* GitHub OAuth */}
         <Button
           variant="outline"
-          className="h-12 rounded-xl"
+          className="h-12 rounded-xl mx-auto"
           disabled={githubLoading || !githubAuthUrl}
           onClick={handleGitHubSignIn}
         >

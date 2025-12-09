@@ -26,7 +26,7 @@ export function Navigation() {
               <Link href="/sign-in">Sign In</Link>
             </Button>
             <Button className="rounded-full" asChild>
-              <Link href="/sign-up">Get Started</Link>
+              <Link href="/theme">Get Started</Link>
             </Button>
           </div>
           {/* Mobile menu button */}
