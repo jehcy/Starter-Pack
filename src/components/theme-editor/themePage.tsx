@@ -498,11 +498,21 @@ const NAV_ITEMS: { id: ActiveSection; icon: typeof Palette; label: string }[] = 
 
 export function ThemePage({ initialTheme }: ThemePageProps) {
   const [theme, dispatch] = useReducer(themeReducer, initialTheme);
-  const [previewMode, setPreviewMode] = useState<'light' | 'dark'>('light');
+  const { theme: currentTheme, setTheme: setGlobalTheme } = useTheme();
+  const [previewMode, setPreviewMode] = useState<'light' | 'dark'>(() => {
+    // Auto-detect current theme, default to dark
+    return (currentTheme === 'light' || currentTheme === 'dark') ? currentTheme : 'dark';
+  });
   const [activeSection, setActiveSection] = useState<ActiveSection>('colors');
   const [isGenerating, setIsGenerating] = useState(false);
   const [isApplying, setIsApplying] = useState(false);
-  const { setTheme: setGlobalTheme } = useTheme();
+
+  // Sync preview mode with current theme when it changes externally
+  useEffect(() => {
+    if (currentTheme === 'light' || currentTheme === 'dark') {
+      setPreviewMode(currentTheme);
+    }
+  }, [currentTheme]);
 
   const handlePreviewModeChange = useCallback((mode: 'light' | 'dark') => {
     setPreviewMode(mode);

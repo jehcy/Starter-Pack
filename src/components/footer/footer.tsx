@@ -9,12 +9,12 @@ export function Footer() {
           <div className="lg:col-span-2">
             <Link href="/" className="inline-flex items-center gap-2">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold">
-                S
+                V
               </div>
-              <span className="text-xl font-bold">SaaS Starter</span>
+              <span className="text-xl font-bold">VibeCN</span>
             </Link>
             <p className="mt-4 max-w-4xl text-muted-foreground leading-relaxed">
-              A modern starter template for building SaaS applications with Next.js, TypeScript, and Tailwind CSS.
+              A Next.js starter template engineered for AI-assisted development. Ship faster with optimized architecture and token-efficient patterns.
             </p>
             <div className="mt-6 flex gap-4">
               <SocialLink href="https://twitter.com" label="Twitter">
@@ -72,7 +72,7 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-border/40 pt-8 sm:flex-row">
           <p className="text-muted-foreground">
-            &copy; {new Date().getFullYear()} SaaS Starter. All rights reserved.
+            &copy; {new Date().getFullYear()} VibeCN. All rights reserved.
           </p>
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
             <Link href="/privacy" className="hover:text-foreground transition-colors">

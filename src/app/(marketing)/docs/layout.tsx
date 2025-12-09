@@ -14,52 +14,55 @@ interface DocsSidebarItem {
 
 const sidebarItems: DocsSidebarItem[] = [
   {
-    title: 'Getting Started',
-    href: '/docs',
-    icon: <Zap className="h-4 w-4" />,
-    items: [
-      { title: 'Introduction', href: '/docs' },
-      { title: 'Installation', href: '/docs/installation' },
-      { title: 'Quick Start', href: '/docs/quick-start' },
-    ],
-  },
-  {
-    title: 'Authentication',
-    href: '/docs/auth',
-    icon: <Shield className="h-4 w-4" />,
-    items: [
-      { title: 'Overview', href: '/docs/auth' },
-      { title: 'Google Auth', href: '/docs/auth/google' },
-      { title: 'GitHub Auth', href: '/docs/auth/github' },
-    ],
-  },
-  {
-    title: 'Database',
-    href: '/docs/database',
-    icon: <Database className="h-4 w-4" />,
-    items: [
-      { title: 'InstantDB Setup', href: '/docs/database' },
-      { title: 'Schema Design', href: '/docs/database/schema' },
-      { title: 'Queries', href: '/docs/database/queries' },
-    ],
-  },
-  {
-    title: 'Theming',
-    href: '/docs/theming',
+    title: 'Theme Editor',
+    href: '#overview',
     icon: <Palette className="h-4 w-4" />,
     items: [
-      { title: 'Theme Editor', href: '/docs/theming' },
-      { title: 'CSS Variables', href: '/docs/theming/variables' },
+      { title: 'Overview', href: '#overview' },
+      { title: 'Getting Started', href: '#getting-started' },
     ],
   },
   {
-    title: 'Deployment',
-    href: '/docs/deployment',
+    title: 'Colors',
+    href: '#colors',
+    icon: <Palette className="h-4 w-4" />,
+    items: [],
+  },
+  {
+    title: 'Spacing',
+    href: '#spacing',
+    icon: <Zap className="h-4 w-4" />,
+    items: [],
+  },
+  {
+    title: 'Radius',
+    href: '#radius',
+    icon: <Shield className="h-4 w-4" />,
+    items: [],
+  },
+  {
+    title: 'Typography',
+    href: '#typography',
+    icon: <BookOpen className="h-4 w-4" />,
+    items: [],
+  },
+  {
+    title: 'Buttons',
+    href: '#buttons',
+    icon: <Database className="h-4 w-4" />,
+    items: [],
+  },
+  {
+    title: 'Actions',
+    href: '#actions',
     icon: <Rocket className="h-4 w-4" />,
-    items: [
-      { title: 'Vercel', href: '/docs/deployment/vercel' },
-      { title: 'Other Platforms', href: '/docs/deployment/other' },
-    ],
+    items: [],
+  },
+  {
+    title: 'brand.md',
+    href: '#brand-md',
+    icon: <BookOpen className="h-4 w-4" />,
+    items: [],
   },
 ];
 
@@ -115,32 +118,28 @@ function SidebarSection({
   section: DocsSidebarItem;
   pathname: string;
 }) {
-  const isActive = pathname === section.href || pathname.startsWith(section.href + '/');
-
   return (
     <div className="space-y-1">
-      <div
+      <Link
+        href={section.href}
         className={cn(
           'flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg transition-colors',
-          isActive ? 'text-foreground' : 'text-muted-foreground'
+          'text-muted-foreground hover:text-foreground hover:bg-muted'
         )}
       >
         {section.icon}
         <span>{section.title}</span>
-      </div>
-      {section.items && (
+      </Link>
+      {section.items && section.items.length > 0 && (
         <div className="ml-6 space-y-1 border-l border-border pl-3">
           {section.items.map((item) => {
-            const isItemActive = pathname === item.href;
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 className={cn(
                   'block px-3 py-1.5 text-sm rounded-md transition-colors',
-                  isItemActive
-                    ? 'text-primary font-medium bg-primary/5'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                  'text-muted-foreground hover:text-foreground hover:bg-muted'
                 )}
               >
                 {item.title}

@@ -9,11 +9,12 @@ export function Navigation() {
         <div className="flex items-center gap-8">
           <Link href="/" className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold">
-              S
+              V
             </div>
-            <span className="text-xl font-bold">SaaS Starter</span>
+            <span className="text-xl font-bold">VibeCN</span>
           </Link>
           <nav className="hidden md:flex items-center gap-1">
+            <NavLink href="/">Home</NavLink>
             <NavLink href="/features">Features</NavLink>
             <NavLink href="/pricing">Pricing</NavLink>
             <NavLink href="/docs">Docs</NavLink>
@@ -26,7 +27,7 @@ export function Navigation() {
               <Link href="/sign-in">Sign In</Link>
             </Button>
             <Button className="rounded-full" asChild>
-              <Link href="/theme">Get Started</Link>
+              <Link href="/theme">Try it Now!</Link>
             </Button>
           </div>
           {/* Mobile menu button */}

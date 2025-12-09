@@ -1,304 +1,701 @@
 import Link from 'next/link';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/cards/card';
+import { DocSection } from '@/components/docs/doc-section';
+import { TokenTable } from '@/components/docs/token-table';
+import { CodeBlock } from '@/components/docs/code-block';
+import { TipBox } from '@/components/docs/tip-box';
 import { Button } from '@/components/ui/button';
+import { Palette, MousePointer, Download, FileJson, Eye } from 'lucide-react';
 
 export const metadata = {
-  title: 'Documentation | SaaS Starter',
-  description: 'Learn how to use and customize the SaaS starter template',
+  title: 'Theme Editor Documentation | SaaS Starter',
+  description: 'Learn how to use the theme editor to customize your design system',
 };
 
 export default function DocsPage() {
   return (
-    <>
+    <div className="space-y-16 pb-24">
       {/* Hero Section */}
-      <section className="relative overflow-hidden py-24 sm:py-32">
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/20 via-background to-background" />
-        <div className="container-wide">
-          <div className="mx-auto max-w-3xl text-center">
-            <p className="font-semibold uppercase tracking-wider text-primary">Documentation</p>
-            <h1 className="mt-2 font-bold tracking-tight">
-              Everything you need
+      <section id="overview" className="scroll-mt-24">
+        <div className="space-y-6">
+          <div className="space-y-2">
+            <p className="font-semibold uppercase tracking-wider text-primary">Theme Editor</p>
+            <h1 className="font-bold tracking-tight">
+              Customize your design system
               <span className="block mt-2 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-                to get started
+                without writing CSS
               </span>
             </h1>
-            <p className="mx-auto mt-6 max-w-4xl text-muted-foreground leading-relaxed">
-              Comprehensive guides and references to help you build amazing applications.
-            </p>
-            <div className="mt-8 relative mx-auto max-w-xl">
-              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-                <svg className="h-5 w-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              </div>
-              <input
-                type="text"
-                placeholder="Search documentation..."
-                className="w-full rounded-full border border-border/50 bg-card/50 py-4 pl-12 pr-4 text-sm backdrop-blur placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Quick Start */}
-      <section className="py-16">
-        <div className="container-wide">
-          <div className="mx-auto max-w-4xl">
-            <div className="mb-8">
-              <h2 className="font-bold">Quick Start</h2>
-              <p className="mt-2 text-muted-foreground">Get up and running in less than 5 minutes</p>
-            </div>
-            <div className="overflow-hidden rounded-2xl border border-border/50 bg-card">
-              <div className="flex items-center gap-2 border-b border-border/50 bg-muted/50 px-4 py-3">
-                <div className="h-3 w-3 rounded-full bg-red-500/50" />
-                <div className="h-3 w-3 rounded-full bg-yellow-500/50" />
-                <div className="h-3 w-3 rounded-full bg-green-500/50" />
-                <span className="ml-2 text-xs text-muted-foreground">Terminal</span>
-              </div>
-              <div className="p-6 font-mono text-sm space-y-4">
-                <div>
-                  <p className="text-muted-foreground"># Clone the repository</p>
-                  <code className="text-primary">git clone https://github.com/your-repo/saas-starter.git</code>
-                </div>
-                <div>
-                  <p className="text-muted-foreground"># Install dependencies</p>
-                  <code className="text-primary">npm install</code>
-                </div>
-                <div>
-                  <p className="text-muted-foreground"># Start the development server</p>
-                  <code className="text-primary">npm run dev</code>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Documentation Categories */}
-      <section className="border-y border-border/40 bg-muted/30 py-24">
-        <div className="container-wide">
-          <div className="mx-auto max-w-4xl text-center mb-16">
-            <h2 className="font-bold tracking-tight">Explore the Docs</h2>
-            <p className="mt-4 text-muted-foreground">
-              Deep dive into every aspect of the starter template
+            <p className="text-muted-foreground max-w-3xl leading-relaxed">
+              The Theme Editor is a visual tool that lets you customize your entire design system through an intuitive interface.
+              Changes are applied as CSS variables, making them instantly available throughout your application.
             </p>
           </div>
-          <div className="mx-auto max-w-5xl grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            <DocCard
-              icon={
-                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              }
-              title="Getting Started"
-              description="Learn the basics and set up your development environment."
-              href="/docs"
-              articles={5}
+
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 mt-8">
+            <QuickLinkCard
+              icon={<Palette className="h-5 w-5" />}
+              title="Colors"
+              description="22 color tokens for light & dark modes"
+              href="#colors"
             />
-            <DocCard
-              icon={
-                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
-                </svg>
-              }
-              title="Components"
-              description="Explore the available UI components and how to use them."
-              href="/docs"
-              articles={12}
+            <QuickLinkCard
+              icon={<MousePointer className="h-5 w-5" />}
+              title="Typography"
+              description="Fonts, sizes, and spacing controls"
+              href="#typography"
             />
-            <DocCard
-              icon={
-                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
-                </svg>
-              }
-              title="Theming"
-              description="Customize colors, fonts, and spacing with the theme editor."
-              href="/theme"
-              articles={4}
+            <QuickLinkCard
+              icon={<Download className="h-5 w-5" />}
+              title="Actions"
+              description="Apply, export, and download your theme"
+              href="#actions"
             />
-            <DocCard
-              icon={
-                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
-              }
-              title="Authentication"
-              description="Set up user authentication and protect your routes."
-              href="/docs"
-              articles={6}
-            />
-            <DocCard
-              icon={
-                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
-                </svg>
-              }
-              title="Database"
-              description="Connect to InstantDB and manage your data."
-              href="/docs"
-              articles={8}
-            />
-            <DocCard
-              icon={
-                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                </svg>
-              }
-              title="Deployment"
-              description="Deploy your app to Vercel, Render, or other platforms."
-              href="/docs"
-              articles={3}
-            />
+          </div>
+
+          <div className="mt-8 p-6 rounded-lg border border-primary/20 bg-primary/5">
+            <h3 className="font-semibold text-foreground mb-2">Key Benefits</h3>
+            <ul className="space-y-2 text-sm text-muted-foreground">
+              <li className="flex items-start gap-2">
+                <span className="text-primary mt-0.5">✓</span>
+                <span>Real-time preview across multiple page types</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-primary mt-0.5">✓</span>
+                <span>Auto-generates CSS variables in globals.css</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-primary mt-0.5">✓</span>
+                <span>Creates AI-friendly documentation (brand.md)</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-primary mt-0.5">✓</span>
+                <span>Export/import themes as JSON for version control</span>
+              </li>
+            </ul>
           </div>
         </div>
       </section>
 
-      {/* API Reference */}
-      <section className="py-24">
-        <div className="container-wide">
-          <div className="mx-auto max-w-4xl">
-            <div className="grid gap-8 lg:grid-cols-2">
-              <div>
-                <p className="font-semibold uppercase tracking-wider text-primary">API Reference</p>
-                <h2 className="mt-2 font-bold tracking-tight">
-                  Complete API documentation
-                </h2>
-                <p className="mt-4 text-muted-foreground leading-relaxed">
-                  Detailed documentation for every API endpoint, with examples and code snippets in multiple languages.
+      {/* Getting Started */}
+      <DocSection
+        id="getting-started"
+        title="Getting Started"
+        description="Learn how to access and use the theme editor interface"
+      >
+        <div className="space-y-4">
+          <div>
+            <h3 className="font-semibold text-foreground mb-2">Accessing the Theme Editor</h3>
+            <p className="text-muted-foreground text-sm mb-4">
+              Navigate to <code className="px-2 py-1 rounded bg-muted text-foreground">/theme</code> in your browser
+              to open the visual theme editor.
+            </p>
+            <Button asChild>
+              <Link href="/theme">Open Theme Editor</Link>
+            </Button>
+          </div>
+
+          <div className="mt-8">
+            <h3 className="font-semibold text-foreground mb-3">Interface Overview</h3>
+            <p className="text-muted-foreground text-sm mb-4">
+              The theme editor uses a 3-column layout:
+            </p>
+            <div className="grid gap-4 sm:grid-cols-3">
+              <div className="p-4 rounded-lg border border-border bg-card">
+                <div className="font-semibold text-sm text-foreground mb-2">Left: Navigation</div>
+                <p className="text-xs text-muted-foreground">
+                  Icon-based tabs for Colors, Spacing, Radius, Fonts, and Buttons sections
                 </p>
-                <ul className="mt-8 space-y-4">
-                  <li className="flex items-center gap-3">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
-                      <svg className="h-4 w-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                    </div>
-                    <span className="text-sm">RESTful API endpoints</span>
-                  </li>
-                  <li className="flex items-center gap-3">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
-                      <svg className="h-4 w-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                    </div>
-                    <span className="text-sm">TypeScript types included</span>
-                  </li>
-                  <li className="flex items-center gap-3">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
-                      <svg className="h-4 w-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                    </div>
-                    <span className="text-sm">Interactive playground</span>
-                  </li>
-                </ul>
-                <div className="mt-8">
-                  <Button className="rounded-full" asChild>
-                    <Link href="/docs">Explore API Docs</Link>
-                  </Button>
-                </div>
               </div>
-              <div className="overflow-hidden rounded-2xl border border-border/50 bg-card">
-                <div className="flex items-center gap-2 border-b border-border/50 bg-muted/50 px-4 py-3">
-                  <span className="text-xs font-mono text-muted-foreground">api/users.ts</span>
-                </div>
-                <div className="p-4 font-mono text-sm overflow-x-auto">
-                  <pre className="text-muted-foreground">
-{`// Get user by ID
-export async function getUser(id: string) {
-  const response = await fetch(
-    \`/api/users/\${id}\`
-  );
-  return response.json();
-}
+              <div className="p-4 rounded-lg border border-border bg-card">
+                <div className="font-semibold text-sm text-foreground mb-2">Center: Preview</div>
+                <p className="text-xs text-muted-foreground">
+                  Live preview showing your changes on simulated pages (Home, Features, Pricing, Dashboard)
+                </p>
+              </div>
+              <div className="p-4 rounded-lg border border-border bg-card">
+                <div className="font-semibold text-sm text-foreground mb-2">Right: Settings</div>
+                <p className="text-xs text-muted-foreground">
+                  Controls for the active section with sliders, color pickers, and dropdowns
+                </p>
+              </div>
+            </div>
+          </div>
 
-// Update user
-export async function updateUser(
-  id: string,
-  data: UserUpdate
-) {
-  const response = await fetch(
-    \`/api/users/\${id}\`,
-    {
-      method: 'PATCH',
-      body: JSON.stringify(data)
-    }
-  );
-  return response.json();
+          <TipBox type="tip">
+            Use the Light/Dark toggle in the preview to switch between editing light mode and dark mode colors.
+          </TipBox>
+        </div>
+      </DocSection>
+
+      {/* Colors */}
+      <DocSection
+        id="colors"
+        title="Colors"
+        description="Customize your color palette for light and dark modes"
+      >
+        <div className="space-y-6">
+          <div>
+            <h3 className="font-semibold text-foreground mb-3">Color System</h3>
+            <p className="text-muted-foreground text-sm mb-4">
+              The theme editor provides 22 color tokens that work together to create a cohesive design system.
+              Each color has separate values for light and dark modes.
+            </p>
+          </div>
+
+          <TipBox type="info">
+            Switch between light and dark mode in the preview panel to edit each mode separately.
+            Maintaining good contrast ratios ensures your design is accessible.
+          </TipBox>
+
+          <div>
+            <h3 className="font-semibold text-foreground mb-3">Color Tokens Reference</h3>
+            <TokenTable
+              headers={['Token', 'Purpose', 'CSS Variable', 'Tailwind Classes']}
+              rows={[
+                {
+                  cells: [
+                    <code key="1" className="text-sm">primary</code>,
+                    'Main brand color for buttons, links, and CTAs',
+                    <code key="2" className="text-xs">--primary</code>,
+                    <code key="3" className="text-xs">bg-primary, text-primary, border-primary</code>,
+                  ],
+                },
+                {
+                  cells: [
+                    <code key="1" className="text-sm">primaryForeground</code>,
+                    'Text color on primary backgrounds',
+                    <code key="2" className="text-xs">--primary-foreground</code>,
+                    <code key="3" className="text-xs">text-primary-foreground</code>,
+                  ],
+                },
+                {
+                  cells: [
+                    <code key="1" className="text-sm">secondary</code>,
+                    'Secondary actions and accents',
+                    <code key="2" className="text-xs">--secondary</code>,
+                    <code key="3" className="text-xs">bg-secondary, text-secondary</code>,
+                  ],
+                },
+                {
+                  cells: [
+                    <code key="1" className="text-sm">secondaryForeground</code>,
+                    'Text on secondary backgrounds',
+                    <code key="2" className="text-xs">--secondary-foreground</code>,
+                    <code key="3" className="text-xs">text-secondary-foreground</code>,
+                  ],
+                },
+                {
+                  cells: [
+                    <code key="1" className="text-sm">accent</code>,
+                    'Highlight color for special elements',
+                    <code key="2" className="text-xs">--accent</code>,
+                    <code key="3" className="text-xs">bg-accent, text-accent</code>,
+                  ],
+                },
+                {
+                  cells: [
+                    <code key="1" className="text-sm">background</code>,
+                    'Main page background',
+                    <code key="2" className="text-xs">--background</code>,
+                    <code key="3" className="text-xs">bg-background</code>,
+                  ],
+                },
+                {
+                  cells: [
+                    <code key="1" className="text-sm">foreground</code>,
+                    'Primary text color',
+                    <code key="2" className="text-xs">--foreground</code>,
+                    <code key="3" className="text-xs">text-foreground</code>,
+                  ],
+                },
+                {
+                  cells: [
+                    <code key="1" className="text-sm">card</code>,
+                    'Card and panel backgrounds',
+                    <code key="2" className="text-xs">--card</code>,
+                    <code key="3" className="text-xs">bg-card</code>,
+                  ],
+                },
+                {
+                  cells: [
+                    <code key="1" className="text-sm">muted</code>,
+                    'Subdued backgrounds and disabled states',
+                    <code key="2" className="text-xs">--muted</code>,
+                    <code key="3" className="text-xs">bg-muted, text-muted</code>,
+                  ],
+                },
+                {
+                  cells: [
+                    <code key="1" className="text-sm">mutedForeground</code>,
+                    'Secondary text and descriptions',
+                    <code key="2" className="text-xs">--muted-foreground</code>,
+                    <code key="3" className="text-xs">text-muted-foreground</code>,
+                  ],
+                },
+                {
+                  cells: [
+                    <code key="1" className="text-sm">destructive</code>,
+                    'Error states and dangerous actions',
+                    <code key="2" className="text-xs">--destructive</code>,
+                    <code key="3" className="text-xs">bg-destructive, text-destructive</code>,
+                  ],
+                },
+                {
+                  cells: [
+                    <code key="1" className="text-sm">border</code>,
+                    'Default border color',
+                    <code key="2" className="text-xs">--border</code>,
+                    <code key="3" className="text-xs">border-border</code>,
+                  ],
+                },
+                {
+                  cells: [
+                    <code key="1" className="text-sm">input</code>,
+                    'Input field borders',
+                    <code key="2" className="text-xs">--input</code>,
+                    <code key="3" className="text-xs">border-input</code>,
+                  ],
+                },
+                {
+                  cells: [
+                    <code key="1" className="text-sm">ring</code>,
+                    'Focus ring color',
+                    <code key="2" className="text-xs">--ring</code>,
+                    <code key="3" className="text-xs">ring-ring</code>,
+                  ],
+                },
+                {
+                  cells: [
+                    <code key="1" className="text-sm">chart1-5</code>,
+                    'Data visualization colors',
+                    <code key="2" className="text-xs">--chart-1 to --chart-5</code>,
+                    <code key="3" className="text-xs">bg-chart-1, bg-chart-2, etc.</code>,
+                  ],
+                },
+              ]}
+            />
+          </div>
+
+          <TipBox type="warning">
+            Always ensure sufficient contrast between foreground and background colors for accessibility.
+            A minimum contrast ratio of 4.5:1 is recommended for normal text.
+          </TipBox>
+        </div>
+      </DocSection>
+
+      {/* Spacing */}
+      <DocSection
+        id="spacing"
+        title="Spacing"
+        description="Control the spacing scale used throughout your application"
+      >
+        <div className="space-y-6">
+          <p className="text-muted-foreground text-sm">
+            The spacing scale defines consistent gaps, padding, and margins. The 6-value scale ensures
+            visual hierarchy and rhythm throughout your design.
+          </p>
+
+          <TokenTable
+            headers={['Token', 'Default', 'Range', 'Use Case']}
+            rows={[
+              { cells: [<code key="1" className="text-sm">xs</code>, '0.25rem', '0-6rem', 'Tight spacing between related elements'] },
+              { cells: [<code key="1" className="text-sm">sm</code>, '0.5rem', '0-6rem', 'Small gaps in compact layouts'] },
+              { cells: [<code key="1" className="text-sm">md</code>, '1rem', '0-6rem', 'Standard spacing for most elements'] },
+              { cells: [<code key="1" className="text-sm">lg</code>, '1.5rem', '0-6rem', 'Medium section spacing'] },
+              { cells: [<code key="1" className="text-sm">xl</code>, '2rem', '0-6rem', 'Large section spacing'] },
+              { cells: [<code key="1" className="text-sm">2xl</code>, '3rem', '0-6rem', 'Hero sections and major dividers'] },
+            ]}
+          />
+
+          <div className="p-6 rounded-lg border border-border bg-muted/30">
+            <h4 className="font-semibold text-sm text-foreground mb-3">CSS Variables</h4>
+            <CodeBlock
+              language="css"
+              code={`:root {
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
 }`}
-                  </pre>
-                </div>
-              </div>
-            </div>
+            />
           </div>
-        </div>
-      </section>
 
-      {/* Resources Section */}
-      <section className="py-24">
-        <div className="container-wide">
-          <div className="relative overflow-hidden rounded-3xl border border-border/50 bg-muted/30 px-6 py-16 sm:px-12 sm:py-20">
-            <div className="relative mx-auto max-w-4xl text-center">
-              <h2 className="font-bold tracking-tight">Need Help?</h2>
-              <p className="mx-auto mt-4 max-w-4xl text-muted-foreground">
-                Check out these resources or reach out to our community for support.
-              </p>
-              <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-                <Button size="lg" variant="outline" className="h-12 px-6 rounded-full gap-2" asChild>
-                  <Link href="https://github.com" target="_blank" rel="noopener noreferrer">
-                    <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                      <path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" />
-                    </svg>
-                    GitHub Repository
-                  </Link>
-                </Button>
-                <Button size="lg" variant="outline" className="h-12 px-6 rounded-full gap-2" asChild>
-                  <Link href="https://discord.com" target="_blank" rel="noopener noreferrer">
-                    <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
-                    </svg>
-                    Discord Community
-                  </Link>
-                </Button>
+          <TipBox type="tip">
+            Use the spacing scale consistently to create visual rhythm. Avoid arbitrary spacing values.
+          </TipBox>
+        </div>
+      </DocSection>
+
+      {/* Radius */}
+      <DocSection
+        id="radius"
+        title="Border Radius"
+        description="Define border radius values for different UI elements"
+      >
+        <div className="space-y-6">
+          <p className="text-muted-foreground text-sm">
+            Border radius values control the roundness of corners on buttons, cards, inputs, and other elements.
+          </p>
+
+          <div>
+            <h3 className="font-semibold text-foreground mb-3">Radius Scale</h3>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <RadiusExample value="none" label="None (Sharp)" />
+              <RadiusExample value="sm" label="Small (Subtle)" />
+              <RadiusExample value="md" label="Medium (Default)" />
+              <RadiusExample value="lg" label="Large (Cards)" />
+              <RadiusExample value="xl" label="XL (Features)" />
+              <RadiusExample value="2xl" label="2XL (Bold)" />
+              <RadiusExample value="full" label="Full (Pills)" />
+            </div>
+          </div>
+
+          <TokenTable
+            headers={['Token', 'Use Case', 'Examples']}
+            rows={[
+              { cells: [<code key="1" className="text-sm">none</code>, 'Sharp corners', 'Data tables, technical UIs'] },
+              { cells: [<code key="1" className="text-sm">sm</code>, 'Subtle rounding', 'Small buttons, inputs'] },
+              { cells: [<code key="1" className="text-sm">md</code>, 'Standard rounding', 'Default buttons, cards'] },
+              { cells: [<code key="1" className="text-sm">lg</code>, 'Card-like elements', 'Modals, large cards'] },
+              { cells: [<code key="1" className="text-sm">xl</code>, 'Feature sections', 'Hero cards, callouts'] },
+              { cells: [<code key="1" className="text-sm">2xl</code>, 'Bold rounding', 'Large feature cards'] },
+              { cells: [<code key="1" className="text-sm">full</code>, 'Circular/pill shape', 'Badges, avatars, pill buttons'] },
+            ]}
+          />
+        </div>
+      </DocSection>
+
+      {/* Typography */}
+      <DocSection
+        id="typography"
+        title="Typography"
+        description="Customize fonts, text sizes, and typographic styles"
+      >
+        <div className="space-y-8">
+          <div>
+            <h3 className="font-semibold text-foreground mb-3">Font Families</h3>
+            <p className="text-muted-foreground text-sm mb-4">
+              The theme editor integrates with Google Fonts and provides three font family slots:
+            </p>
+            <TokenTable
+              headers={['Font', 'Purpose', 'Options']}
+              rows={[
+                { cells: [<code key="1" className="text-sm">sans</code>, 'Body text and UI', 'Inter, Roboto, Poppins, Open Sans, and 14 more'] },
+                { cells: [<code key="1" className="text-sm">mono</code>, 'Code blocks', 'JetBrains Mono, Fira Code, Source Code Pro, and 6 more'] },
+                { cells: [<code key="1" className="text-sm">heading</code>, 'Headlines', 'Playfair Display, Merriweather, Montserrat, and 12 more'] },
+              ]}
+            />
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-foreground mb-3">Text Sizes</h3>
+            <p className="text-muted-foreground text-sm mb-4">
+              Control the font size for different text elements:
+            </p>
+            <TokenTable
+              headers={['Element', 'CSS Variable', 'Default Range']}
+              rows={[
+                { cells: [<code key="1" className="text-sm">h1</code>, <code key="2" className="text-xs">--text-h1</code>, '2-10rem'] },
+                { cells: [<code key="1" className="text-sm">h2</code>, <code key="2" className="text-xs">--text-h2</code>, '1.5-4rem'] },
+                { cells: [<code key="1" className="text-sm">h3</code>, <code key="2" className="text-xs">--text-h3</code>, '1.25-2rem'] },
+                { cells: [<code key="1" className="text-sm">h4</code>, <code key="2" className="text-xs">--text-h4</code>, '1-1.5rem'] },
+                { cells: [<code key="1" className="text-sm">p</code>, <code key="2" className="text-xs">--text-p</code>, '0.75-1.25rem'] },
+                { cells: [<code key="1" className="text-sm">blockquote</code>, <code key="2" className="text-xs">--text-blockquote</code>, 'Dropdown presets'] },
+                { cells: [<code key="1" className="text-sm">label</code>, <code key="2" className="text-xs">--text-label</code>, 'Dropdown presets'] },
+                { cells: [<code key="1" className="text-sm">code</code>, <code key="2" className="text-xs">--text-code</code>, 'Dropdown presets'] },
+              ]}
+            />
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-foreground mb-3">Typography Styles</h3>
+            <p className="text-muted-foreground text-sm mb-4">
+              Fine-tune line heights and letter spacing:
+            </p>
+            <TokenTable
+              headers={['Property', 'CSS Variable', 'Range']}
+              rows={[
+                { cells: ['Body Line Height', <code key="1" className="text-xs">--line-height</code>, '1.0-2.5'] },
+                { cells: ['H1 Line Height', <code key="1" className="text-xs">--line-height-h1</code>, '0.8-1.8'] },
+                { cells: ['H2 Line Height', <code key="1" className="text-xs">--line-height-h2</code>, '0.8-1.8'] },
+                { cells: ['H3 Line Height', <code key="1" className="text-xs">--line-height-h3</code>, '0.8-1.8'] },
+                { cells: ['Letter Spacing', <code key="1" className="text-xs">--letter-spacing</code>, '-0.05em to 0.2em'] },
+              ]}
+            />
+          </div>
+
+          <TipBox type="warning">
+            <strong>Important:</strong> Do not override typography sizes with Tailwind classes like{' '}
+            <code className="px-1 py-0.5 rounded bg-muted text-xs">text-4xl</code> or{' '}
+            <code className="px-1 py-0.5 rounded bg-muted text-xs">leading-tight</code> on headings.
+            The theme editor controls these via CSS variables. Use{' '}
+            <code className="px-1 py-0.5 rounded bg-muted text-xs">font-bold</code>,{' '}
+            <code className="px-1 py-0.5 rounded bg-muted text-xs">text-primary</code>, and spacing classes instead.
+          </TipBox>
+        </div>
+      </DocSection>
+
+      {/* Buttons */}
+      <DocSection
+        id="buttons"
+        title="Buttons"
+        description="Customize button styling and hover effects"
+      >
+        <div className="space-y-6">
+          <p className="text-muted-foreground text-sm">
+            Control button appearance including border radius, font weight, font size, and hover effects.
+          </p>
+
+          <div>
+            <h3 className="font-semibold text-foreground mb-3">Button Properties</h3>
+            <TokenTable
+              headers={['Property', 'CSS Variable', 'Options']}
+              rows={[
+                { cells: ['Border Radius', <code key="1" className="text-xs">--button-radius</code>, '0-3rem slider'] },
+                { cells: ['Font Weight', <code key="1" className="text-xs">--button-font-weight</code>, '300-900 (100 steps)'] },
+                { cells: ['Font Size', <code key="1" className="text-xs">--button-font-size</code>, '0.75-1.5rem + presets'] },
+              ]}
+            />
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-foreground mb-3">Hover Effects</h3>
+            <p className="text-muted-foreground text-sm mb-4">
+              Choose from 5 hover effect styles:
+            </p>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <HoverEffectCard effect="None" description="No hover effect" />
+              <HoverEffectCard effect="Opacity" description="Fade to 80% opacity" />
+              <HoverEffectCard effect="Lift" description="Raise with shadow" />
+              <HoverEffectCard effect="Scale" description="Slightly enlarge (1.05x)" />
+              <HoverEffectCard effect="Glow" description="Subtle glow effect" />
+            </div>
+          </div>
+
+          <TipBox type="info">
+            Button hover effects use CSS variables like{' '}
+            <code className="px-1 py-0.5 rounded bg-muted text-xs">--button-hover-opacity</code>,{' '}
+            <code className="px-1 py-0.5 rounded bg-muted text-xs">--button-hover-transform</code>, and{' '}
+            <code className="px-1 py-0.5 rounded bg-muted text-xs">--button-hover-shadow</code>.
+          </TipBox>
+        </div>
+      </DocSection>
+
+      {/* Actions */}
+      <DocSection
+        id="actions"
+        title="Actions"
+        description="Apply your theme, export settings, and download starter projects"
+      >
+        <div className="space-y-6">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <ActionCard
+              icon={<Download className="h-5 w-5" />}
+              title="Apply to Project"
+              description="Updates globals.css with new CSS variables and regenerates brand.md documentation"
+            />
+            <ActionCard
+              icon={<FileJson className="h-5 w-5" />}
+              title="Export JSON"
+              description="Download brand-theme.json with all settings for backup or version control"
+            />
+            <ActionCard
+              icon={<FileJson className="h-5 w-5" />}
+              title="Import JSON"
+              description="Load a previously saved theme from a JSON file"
+            />
+            <ActionCard
+              icon={<Eye className="h-5 w-5" />}
+              title="View CSS"
+              description="Preview the CSS code that will be generated before applying"
+            />
+            <ActionCard
+              icon={<Download className="h-5 w-5" />}
+              title="Download Starter"
+              description="Generate a ZIP file with a starter project using your current theme"
+            />
+          </div>
+
+          <TipBox type="warning">
+            After clicking "Apply to Project", you must refresh your browser to see the changes take effect.
+          </TipBox>
+        </div>
+      </DocSection>
+
+      {/* brand.md Integration */}
+      <DocSection
+        id="brand-md"
+        title="brand.md Integration"
+        description="Understand how the theme editor generates AI-friendly documentation"
+      >
+        <div className="space-y-6">
+          <div>
+            <h3 className="font-semibold text-foreground mb-3">What is brand.md?</h3>
+            <p className="text-muted-foreground text-sm">
+              <code className="px-1 py-0.5 rounded bg-muted">docs/brand.md</code> is an auto-generated file that documents
+              your entire design system in a human-readable and AI-parseable format.
+            </p>
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-foreground mb-3">What it contains</h3>
+            <ul className="space-y-2 text-sm text-muted-foreground">
+              <li className="flex items-start gap-2">
+                <span className="text-primary mt-0.5">•</span>
+                <span>Complete color palette tables (light and dark modes)</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-primary mt-0.5">•</span>
+                <span>Typography settings (fonts, sizes, line heights)</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-primary mt-0.5">•</span>
+                <span>Spacing scale and border radius values</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-primary mt-0.5">•</span>
+                <span>Button styles and hover effects</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-primary mt-0.5">•</span>
+                <span>Raw theme JSON for programmatic access</span>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-foreground mb-3">How it updates</h3>
+            <p className="text-muted-foreground text-sm mb-4">
+              When you click "Apply to Project" in the theme editor:
+            </p>
+            <ol className="space-y-2 text-sm text-muted-foreground pl-5 list-decimal">
+              <li>The <code className="px-1 py-0.5 rounded bg-muted">:root</code> and <code className="px-1 py-0.5 rounded bg-muted">.dark</code> blocks in <code className="px-1 py-0.5 rounded bg-muted">src/app/globals.css</code> are replaced</li>
+              <li>The <code className="px-1 py-0.5 rounded bg-muted">docs/brand.md</code> file is regenerated with current values</li>
+              <li>Both files are updated atomically in a single operation</li>
+            </ol>
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-foreground mb-3">AI Integration</h3>
+            <p className="text-muted-foreground text-sm mb-4">
+              AI code assistants (like Claude, Cursor, GitHub Copilot) can read brand.md to understand your design system
+              and generate code that follows your brand guidelines.
+            </p>
+            <CodeBlock
+              language="bash"
+              code={`# Example: Ask your AI assistant
+"Create a new feature card component using the design system from brand.md"
+
+# The AI will use your custom colors, spacing, and typography`}
+            />
+          </div>
+
+          <TipBox type="tip">
+            Include brand.md in your version control to track design system changes over time.
+          </TipBox>
+
+          <div className="p-6 rounded-lg border border-border bg-muted/30">
+            <h4 className="font-semibold text-sm text-foreground mb-3">File Locations</h4>
+            <div className="space-y-2 text-sm font-mono">
+              <div>
+                <code className="text-primary">docs/brand.md</code>
+                <p className="text-xs text-muted-foreground mt-1">Auto-generated design system documentation</p>
+              </div>
+              <div className="mt-3">
+                <code className="text-primary">src/app/globals.css</code>
+                <p className="text-xs text-muted-foreground mt-1">CSS variables updated by theme editor</p>
+              </div>
+              <div className="mt-3">
+                <code className="text-primary">.cursor/commands/brand.md</code>
+                <p className="text-xs text-muted-foreground mt-1">Developer guidelines for using the design system</p>
               </div>
             </div>
           </div>
         </div>
-      </section>
-    </>
+      </DocSection>
+    </div>
   );
 }
 
-interface DocCardProps {
+// Helper Components
+
+function QuickLinkCard({
+  icon,
+  title,
+  description,
+  href,
+}: {
   icon: React.ReactNode;
   title: string;
   description: string;
   href: string;
-  articles: number;
+}) {
+  return (
+    <Link
+      href={href}
+      className="group flex gap-3 p-4 rounded-lg border border-border bg-card transition-colors hover:border-primary/50 hover:bg-card/80"
+    >
+      <div className="flex-shrink-0 text-primary">{icon}</div>
+      <div>
+        <div className="font-semibold text-sm text-foreground group-hover:text-primary transition-colors">
+          {title}
+        </div>
+        <div className="text-xs text-muted-foreground mt-1">{description}</div>
+      </div>
+    </Link>
+  );
 }
 
-function DocCard({ icon, title, description, href, articles }: DocCardProps) {
+function RadiusExample({ value, label }: { value: string; label: string }) {
+  const radiusMap: Record<string, string> = {
+    none: '0',
+    sm: '0.125rem',
+    md: '0.375rem',
+    lg: '0.5rem',
+    xl: '0.75rem',
+    '2xl': '1rem',
+    full: '9999px',
+  };
+
   return (
-    <Link href={href}>
-      <Card className="group h-full overflow-hidden border-border/50 bg-card/50 backdrop-blur transition-all hover:border-primary/50 hover:shadow-lg">
-        <CardHeader className="pb-2">
-          <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-            {icon}
-          </div>
-          <CardTitle className="text-lg">{title}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <CardDescription className="leading-relaxed">{description}</CardDescription>
-          <div className="mt-4 flex items-center gap-2 text-sm text-primary">
-            <span>{articles} articles</span>
-            <svg className="h-4 w-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </div>
-        </CardContent>
-      </Card>
-    </Link>
+    <div className="p-4 rounded-lg border border-border bg-card">
+      <div
+        className="w-full h-16 bg-primary/20 border-2 border-primary/40 mb-2"
+        style={{ borderRadius: radiusMap[value] }}
+      />
+      <div className="text-xs font-semibold text-foreground">{label}</div>
+      <div className="text-xs text-muted-foreground">{radiusMap[value]}</div>
+    </div>
+  );
+}
+
+function HoverEffectCard({ effect, description }: { effect: string; description: string }) {
+  return (
+    <div className="p-4 rounded-lg border border-border bg-card">
+      <div className="font-semibold text-sm text-foreground mb-1">{effect}</div>
+      <div className="text-xs text-muted-foreground">{description}</div>
+    </div>
+  );
+}
+
+function ActionCard({
+  icon,
+  title,
+  description,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+}) {
+  return (
+    <div className="p-4 rounded-lg border border-border bg-card">
+      <div className="flex items-center gap-2 mb-2">
+        <div className="text-primary">{icon}</div>
+        <div className="font-semibold text-sm text-foreground">{title}</div>
+      </div>
+      <div className="text-xs text-muted-foreground">{description}</div>
+    </div>
   );
 }

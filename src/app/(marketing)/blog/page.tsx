@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/cards/card';
 import { Input } from '@/components/ui/input';
+import { CTA } from '@/components/cta';
 
 export const metadata = {
   title: 'Blog | SaaS Starter',
@@ -18,11 +19,11 @@ export default function BlogPage() {
           <div className="mx-auto max-w-3xl text-center">
             <p className="font-semibold uppercase tracking-wider text-primary">Blog</p>
             <h1 className="mt-2 font-bold">
-              Insights & Updates
+              Engineering for AI
             </h1>
             <div className="mt-6">
               <p className="text-muted-foreground">
-                Stay up to date with the latest news, tutorials, and insights from our team.
+                Insights on vibe coding, AI-assisted development, and shipping faster.
               </p>
             </div>
           </div>
@@ -161,32 +162,7 @@ export default function BlogPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24">
-        <div className="container-wide">
-          <div className="relative overflow-hidden rounded-3xl bg-primary px-6 py-16 sm:px-12 sm:py-20">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary to-primary/80" />
-            <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=%2230%22 height=%2230%22 viewBox=%220 0 30 30%22 fill=%22none%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cpath d=%22M1.22676 0C1.91374 0 2.45351 0.539773 2.45351 1.22676C2.45351 1.91374 1.91374 2.45351 1.22676 2.45351C0.539773 2.45351 0 1.91374 0 1.22676C0 0.539773 0.539773 0 1.22676 0Z%22 fill=%22rgba(255,255,255,0.07)%22/%3E%3C/svg%3E')] opacity-40" />
-            <div className="relative mx-auto max-w-4xl text-center">
-              <h2 className="font-bold text-primary-foreground">
-                Ready to get started?
-              </h2>
-              <p className="mt-4 text-primary-foreground/80">
-                Join thousands of teams already building with our platform.
-              </p>
-              <div className="mt-8">
-                <Button
-                  size="lg"
-                  variant="secondary"
-                  className="h-12 px-8"
-                  asChild
-                >
-                  <Link href="/sign-up">Start Free Trial</Link>
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <CTA />
     </>
   );
 }

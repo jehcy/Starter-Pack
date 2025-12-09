@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/cards/card';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { CTA } from '@/components/cta';
 
 export const metadata = {
   title: 'Features | SaaS Starter',
@@ -17,13 +18,13 @@ export default function FeaturesPage() {
           <div className="mx-auto max-w-3xl text-center">
             <p className="font-semibold uppercase tracking-wider text-primary">Features</p>
             <h1 className="mt-2 font-bold tracking-tight">
-              Powerful Features for
+              Engineered for
               <span className="block mt-2 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-                Modern Applications
+                AI-Assisted Development
               </span>
             </h1>
             <p className="mx-auto mt-6 max-w-4xl text-muted-foreground leading-relaxed">
-              Everything you need to build, launch, and scale your SaaS product with confidence.
+              Every architectural decision optimized for vibe coding. Faster comprehension, fewer tokens, better results.
             </p>
           </div>
         </div>
@@ -39,9 +40,9 @@ export default function FeaturesPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
               }
-              title="Next.js 14 App Router"
-              description="Built on the latest Next.js with server components, streaming, and the new app directory structure. Experience blazing fast page loads and optimal SEO out of the box."
-              features={['Server Components', 'Streaming SSR', 'File-based routing', 'API Routes']}
+              title="AI-Optimized Architecture"
+              description="Flat directory structures, explicit file naming, and comprehensive design guide. AI assistants generate consistent UI without chasing design decisions."
+              features={['Brand.md guide', 'Explicit exports', 'Flat structure', 'Type inference']}
             />
             <LargeFeatureCard
               icon={
@@ -49,9 +50,9 @@ export default function FeaturesPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
                 </svg>
               }
-              title="TypeScript First"
-              description="Full type safety across your entire codebase with strict TypeScript configuration. Catch errors early and enjoy superior developer experience with intelligent autocompletion."
-              features={['Strict mode enabled', 'Type inference', 'IDE integration', 'Error prevention']}
+              title="Token-Efficient Patterns"
+              description="Predictable component APIs, consistent styling patterns, and self-documenting code. Get more done before hitting context limits."
+              features={['Consistent APIs', 'Design tokens', 'JSDoc comments', 'Minimal abstractions']}
             />
           </div>
         </div>
@@ -76,7 +77,7 @@ export default function FeaturesPage() {
                 </svg>
               }
               title="Tailwind CSS"
-              description="Utility-first CSS framework with dark mode support and custom theming capabilities."
+              description="Design tokens as CSS variables. AI tools generate consistent styles without color mismatches."
             />
             <FeatureCard
               icon={
@@ -84,8 +85,8 @@ export default function FeaturesPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
                 </svg>
               }
-              title="shadcn/ui Components"
-              description="Beautiful, accessible, and customizable components built with Radix UI primitives."
+              title="shadcn/ui"
+              description="Composable components with explicit props. AI assistants scaffold new UI predictably."
             />
             <FeatureCard
               icon={
@@ -93,8 +94,8 @@ export default function FeaturesPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
                 </svg>
               }
-              title="InstantDB Integration"
-              description="Real-time database with instant sync, offline support, and optimistic updates."
+              title="InstantDB"
+              description="Type-safe real-time queries. Pre-configured schema patterns for rapid feature development."
             />
             <FeatureCard
               icon={
@@ -102,8 +103,8 @@ export default function FeaturesPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
               }
-              title="Authentication Ready"
-              description="Secure authentication flows with protected routes and session management."
+              title="Auth Ready"
+              description="OAuth with Google/GitHub pre-wired. Skip the boilerplate, ship the feature."
             />
             <FeatureCard
               icon={
@@ -112,7 +113,7 @@ export default function FeaturesPage() {
                 </svg>
               }
               title="Theme Editor"
-              description="Built-in visual theme editor to customize colors, spacing, and typography."
+              description="Visual customization with instant preview. Design tokens AI tools can reference."
             />
             <FeatureCard
               icon={
@@ -120,8 +121,8 @@ export default function FeaturesPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                 </svg>
               }
-              title="Responsive Design"
-              description="Mobile-first approach with beautiful layouts on all screen sizes."
+              title="Responsive"
+              description="Mobile-first layouts with consistent breakpoints. Predictable responsive patterns."
             />
           </div>
         </div>
@@ -134,24 +135,23 @@ export default function FeaturesPage() {
             <div>
               <p className="font-semibold uppercase tracking-wider text-primary">Performance</p>
               <h2 className="mt-2 font-bold tracking-tight">
-                Optimized for speed
+                Optimized for Comprehension
               </h2>
               <p className="mt-4 text-muted-foreground leading-relaxed">
-                Built with performance in mind from the ground up. Every component is optimized
-                for the best possible user experience.
+                Every architectural decision optimized for AI assistants to understand and extend your codebase efficiently.
               </p>
               <ul className="mt-8 space-y-4">
                 <PerformanceItem
-                  title="100/100 Lighthouse Score"
-                  description="Achieve perfect performance scores out of the box"
+                  title="70% fewer tokens"
+                  description="Flat structures and explicit exports reduce context overhead"
                 />
                 <PerformanceItem
-                  title="Edge-ready deployment"
-                  description="Deploy to the edge for ultra-low latency worldwide"
+                  title="Instant AI onboarding"
+                  description="Brand.md provides complete design system guidance in one file"
                 />
                 <PerformanceItem
-                  title="Automatic code splitting"
-                  description="Only load the JavaScript you need, when you need it"
+                  title="Predictable patterns"
+                  description="Consistent conventions AI tools recognize and extend"
                 />
               </ul>
             </div>
@@ -165,28 +165,7 @@ export default function FeaturesPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24">
-        <div className="container-wide">
-          <div className="relative overflow-hidden rounded-3xl border border-border/50 bg-muted/30 px-6 py-16 sm:px-12 sm:py-20">
-            <div className="relative mx-auto max-w-4xl text-center">
-              <h2 className="font-bold tracking-tight">
-                Ready to get started?
-              </h2>
-              <p className="mx-auto mt-4 text-muted-foreground">
-                Start building your next project with these powerful features.
-              </p>
-              <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-                <Button size="lg" className="h-12 px-8 text-base rounded-full" asChild>
-                  <Link href="/sign-up">Get Started Free</Link>
-                </Button>
-                <Button size="lg" variant="outline" className="h-12 px-8 text-base rounded-full" asChild>
-                  <Link href="/docs">Read the Docs</Link>
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <CTA />
     </>
   );
 }
