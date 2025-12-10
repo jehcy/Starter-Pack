@@ -52,18 +52,25 @@ export default function SignInPage() {
     window.location.href = githubAuthUrl;
   }
 
-  // Show loading while checking auth
-  if (isLoading) {
+  // Don't render if authenticated (will redirect)
+  if (user) {
+    return null;
+  }
+
+  // Show loading only briefly, then show form regardless
+  // This prevents infinite loading when InstantDB auth state doesn't resolve
+  const [showForm, setShowForm] = React.useState(false);
+  React.useEffect(() => {
+    const timer = setTimeout(() => setShowForm(true), 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading && !showForm) {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
       </div>
     );
-  }
-
-  // Don't render if authenticated (will redirect)
-  if (user) {
-    return null;
   }
 
   return (
