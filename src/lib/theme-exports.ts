@@ -211,89 +211,12 @@ module.exports = {
 }
 
 export function generateTailwindV4Theme(theme: BrandTheme): string {
-  return `/* Tailwind CSS v4 Theme Configuration
+  return `/* Tailwind CSS v3 Directives
  * Place this at the top of your globals.css file
  */
-@import "tailwindcss";
-
-@custom-variant dark (&:is(.dark *));
-
-@theme inline {
-  /* Colors */
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
-
-  /* Fonts */
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-mono);
-  --font-heading: var(--font-heading);
-
-  /* Spacing */
-  --spacing-xs: var(--spacing-xs);
-  --spacing-sm: var(--spacing-sm);
-  --spacing-md: var(--spacing-md);
-  --spacing-lg: var(--spacing-lg);
-  --spacing-xl: var(--spacing-xl);
-  --spacing-2xl: var(--spacing-2xl);
-
-  /* Radius */
-  --radius-none: var(--radius-none);
-  --radius-sm: var(--radius-sm);
-  --radius-md: var(--radius-md);
-  --radius-lg: var(--radius-lg);
-  --radius-xl: var(--radius-xl);
-  --radius-2xl: var(--radius-2xl);
-  --radius-full: var(--radius-full);
-
-  /* Typography Sizes */
-  --text-h1: var(--text-h1);
-  --text-h2: var(--text-h2);
-  --text-h3: var(--text-h3);
-  --text-h4: var(--text-h4);
-  --text-p: var(--text-p);
-  --text-blockquote: var(--text-blockquote);
-  --text-label: var(--text-label);
-  --text-code: var(--text-code);
-  --text-table: var(--text-table);
-  --text-list: var(--text-list);
-
-  /* Typography Styles */
-  --line-height: var(--line-height);
-  --line-height-h1: var(--line-height-h1);
-  --line-height-h2: var(--line-height-h2);
-  --line-height-h3: var(--line-height-h3);
-  --letter-spacing: var(--letter-spacing);
-
-  /* Button tokens */
-  --button-radius: var(--button-radius);
-  --button-font-weight: var(--button-font-weight);
-  --button-font-size: var(--button-font-size);
-  --button-hover-effect: var(--button-hover-effect);
-  --input-button-radius: var(--input-button-radius);
-  --input-button-font-weight: var(--input-button-font-weight);
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 `;
 }
 
@@ -305,27 +228,30 @@ export async function generateTailwindConfigZip(
   // Add Tailwind v3 config
   zip.file('tailwind.config.js', generateTailwindV3Config(theme));
 
-  // Add Tailwind v4 theme CSS
-  zip.file('tailwind-v4-theme.css', generateTailwindV4Theme(theme));
+  // Add Tailwind CSS directives
+  zip.file('tailwind-directives.css', generateTailwindV4Theme(theme));
 
   // Add README
   zip.file(
     'README.md',
-    `# Tailwind Configuration
+    `# Tailwind CSS v3 Configuration
 
-This package includes Tailwind CSS configuration for both v3 and v4.
+This package includes Tailwind CSS v3 configuration files.
 
-## Tailwind CSS v3
+## Usage
 
-Use \`tailwind.config.js\` with your existing Tailwind v3 setup.
+1. Copy \`tailwind.config.js\` to your project root
+2. Copy the Tailwind directives from \`tailwind-directives.css\` to the top of your \`globals.css\` file
+3. Download the "globals.css" export option for the complete CSS variable definitions
 
-## Tailwind CSS v4
+## Files Included
 
-Copy the contents of \`tailwind-v4-theme.css\` to the top of your \`globals.css\` file.
+- \`tailwind.config.js\` - Tailwind v3 configuration with theme extensions
+- \`tailwind-directives.css\` - Basic Tailwind directives (@tailwind base, components, utilities)
 
 ## CSS Variables
 
-Both configurations expect CSS variables to be defined in your globals.css file.
+The configuration expects CSS variables to be defined in your globals.css file.
 Download the "globals.css" export option for the complete CSS variable definitions.
 `
   );

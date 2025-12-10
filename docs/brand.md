@@ -6,7 +6,7 @@ Design tokens and guidelines for consistent UI across all pages.
 
 ---
 
-## Theme: Amber
+## Theme: Ocean
 
 ---
 
@@ -17,58 +17,58 @@ Design tokens and guidelines for consistent UI across all pages.
 | Token | HEX | CSS Variable |
 | ----- | --- | ------------ |
 | `background` | `#ffffff` | `--background` |
-| `foreground` | `#262626` | `--foreground` |
-| `primary` | `#f59e0b` | `--primary` |
-| `primaryForeground` | `#000000` | `--primary-foreground` |
-| `secondary` | `#f3f4f6` | `--secondary` |
-| `secondaryForeground` | `#4b5563` | `--secondary-foreground` |
-| `accent` | `#fffbeb` | `--accent` |
-| `accentForeground` | `#92400e` | `--accent-foreground` |
-| `muted` | `#f9fafb` | `--muted` |
-| `mutedForeground` | `#6b7280` | `--muted-foreground` |
-| `destructive` | `#ef4444` | `--destructive` |
+| `foreground` | `#0f1419` | `--foreground` |
+| `primary` | `#1e9df1` | `--primary` |
+| `primaryForeground` | `#ffffff` | `--primary-foreground` |
+| `secondary` | `#0f1419` | `--secondary` |
+| `secondaryForeground` | `#ffffff` | `--secondary-foreground` |
+| `accent` | `#e3ecf6` | `--accent` |
+| `accentForeground` | `#1e9df1` | `--accent-foreground` |
+| `muted` | `#e5e5e6` | `--muted` |
+| `mutedForeground` | `#0f1419` | `--muted-foreground` |
+| `destructive` | `#f4212e` | `--destructive` |
 | `destructiveForeground` | `#ffffff` | `--destructive-foreground` |
-| `card` | `#ffffff` | `--card` |
-| `cardForeground` | `#262626` | `--card-foreground` |
+| `card` | `#f7f8f8` | `--card` |
+| `cardForeground` | `#0f1419` | `--card-foreground` |
 | `popover` | `#ffffff` | `--popover` |
-| `popoverForeground` | `#262626` | `--popover-foreground` |
-| `border` | `#e5e7eb` | `--border` |
-| `input` | `#e5e7eb` | `--input` |
-| `ring` | `#f59e0b` | `--ring` |
-| `chart1` | `#f59e0b` | `--chart1` |
-| `chart2` | `#d97706` | `--chart2` |
-| `chart3` | `#b45309` | `--chart3` |
-| `chart4` | `#92400e` | `--chart4` |
-| `chart5` | `#78350f` | `--chart5` |
+| `popoverForeground` | `#0f1419` | `--popover-foreground` |
+| `border` | `#e1eaef` | `--border` |
+| `input` | `#f7f9fa` | `--input` |
+| `ring` | `#1da1f2` | `--ring` |
+| `chart1` | `#1e9df1` | `--chart1` |
+| `chart2` | `#00b87a` | `--chart2` |
+| `chart3` | `#f7b928` | `--chart3` |
+| `chart4` | `#17bf63` | `--chart4` |
+| `chart5` | `#e0245e` | `--chart5` |
 
 ### Dark Mode Colors
 
 | Token | HEX | CSS Variable |
 | ----- | --- | ------------ |
-| `background` | `#171717` | `--background` |
-| `foreground` | `#e5e5e5` | `--foreground` |
-| `primary` | `#f59e0b` | `--primary` |
-| `primaryForeground` | `#000000` | `--primary-foreground` |
-| `secondary` | `#262626` | `--secondary` |
-| `secondaryForeground` | `#e5e5e5` | `--secondary-foreground` |
-| `accent` | `#92400e` | `--accent` |
-| `accentForeground` | `#fde68a` | `--accent-foreground` |
-| `muted` | `#1f1f1f` | `--muted` |
-| `mutedForeground` | `#a3a3a3` | `--muted-foreground` |
-| `destructive` | `#ef4444` | `--destructive` |
+| `background` | `#000000` | `--background` |
+| `foreground` | `#e7e9ea` | `--foreground` |
+| `primary` | `#1c9cf0` | `--primary` |
+| `primaryForeground` | `#ffffff` | `--primary-foreground` |
+| `secondary` | `#f0f3f4` | `--secondary` |
+| `secondaryForeground` | `#0f1419` | `--secondary-foreground` |
+| `accent` | `#061622` | `--accent` |
+| `accentForeground` | `#1c9cf0` | `--accent-foreground` |
+| `muted` | `#181818` | `--muted` |
+| `mutedForeground` | `#72767a` | `--muted-foreground` |
+| `destructive` | `#f4212e` | `--destructive` |
 | `destructiveForeground` | `#ffffff` | `--destructive-foreground` |
-| `card` | `#262626` | `--card` |
-| `cardForeground` | `#e5e5e5` | `--card-foreground` |
-| `popover` | `#262626` | `--popover` |
-| `popoverForeground` | `#e5e5e5` | `--popover-foreground` |
-| `border` | `#404040` | `--border` |
-| `input` | `#404040` | `--input` |
-| `ring` | `#f59e0b` | `--ring` |
-| `chart1` | `#fbbf24` | `--chart1` |
-| `chart2` | `#d97706` | `--chart2` |
-| `chart3` | `#92400e` | `--chart3` |
-| `chart4` | `#b45309` | `--chart4` |
-| `chart5` | `#92400e` | `--chart5` |
+| `card` | `#17181c` | `--card` |
+| `cardForeground` | `#d9d9d9` | `--card-foreground` |
+| `popover` | `#000000` | `--popover` |
+| `popoverForeground` | `#e7e9ea` | `--popover-foreground` |
+| `border` | `#242628` | `--border` |
+| `input` | `#22303c` | `--input` |
+| `ring` | `#1da1f2` | `--ring` |
+| `chart1` | `#1e9df1` | `--chart1` |
+| `chart2` | `#00b87a` | `--chart2` |
+| `chart3` | `#f7b928` | `--chart3` |
+| `chart4` | `#17bf63` | `--chart4` |
+| `chart5` | `#e0245e` | `--chart5` |
 
 ---
 
@@ -149,59 +149,59 @@ Design tokens and guidelines for consistent UI across all pages.
 
 ```json
 {
-  "name": "Amber",
+  "name": "Ocean",
   "colors": {
     "light": {
       "background": "#ffffff",
-      "foreground": "#262626",
-      "primary": "#f59e0b",
-      "primaryForeground": "#000000",
-      "secondary": "#f3f4f6",
-      "secondaryForeground": "#4b5563",
-      "accent": "#fffbeb",
-      "accentForeground": "#92400e",
-      "muted": "#f9fafb",
-      "mutedForeground": "#6b7280",
-      "destructive": "#ef4444",
+      "foreground": "#0f1419",
+      "primary": "#1e9df1",
+      "primaryForeground": "#ffffff",
+      "secondary": "#0f1419",
+      "secondaryForeground": "#ffffff",
+      "accent": "#e3ecf6",
+      "accentForeground": "#1e9df1",
+      "muted": "#e5e5e6",
+      "mutedForeground": "#0f1419",
+      "destructive": "#f4212e",
       "destructiveForeground": "#ffffff",
-      "card": "#ffffff",
-      "cardForeground": "#262626",
+      "card": "#f7f8f8",
+      "cardForeground": "#0f1419",
       "popover": "#ffffff",
-      "popoverForeground": "#262626",
-      "border": "#e5e7eb",
-      "input": "#e5e7eb",
-      "ring": "#f59e0b",
-      "chart1": "#f59e0b",
-      "chart2": "#d97706",
-      "chart3": "#b45309",
-      "chart4": "#92400e",
-      "chart5": "#78350f"
+      "popoverForeground": "#0f1419",
+      "border": "#e1eaef",
+      "input": "#f7f9fa",
+      "ring": "#1da1f2",
+      "chart1": "#1e9df1",
+      "chart2": "#00b87a",
+      "chart3": "#f7b928",
+      "chart4": "#17bf63",
+      "chart5": "#e0245e"
     },
     "dark": {
-      "background": "#171717",
-      "foreground": "#e5e5e5",
-      "primary": "#f59e0b",
-      "primaryForeground": "#000000",
-      "secondary": "#262626",
-      "secondaryForeground": "#e5e5e5",
-      "accent": "#92400e",
-      "accentForeground": "#fde68a",
-      "muted": "#1f1f1f",
-      "mutedForeground": "#a3a3a3",
-      "destructive": "#ef4444",
+      "background": "#000000",
+      "foreground": "#e7e9ea",
+      "primary": "#1c9cf0",
+      "primaryForeground": "#ffffff",
+      "secondary": "#f0f3f4",
+      "secondaryForeground": "#0f1419",
+      "accent": "#061622",
+      "accentForeground": "#1c9cf0",
+      "muted": "#181818",
+      "mutedForeground": "#72767a",
+      "destructive": "#f4212e",
       "destructiveForeground": "#ffffff",
-      "card": "#262626",
-      "cardForeground": "#e5e5e5",
-      "popover": "#262626",
-      "popoverForeground": "#e5e5e5",
-      "border": "#404040",
-      "input": "#404040",
-      "ring": "#f59e0b",
-      "chart1": "#fbbf24",
-      "chart2": "#d97706",
-      "chart3": "#92400e",
-      "chart4": "#b45309",
-      "chart5": "#92400e"
+      "card": "#17181c",
+      "cardForeground": "#d9d9d9",
+      "popover": "#000000",
+      "popoverForeground": "#e7e9ea",
+      "border": "#242628",
+      "input": "#22303c",
+      "ring": "#1da1f2",
+      "chart1": "#1e9df1",
+      "chart2": "#00b87a",
+      "chart3": "#f7b928",
+      "chart4": "#17bf63",
+      "chart5": "#e0245e"
     }
   },
   "spacing": {

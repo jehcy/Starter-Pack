@@ -34,6 +34,12 @@ export interface WorkspaceMember {
 
 export type UserType = 'free' | 'paid' | 'admin';
 
+/**
+ * Admin email addresses
+ * Users with these emails will automatically receive admin privileges
+ */
+export const ADMIN_EMAILS = ['jehcy.adorna@gmail.com'];
+
 export interface UserProfile {
   id: string;
   userId: string;

@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect } from 'react';
-import { db, tx, id } from '@/lib/instantdb';
+import { db, tx, id, ADMIN_EMAILS } from '@/lib/instantdb';
 import { useAuth, User } from '@/hooks/useAuth';
 import type { UserProfile, UserType } from '@/lib/instantdb';
 
@@ -31,19 +31,32 @@ export function useUserProfile(): UseUserProfileReturn {
   useEffect(() => {
     if (user && !profileLoading && !profile) {
       const profileId = id();
+      const isAdminEmail = ADMIN_EMAILS.includes(user.email ?? '');
       db.transact(
         tx.userProfiles[profileId].update({
           userId: user.id,
           email: user.email ?? '',
           displayName: user.email?.split('@')[0] ?? null,
           avatarUrl: null,
-          userType: 'free',
+          userType: isAdminEmail ? 'admin' : 'free',
           createdAt: Date.now(),
           updatedAt: Date.now(),
         })
       );
     }
   }, [user, profile, profileLoading]);
+
+  // Auto-upgrade existing profiles to admin if email matches
+  useEffect(() => {
+    if (profile && user?.email && ADMIN_EMAILS.includes(user.email) && profile.userType !== 'admin') {
+      db.transact(
+        tx.userProfiles[profile.id].update({
+          userType: 'admin',
+          updatedAt: Date.now(),
+        })
+      );
+    }
+  }, [profile, user?.email]);
 
   return {
     user,

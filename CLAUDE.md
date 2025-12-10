@@ -51,18 +51,14 @@ The project has a visual theme editor at `/theme` that controls typography, colo
 
 **Container utility:** Use `container-wide` class for consistent page-width containers.
 
-### Max-Width Utilities (Tailwind CSS 4)
-
-This project uses **Tailwind CSS 4** which requires explicit width tokens for max-width utilities to work properly.
+### Max-Width Utilities
 
 **Available max-width utilities:**
 - `max-w-xs`, `max-w-sm`, `max-w-md`, `max-w-lg`, `max-w-xl`
 - `max-w-2xl`, `max-w-3xl`, `max-w-4xl`, `max-w-5xl`, `max-w-6xl`, `max-w-7xl`
 - `max-w-full`, `max-w-none`
 
-These are defined in `globals.css` via `--width-*` tokens in the `@theme inline` section. In Tailwind v4, max-width utilities use these width tokens instead of spacing tokens.
-
-**Important:** If you add new max-width utilities, you MUST define the corresponding `--width-*` token in `globals.css` `@theme inline` section, otherwise the utility won't work.
+These are defined in `tailwind.config.js` via the `maxWidth` theme extension and use CSS variables from `globals.css`.
 
 ## ESLint Rules
 - `@typescript-eslint/no-explicit-any`: error
@@ -115,11 +111,10 @@ These are defined in `globals.css` via `--width-*` tokens in the `@theme inline`
 
 ### UI & Styling
 - **Component Library:** shadcn/ui (new-york style)
-- **Styling:** Tailwind CSS 4
+- **Styling:** Tailwind CSS 3
 - **Typography Plugin:** @tailwindcss/typography (required for prose classes)
 - **Icons:** Lucide React
 - **Theming:** next-themes (dark/light mode)
-- **Animations:** tw-animate-css
 - **Toasts:** Sonner
 
 ### Radix UI Primitives
@@ -134,45 +129,50 @@ Dialog, Label, Scroll Area, Select, Separator, Slider, Slot, Tabs, Tooltip
 - **Formatting:** Prettier with Tailwind plugin
 - **Build:** Turbopack (Next.js default)
 
-## Tailwind CSS 4 Setup
+## Tailwind CSS 3 Setup
 
-This project uses **Tailwind CSS 4** which has different configuration requirements compared to v3:
+This project uses **Tailwind CSS 3** with a standard configuration:
 
 ### Configuration Files
-- **No `tailwind.config.js`** - Tailwind v4 uses a config-free approach
-- **CSS-based configuration** - All theme tokens are in `src/app/globals.css` using `@theme inline`
-- **PostCSS only** - Configuration is in `postcss.config.mjs`
+- **`tailwind.config.js`** - Main Tailwind configuration file with theme extensions
+- **`postcss.config.mjs`** - PostCSS configuration with Tailwind and Autoprefixer
+- **`src/app/globals.css`** - Global styles with Tailwind directives and CSS variables
 
 ### Required Setup in `globals.css`
 
 ```css
-@import "tailwindcss";
-@import "tw-animate-css";
-@plugin "@tailwindcss/typography";
-
-@theme inline {
-  /* All design tokens defined here */
-  /* Including --width-* tokens for max-width utilities */
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 ```
 
-### Key Differences from Tailwind v3
+### Theme Configuration
 
-1. **Max-width utilities** - Require explicit `--width-*` tokens in `@theme inline`
-2. **Typography plugin** - Must be loaded with `@plugin` directive, not `@import`
-3. **No config file** - All customization happens in CSS via `@theme`
-4. **Width tokens** - In v3, max-w used container sizing; in v4, they use width tokens
+All theme customization is done in `tailwind.config.js`:
+- **Colors** - Use HSL values via CSS variables (e.g., `hsl(var(--background))`)
+- **Typography** - Custom font sizes, line heights, and letter spacing
+- **Spacing** - Custom spacing scale with CSS variables
+- **Border Radius** - Custom radius values
+- **Shadows** - Custom shadow scale
+- **Max Width** - Custom max-width utilities using CSS variables
+
+### CSS Variables
+
+Theme values are stored as CSS variables in `globals.css`:
+- `:root` - Light mode colors and theme tokens
+- `.dark` - Dark mode color overrides
+- All theme tokens reference these CSS variables for easy theming
 
 ### Common Issues & Solutions
 
-**Issue:** `max-w-*` utilities not working
-**Solution:** Add `--width-*` tokens to `@theme inline` section in `globals.css`
-
 **Issue:** `prose` classes not working
-**Solution:** Install `@tailwindcss/typography` and add `@plugin "@tailwindcss/typography"` to `globals.css`
+**Solution:** Ensure `@tailwindcss/typography` is installed and included in the plugins array in `tailwind.config.js`
 
-**Issue:** Build errors about missing width values
-**Solution:** Ensure all used max-width utilities have corresponding `--width-*` tokens defined
+**Issue:** Colors not applying correctly
+**Solution:** Verify CSS variables are defined in both `:root` and `.dark` sections of `globals.css`
+
+**Issue:** Custom theme values not working
+**Solution:** Check that the values are properly defined in `tailwind.config.js` under `theme.extend`
 
 ## Data Architecture
 

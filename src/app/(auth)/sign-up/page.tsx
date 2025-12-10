@@ -4,7 +4,7 @@ import * as React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { db } from '@/lib/instantdb';
-import { useAuth } from '@/hooks/useAuth';
+import { useUserProfile } from '@/hooks/useUserProfile';
 import { Button } from '@/components/ui/button';
 
 // These should match what you configured in the InstantDB dashboard
@@ -13,16 +13,16 @@ const GITHUB_CLIENT_NAME = 'VibeCN';
 
 export default function SignUpPage() {
   const router = useRouter();
-  const { user, isLoading: authLoading } = useAuth();
+  const { user, isLoading, isAdmin } = useUserProfile();
   const [googleLoading, setGoogleLoading] = React.useState(false);
   const [githubLoading, setGithubLoading] = React.useState(false);
 
-  // Redirect if already authenticated
+  // Redirect based on user role
   React.useEffect(() => {
-    if (!authLoading && user) {
-      router.push('/dashboard');
+    if (!isLoading && user) {
+      router.push(isAdmin ? '/dashboard' : '/theme');
     }
-  }, [user, authLoading, router]);
+  }, [user, isLoading, isAdmin, router]);
 
   // Generate Google auth URL
   const googleAuthUrl = React.useMemo(() => {
@@ -53,7 +53,7 @@ export default function SignUpPage() {
   }
 
   // Show loading while checking auth
-  if (authLoading) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />

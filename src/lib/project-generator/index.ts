@@ -266,86 +266,9 @@ MIT
 function generateGlobalsCssTemplate(theme: BrandTheme): string {
   const { root, dark } = generateGlobalsCss(theme);
 
-  return `@import "tailwindcss";
-
-@custom-variant dark (&:is(.dark *));
-
-@theme inline {
-  /* Colors */
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
-
-  /* Fonts */
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-mono);
-  --font-heading: var(--font-heading);
-
-  /* Spacing */
-  --spacing-xs: var(--spacing-xs);
-  --spacing-sm: var(--spacing-sm);
-  --spacing-md: var(--spacing-md);
-  --spacing-lg: var(--spacing-lg);
-  --spacing-xl: var(--spacing-xl);
-  --spacing-2xl: var(--spacing-2xl);
-
-  /* Radius */
-  --radius-none: var(--radius-none);
-  --radius-sm: var(--radius-sm);
-  --radius-md: var(--radius-md);
-  --radius-lg: var(--radius-lg);
-  --radius-xl: var(--radius-xl);
-  --radius-2xl: var(--radius-2xl);
-  --radius-full: var(--radius-full);
-
-  /* Typography Sizes */
-  --text-h1: var(--text-h1);
-  --text-h2: var(--text-h2);
-  --text-h3: var(--text-h3);
-  --text-h4: var(--text-h4);
-  --text-p: var(--text-p);
-  --text-blockquote: var(--text-blockquote);
-  --text-label: var(--text-label);
-  --text-code: var(--text-code);
-  --text-table: var(--text-table);
-  --text-list: var(--text-list);
-
-  /* Typography Styles */
-  --line-height: var(--line-height);
-  --line-height-h1: var(--line-height-h1);
-  --line-height-h2: var(--line-height-h2);
-  --line-height-h3: var(--line-height-h3);
-  --letter-spacing: var(--letter-spacing);
-
-  /* Button tokens */
-  --button-radius: var(--button-radius);
-  --button-font-weight: var(--button-font-weight);
-  --button-font-size: var(--button-font-size);
-  --button-hover-effect: var(--button-hover-effect);
-  --input-button-radius: var(--input-button-radius);
-  --input-button-font-weight: var(--input-button-font-weight);
-}
+  return `@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 body {
   line-height: 1.6;

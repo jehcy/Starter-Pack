@@ -93,8 +93,8 @@ export function CssPreviewModal({ theme }: CssPreviewModalProps) {
           <Code className="size-4" />
         </Button>
       </SheetTrigger>
-      <SheetContent side="right" className="sm:max-w-3xl p-0">
-        <div className="flex h-full flex-col">
+      <SheetContent side="right" className="w-[650px] sm:max-w-3xl p-0">
+        <div className="w-full flex h-full flex-col">
           <SheetHeader className="border-b p-6">
             <div className="space-y-1">
               <SheetTitle>CSS Preview</SheetTitle>

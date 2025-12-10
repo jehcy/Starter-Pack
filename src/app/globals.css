@@ -1,127 +1,6 @@
-@import "tailwindcss";
-@import "tw-animate-css";
-@plugin "@tailwindcss/typography";
-
-@custom-variant dark (&:is(.dark *));
-
-
-@theme inline {
-  /* Colors */
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
-
-  /* Fonts - using CSS variables from :root */
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-mono);
-  --font-heading: var(--font-heading);
-
-  /* Spacing - using CSS variables from :root */
-  --spacing-xs: var(--spacing-xs);
-  --spacing-sm: var(--spacing-sm);
-  --spacing-md: var(--spacing-md);
-  --spacing-lg: var(--spacing-lg);
-  --spacing-xl: var(--spacing-xl);
-  --spacing-2xl: var(--spacing-2xl);
-
-  /* Radius - using CSS variables from :root */
-  --radius-none: var(--radius-none);
-  --radius-sm: var(--radius-sm);
-  --radius-md: var(--radius-md);
-  --radius-lg: var(--radius-lg);
-  --radius-xl: var(--radius-xl);
-  --radius-2xl: var(--radius-2xl);
-  --radius-full: var(--radius-full);
-
-  /* Typography Sizes */
-  --text-h1: var(--text-h1);
-  --text-h2: var(--text-h2);
-  --text-h3: var(--text-h3);
-  --text-h4: var(--text-h4);
-  --text-p: var(--text-p);
-  --text-blockquote: var(--text-blockquote);
-  --text-label: var(--text-label);
-  --text-code: var(--text-code);
-  --text-table: var(--text-table);
-  --text-list: var(--text-list);
-
-  /* Typography Styles */
-  --line-height: var(--line-height);
-  --line-height-h1: var(--line-height-h1);
-  --line-height-h2: var(--line-height-h2);
-  --line-height-h3: var(--line-height-h3);
-  --letter-spacing: var(--letter-spacing);
-
-  /* Button tokens */
-  --button-radius: var(--button-radius);
-  --button-font-weight: var(--button-font-weight);
-  --button-font-size: var(--button-font-size);
-  --button-hover-effect: var(--button-hover-effect);
-  --input-button-radius: var(--input-button-radius);
-  --input-button-font-weight: var(--input-button-font-weight);
-
-  /* Shadows */
-  --shadow-2xs: var(--shadow-2xs);
-  --shadow-xs: var(--shadow-xs);
-  --shadow-sm: var(--shadow-sm);
-  --shadow: var(--shadow);
-  --shadow-md: var(--shadow-md);
-  --shadow-lg: var(--shadow-lg);
-  --shadow-xl: var(--shadow-xl);
-  --shadow-2xl: var(--shadow-2xl);
-
-  /* Tracking */
-  --tracking-tighter: calc(var(--tracking-normal) - 0.05em);
-  --tracking-tight: calc(var(--tracking-normal) - 0.025em);
-  --tracking-normal: var(--tracking-normal);
-  --tracking-wide: calc(var(--tracking-normal) + 0.025em);
-  --tracking-wider: calc(var(--tracking-normal) + 0.05em);
-  --tracking-widest: calc(var(--tracking-normal) + 0.1em);
-
-  /* Max-width tokens for proper container sizing */
-  --width-xs: 20rem;      /* 320px */
-  --width-sm: 24rem;      /* 384px */
-  --width-md: 28rem;      /* 448px */
-  --width-lg: 32rem;      /* 512px */
-  --width-xl: 36rem;      /* 576px */
-  --width-2xl: 42rem;     /* 672px */
-  --width-3xl: 48rem;     /* 768px */
-  --width-4xl: 56rem;     /* 896px */
-  --width-5xl: 64rem;     /* 1024px */
-  --width-6xl: 72rem;     /* 1152px */
-  --width-7xl: 80rem;     /* 1280px */
-  --width-full: 100%;
-  --width-none: none;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 body {
   /* Default readable line-height and letter-spacing for body text */
@@ -143,29 +22,29 @@ h1, h2, h3 {
 :root {
   /* Brand Light Mode Colors - from brand.md */
   --background: #ffffff;
-  --foreground: #262626;
-  --primary: #f59e0b;
-  --primary-foreground: #000000;
-  --secondary: #f3f4f6;
-  --secondary-foreground: #4b5563;
-  --accent: #fffbeb;
-  --accent-foreground: #92400e;
-  --muted: #f9fafb;
-  --muted-foreground: #6b7280;
-  --destructive: #ef4444;
+  --foreground: #0f1419;
+  --primary: #1e9df1;
+  --primary-foreground: #ffffff;
+  --secondary: #0f1419;
+  --secondary-foreground: #ffffff;
+  --accent: #e3ecf6;
+  --accent-foreground: #1e9df1;
+  --muted: #e5e5e6;
+  --muted-foreground: #0f1419;
+  --destructive: #f4212e;
   --destructive-foreground: #ffffff;
-  --card: #ffffff;
-  --card-foreground: #262626;
+  --card: #f7f8f8;
+  --card-foreground: #0f1419;
   --popover: #ffffff;
-  --popover-foreground: #262626;
-  --border: #e5e7eb;
-  --input: #e5e7eb;
-  --ring: #f59e0b;
-  --chart-1: #f59e0b;
-  --chart-2: #d97706;
-  --chart-3: #b45309;
-  --chart-4: #92400e;
-  --chart-5: #78350f;
+  --popover-foreground: #0f1419;
+  --border: #e1eaef;
+  --input: #f7f9fa;
+  --ring: #1da1f2;
+  --chart-1: #1e9df1;
+  --chart-2: #00b87a;
+  --chart-3: #f7b928;
+  --chart-4: #17bf63;
+  --chart-5: #e0245e;
 
   /* Brand Spacing */
   --spacing-xs: 0.25rem;
@@ -225,30 +104,30 @@ h1, h2, h3 {
 
 .dark {
   /* Brand Dark Mode Colors - from brand.md */
-  --background: #171717;
-  --foreground: #e5e5e5;
-  --primary: #f59e0b;
-  --primary-foreground: #000000;
-  --secondary: #262626;
-  --secondary-foreground: #e5e5e5;
-  --accent: #92400e;
-  --accent-foreground: #fde68a;
-  --muted: #1f1f1f;
-  --muted-foreground: #a3a3a3;
-  --destructive: #ef4444;
+  --background: #000000;
+  --foreground: #e7e9ea;
+  --primary: #1c9cf0;
+  --primary-foreground: #ffffff;
+  --secondary: #f0f3f4;
+  --secondary-foreground: #0f1419;
+  --accent: #061622;
+  --accent-foreground: #1c9cf0;
+  --muted: #181818;
+  --muted-foreground: #72767a;
+  --destructive: #f4212e;
   --destructive-foreground: #ffffff;
-  --card: #262626;
-  --card-foreground: #e5e5e5;
-  --popover: #262626;
-  --popover-foreground: #e5e5e5;
-  --border: #404040;
-  --input: #404040;
-  --ring: #f59e0b;
-  --chart-1: #fbbf24;
-  --chart-2: #d97706;
-  --chart-3: #92400e;
-  --chart-4: #b45309;
-  --chart-5: #92400e;
+  --card: #17181c;
+  --card-foreground: #d9d9d9;
+  --popover: #000000;
+  --popover-foreground: #e7e9ea;
+  --border: #242628;
+  --input: #22303c;
+  --ring: #1da1f2;
+  --chart-1: #1e9df1;
+  --chart-2: #00b87a;
+  --chart-3: #f7b928;
+  --chart-4: #17bf63;
+  --chart-5: #e0245e;
 
   /* Dark Mode Button Hover */
   --button-hover-shadow: none;
@@ -280,7 +159,7 @@ h1, h2, h3 {
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border;
   }
   body {
     @apply bg-background text-foreground font-sans antialiased;

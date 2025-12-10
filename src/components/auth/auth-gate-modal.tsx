@@ -39,9 +39,9 @@ export function AuthGateModal({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="sm:max-w-3xl p-0">
+      <SheetContent side="right" className="w-[650px] sm:max-w-3xl p-0">
         <div className="flex h-full flex-col items-center justify-center p-6">
-          <div className="w-1/2 space-y-6">
+          <div className="w-3/4 space-y-6">
             <SheetHeader>
               <SheetTitle>Sign in to continue</SheetTitle>
               <SheetDescription>
