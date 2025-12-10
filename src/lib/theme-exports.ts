@@ -114,7 +114,7 @@ export function generateTokensJson(theme: BrandTheme): string {
 }
 
 // ============================================
-// 2. Tailwind Config Generator (v3 + v4 ZIP)
+// 2. Tailwind Config Generator (v3)
 // ============================================
 
 export function generateTailwindV3Config(theme: BrandTheme): string {
@@ -210,8 +210,8 @@ module.exports = {
 `;
 }
 
-export function generateTailwindV4Theme(theme: BrandTheme): string {
-  return `/* Tailwind CSS v3 Directives
+export function generateTailwindDirectives(theme: BrandTheme): string {
+  return `/* Tailwind CSS Directives
  * Place this at the top of your globals.css file
  */
 @tailwind base;
@@ -229,7 +229,7 @@ export async function generateTailwindConfigZip(
   zip.file('tailwind.config.js', generateTailwindV3Config(theme));
 
   // Add Tailwind CSS directives
-  zip.file('tailwind-directives.css', generateTailwindV4Theme(theme));
+  zip.file('tailwind-directives.css', generateTailwindDirectives(theme));
 
   // Add README
   zip.file(

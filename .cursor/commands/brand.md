@@ -31,7 +31,7 @@ You are a UI designer specializing in creating consistent, brand-aligned interfa
    - ❌ NEVER use: Any `max-w-*` classes on paragraph elements
    - ✅ Let the parent container control layout and width
    - ✅ Use max-width on section containers or divs, not on individual paragraphs
-6. **Use only defined max-width utilities** - This project uses Tailwind CSS 4:
+6. **Use only defined max-width utilities** - This project uses Tailwind CSS 3:
    - ✅ Available: `max-w-xs` through `max-w-7xl`, `max-w-full`, `max-w-none`
    - ❌ Do NOT use: `max-w-screen-*` (not defined in this project)
    - ⚠️ If you need a new max-width value, you MUST add the `--width-*` token to `globals.css` first
@@ -44,7 +44,7 @@ You are a UI designer specializing in creating consistent, brand-aligned interfa
 2. **Check existing components** - Look in `@/src/components/` for available shadcn components.
 3. **Add missing components** - If a needed component doesn't exist, add it using `npx shadcn@latest add [component-name]` before using it.
 4. **Apply styles from globals.css** - Use Tailwind classes that reference the CSS variables and design tokens defined in `globals.css`.
-5. **Verify max-width availability** - Before using `max-w-*` utilities, check that the corresponding `--width-*` token exists in `globals.css` `@theme inline` section.
+5. **Verify max-width availability** - Before using `max-w-*` utilities, check that the corresponding `--width-*` token exists in the `:root` section of `globals.css`.
 
 ### When Adding New Styles:
 
@@ -58,17 +58,17 @@ If the user provides new design inspiration or a screenshot:
    - Use the existing color token system (`--color-*`, `--primary`, `--secondary`, etc.)
 3. **Never add inline styles** - All styles must be in `globals.css` and referenced via Tailwind classes.
 
-## Tailwind CSS 4 Specifics
+## Tailwind CSS 3 Configuration
 
-This project uses **Tailwind CSS 4**, which has important differences from v3:
+This project uses **Tailwind CSS 3** with a custom configuration in `tailwind.config.js`.
 
 ### Max-Width Tokens Required
 
-In Tailwind v4, `max-w-*` utilities require explicit `--width-*` tokens in `@theme inline`:
+`max-w-*` utilities reference CSS variables defined in `globals.css` `:root` section:
 
 **Available max-width utilities:**
 ```css
-/* Defined in globals.css @theme inline */
+/* Defined in globals.css :root section */
 --width-xs: 20rem;      /* max-w-xs */
 --width-sm: 24rem;      /* max-w-sm */
 --width-md: 28rem;      /* max-w-md */
@@ -88,12 +88,12 @@ In Tailwind v4, `max-w-*` utilities require explicit `--width-*` tokens in `@the
 - ❌ Do NOT use `max-w-screen-sm`, `max-w-screen-md`, etc. (not defined)
 - ❌ Do NOT use `max-w-prose` without verifying it exists
 - ✅ Only use max-width utilities listed above
-- ⚠️ To add new max-width values, add `--width-*` token to `globals.css` `@theme inline` first
+- ⚠️ To add new max-width values, add `--width-*` token to `:root` in `globals.css` first
 
 ### Typography Plugin
 
 The project uses `@tailwindcss/typography` for prose classes:
-- Loaded via `@plugin "@tailwindcss/typography"` in `globals.css`
+- Configured via `plugins` array in `tailwind.config.js`
 - Enables `prose`, `prose-lg`, `prose-xl` classes
 - Used in terms/privacy pages
 
@@ -234,7 +234,7 @@ Before finalizing any UI component or page:
 4. Implement the design using only classes from `globals.css`
 5. **NEVER hardcode typography sizes or line-heights** - these are controlled by the theme editor
 6. **If adding new max-width values:**
-   - Add `--width-*` token to `@theme inline` in `globals.css`
+   - Add `--width-*` token to `:root` section in `globals.css`
    - Follow existing naming pattern (xs, sm, md, lg, xl, 2xl-7xl)
    - Use rem units for consistency
 

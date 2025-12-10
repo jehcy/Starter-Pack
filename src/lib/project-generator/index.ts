@@ -87,11 +87,12 @@ function generatePackageJson(projectName: string): string {
       'tailwind-merge': '^3.4.0',
     },
     devDependencies: {
-      '@tailwindcss/postcss': '^4',
       '@types/node': '^20',
       '@types/react': '^19',
       '@types/react-dom': '^19',
-      'tailwindcss': '^4',
+      'autoprefixer': '^10.4.20',
+      'postcss': '^8.4.49',
+      'tailwindcss': '^3.4.15',
       'typescript': '^5',
     },
   }, null, 2);
@@ -135,13 +136,12 @@ export default nextConfig;
 }
 
 function generatePostcssConfig(): string {
-  return `const config = {
+  return `module.exports = {
   plugins: {
-    "@tailwindcss/postcss": {},
+    tailwindcss: {},
+    autoprefixer: {},
   },
 };
-
-export default config;
 `;
 }
 
@@ -253,7 +253,7 @@ npx shadcn@latest add [component-name]
 ## Tech Stack
 
 - [Next.js 15](https://nextjs.org) - React framework
-- [Tailwind CSS 4](https://tailwindcss.com) - Utility-first CSS
+- [Tailwind CSS 3](https://tailwindcss.com) - Utility-first CSS
 - [shadcn/ui](https://ui.shadcn.com) - Component library
 - [next-themes](https://github.com/pacocoursey/next-themes) - Dark mode support
 

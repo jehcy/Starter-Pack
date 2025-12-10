@@ -616,7 +616,7 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
         a.click();
         URL.revokeObjectURL(url);
         toast.success('Tailwind config downloaded!', {
-          description: 'Includes both v3 and v4 configurations.',
+          description: 'Includes Tailwind v3 configuration.',
         });
       } catch {
         toast.error('Failed to generate Tailwind config');
@@ -856,7 +856,7 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
                 <div className="flex flex-col">
                   <span className="font-medium">Tailwind Config</span>
                   <span className="text-xs text-muted-foreground">
-                    v3 + v4 configurations
+                    v3 configuration
                   </span>
                 </div>
               </DropdownMenuItem>

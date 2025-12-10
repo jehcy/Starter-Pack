@@ -6,7 +6,7 @@ A modern SaaS starter template built with Next.js, TypeScript, Tailwind CSS, sha
 
 - **Framework**: [Next.js 14](https://nextjs.org/) with App Router
 - **Language**: [TypeScript](https://www.typescriptlang.org/)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/) v4
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/) v3
 - **UI Components**: [shadcn/ui](https://ui.shadcn.com/)
 - **Database**: [InstantDB](https://instantdb.com/) (real-time, offline-first)
 - **Deployment**: [Render](https://render.com/)

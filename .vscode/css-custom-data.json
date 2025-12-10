@@ -3,11 +3,11 @@
   "atDirectives": [
     {
       "name": "@theme",
-      "description": "Tailwind CSS v4 theme configuration"
+      "description": "Tailwind CSS v3 theme configuration"
     },
     {
       "name": "@custom-variant",
-      "description": "Tailwind CSS v4 custom variant definition"
+      "description": "Tailwind CSS v3 custom variant definition"
     },
     {
       "name": "@apply",
