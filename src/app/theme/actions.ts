@@ -109,6 +109,27 @@ ${radiusRows}
 
 ---
 
+## Brand Assets
+
+### Logo
+- **Primary:** ${theme.assets.logo?.url || 'Not set'}
+- **Dark Mode:** ${theme.assets.logoDark?.url || 'Not set'}
+
+### Icons & Social
+- **Favicon:** ${theme.assets.favicon?.url || 'Not set'}
+- **OG Image:** ${theme.assets.ogImage?.url || 'Not set'}
+
+### Hero Images
+${theme.assets.heroImages.length > 0 ? theme.assets.heroImages.map((img, i) => `${i + 1}. ${img.url}`).join('\n') : 'None uploaded'}
+
+### Product Images
+${theme.assets.productImages.length > 0 ? theme.assets.productImages.map((img, i) => `${i + 1}. ${img.url}`).join('\n') : 'None uploaded'}
+
+### Videos
+${theme.assets.videos.length > 0 ? theme.assets.videos.map((v, i) => `${i + 1}. ${v.type === 'embed' ? `${v.embedUrl} (embed)` : `${v.url} (upload)`}`).join('\n') : 'None uploaded'}
+
+---
+
 ## Raw Theme JSON
 
 \`\`\`json

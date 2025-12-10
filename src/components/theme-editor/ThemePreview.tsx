@@ -37,11 +37,21 @@ interface ThemePreviewProps {
   theme: BrandTheme;
   mode: 'light' | 'dark';
   onModeChange?: (mode: 'light' | 'dark') => void;
+  breakpoint?: 'desktop' | 'tablet' | 'mobile';
+  onBreakpointChange?: (breakpoint: 'desktop' | 'tablet' | 'mobile') => void;
 }
 
-export function ThemePreview({ theme, mode, onModeChange }: ThemePreviewProps) {
+export function ThemePreview({ theme, mode, onModeChange, breakpoint = 'desktop', onBreakpointChange }: ThemePreviewProps) {
   const [currentPage, setCurrentPage] = useState<PreviewPage>('home');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const colors = mode === 'light' ? theme.colors.light : theme.colors.dark;
+
+  // Breakpoint width mapping
+  const containerWidth = {
+    desktop: '100%',
+    tablet: '768px',
+    mobile: '375px',
+  }[breakpoint];
 
   // Generate CSS variables from theme
   const cssVariables = useMemo(() => {
@@ -72,31 +82,85 @@ export function ThemePreview({ theme, mode, onModeChange }: ThemePreviewProps) {
 
   return (
     <div
-      className="h-full overflow-auto flex flex-col"
+      className="h-full flex flex-col"
       style={{
         ...cssVariables,
-        backgroundColor: colors.background,
         color: colors.foreground,
         fontFamily: theme.fonts.sans,
         lineHeight: theme.typographyStyles.lineHeight,
         letterSpacing: `${theme.typographyStyles.letterSpacing}em`,
+        overflow: 'hidden',
       } as React.CSSProperties}
     >
-      {/* Navigation Header */}
-      <header
+     
+
+      {/* Responsive Container */}
+      <div className="flex-1 flex justify-center" style={{ backgroundColor: colors.muted + '20', overflow: 'hidden' }}>
+        <div
+          className="transition-all duration-300 ease-in-out overflow-auto"
+          style={{
+            width: containerWidth,
+            maxWidth: '100%',
+            height: '100%',
+            border: `1px solid ${colors.border}`,
+            boxShadow: breakpoint !== 'desktop' ? '0 0 0 9999px rgba(0, 0, 0, 0.1)' : 'none',
+          }}
+        >
+          {/* Page Content */}
+          <div className="flex-1">
+
+          <header
         className="sticky top-0 z-10 border-b"
         style={{
           backgroundColor: colors.background,
           borderColor: colors.border,
         }}
       >
-        <div className="w-full mx-auto px-6 h-16 flex items-center justify-between">
+        <div
+          className="w-full mx-auto flex items-center justify-between"
+          style={{
+            paddingLeft: theme.spacing.px[breakpoint],
+            paddingRight: theme.spacing.px[breakpoint],
+            height: breakpoint === 'mobile' ? '56px' : '64px',
+          }}
+        >
           {/* Logo */}
-          <div className="flex items-center gap-8">
+          <div className="flex items-center" style={{ gap: breakpoint === 'mobile' ? '1rem' : '2rem' }}>
+            {/* Hamburger Menu - Show on mobile and tablet */}
+            {(breakpoint === 'mobile' || breakpoint === 'tablet') && (
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="transition-colors hover:opacity-80"
+                style={{
+                  padding: '0.5rem',
+                  backgroundColor: 'transparent',
+                  color: colors.foreground,
+                  borderRadius: theme.radius.md,
+                }}
+                aria-label="Toggle menu"
+              >
+                <svg
+                  className={breakpoint === 'mobile' ? 'size-5' : 'size-6'}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  {mobileMenuOpen ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  )}
+                </svg>
+              </button>
+            )}
+
             <div className="flex items-center gap-2">
               <div
-                className="size-8 flex items-center justify-center font-bold text-sm"
+                className="flex items-center justify-center font-bold"
                 style={{
+                  width: breakpoint === 'mobile' ? '28px' : '32px',
+                  height: breakpoint === 'mobile' ? '28px' : '32px',
+                  fontSize: breakpoint === 'mobile' ? '0.75rem' : '0.875rem',
                   backgroundColor: colors.primary,
                   color: colors.primaryForeground,
                   borderRadius: theme.radius.md,
@@ -104,22 +168,100 @@ export function ThemePreview({ theme, mode, onModeChange }: ThemePreviewProps) {
               >
                 V
               </div>
-              <span className="font-semibold" style={{ color: colors.foreground, fontFamily: theme.fonts.heading }}>
-                VibeCN
-              </span>
+              {breakpoint !== 'mobile' && (
+                <span className="font-semibold" style={{ color: colors.foreground, fontFamily: theme.fonts.heading }}>
+                  VibeCN
+                </span>
+              )}
             </div>
-            
-            {/* Nav Items */}
-            <nav data-tour="preview-tabs" className="hidden md:flex items-center gap-1">
+
+            {/* Nav Items - Only show on desktop */}
+            {breakpoint === 'desktop' && (
+              <nav data-tour="preview-tabs" className="flex items-center gap-1">
+                {navItems.map((item) => (
+                  <button
+                    key={item.label}
+                    onClick={() => setCurrentPage(item.page)}
+                    className="px-3 py-2 text-sm font-medium transition-colors"
+                    style={{
+                      color: currentPage === item.page ? colors.foreground : colors.mutedForeground,
+                      backgroundColor: currentPage === item.page ? colors.muted : 'transparent',
+                      borderRadius: theme.buttons.borderRadius,
+                    }}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </nav>
+            )}
+          </div>
+
+          {/* Right Side */}
+          <div className="flex items-center" style={{ gap: breakpoint === 'mobile' ? '0.25rem' : '0.5rem' }}>
+            {/* Theme Toggle */}
+            <button
+              onClick={handleToggleMode}
+              className="transition-colors hover:opacity-80"
+              style={{
+                padding: breakpoint === 'mobile' ? '0.375rem' : '0.5rem',
+                backgroundColor: 'transparent',
+                color: colors.foreground,
+                borderRadius: theme.radius.md,
+              }}
+              title={`Switch to ${mode === 'light' ? 'dark' : 'light'} mode`}
+            >
+              {mode === 'light' ? <Moon className={breakpoint === 'mobile' ? 'size-3.5' : 'size-4'} /> : <Sun className={breakpoint === 'mobile' ? 'size-3.5' : 'size-4'} />}
+            </button>
+            {/* Bell icon - Hide on mobile */}
+            {breakpoint !== 'mobile' && (
+              <PreviewButton
+                colors={colors}
+                radius={theme.buttons.borderRadius}
+                variant="ghost"
+                fontWeight={theme.buttons.fontWeight}
+                fontSize={theme.buttons.fontSize}
+                hoverEffect={theme.buttons.hoverEffect}
+                size={breakpoint === 'tablet' ? 'sm' : 'default'}
+              >
+                <Bell className="size-4" />
+              </PreviewButton>
+            )}
+            <PreviewButton
+              colors={colors}
+              radius={theme.buttons.borderRadius}
+              variant="default"
+              fontWeight={theme.buttons.fontWeight}
+              fontSize={breakpoint === 'mobile' ? '0.75rem' : theme.buttons.fontSize}
+              hoverEffect={theme.buttons.hoverEffect}
+              size={breakpoint === 'mobile' ? 'sm' : 'default'}
+            >
+              {breakpoint === 'mobile' ? 'Start' : 'Get Started'}
+            </PreviewButton>
+          </div>
+        </div>
+
+        {/* Mobile Menu Dropdown */}
+        {(breakpoint === 'mobile' || breakpoint === 'tablet') && mobileMenuOpen && (
+          <div
+            className="border-t"
+            style={{
+              backgroundColor: colors.background,
+              borderColor: colors.border,
+            }}
+          >
+            <nav className="flex flex-col">
               {navItems.map((item) => (
                 <button
                   key={item.label}
-                  onClick={() => setCurrentPage(item.page)}
-                  className="px-3 py-2 text-sm font-medium transition-colors"
+                  onClick={() => {
+                    setCurrentPage(item.page);
+                    setMobileMenuOpen(false);
+                  }}
+                  className="text-left px-6 py-3 text-sm font-medium transition-colors border-b"
                   style={{
-                    color: currentPage === item.page ? colors.foreground : colors.mutedForeground,
-                    backgroundColor: currentPage === item.page ? colors.muted : 'transparent',
-                    borderRadius: theme.buttons.borderRadius,
+                    color: currentPage === item.page ? colors.primary : colors.foreground,
+                    backgroundColor: currentPage === item.page ? `${colors.primary}10` : 'transparent',
+                    borderColor: colors.border,
                   }}
                 >
                   {item.label}
@@ -127,57 +269,20 @@ export function ThemePreview({ theme, mode, onModeChange }: ThemePreviewProps) {
               ))}
             </nav>
           </div>
-
-          {/* Right Side */}
-          <div className="flex items-center gap-2">
-            {/* Theme Toggle */}
-            <button
-              onClick={handleToggleMode}
-              className="p-2 transition-colors hover:opacity-80"
-              style={{
-                backgroundColor: 'transparent',
-                color: colors.foreground,
-                borderRadius: theme.radius.md,
-              }}
-              title={`Switch to ${mode === 'light' ? 'dark' : 'light'} mode`}
-            >
-              {mode === 'light' ? <Moon className="size-4" /> : <Sun className="size-4" />}
-            </button>
-            <PreviewButton
-              colors={colors}
-              radius={theme.buttons.borderRadius}
-              variant="ghost"
-              fontWeight={theme.buttons.fontWeight}
-              fontSize={theme.buttons.fontSize}
-              hoverEffect={theme.buttons.hoverEffect}
-            >
-              <Bell className="size-4" />
-            </PreviewButton>
-            <PreviewButton
-              colors={colors}
-              radius={theme.buttons.borderRadius}
-              variant="default"
-              fontWeight={theme.buttons.fontWeight}
-              fontSize={theme.buttons.fontSize}
-              hoverEffect={theme.buttons.hoverEffect}
-            >
-              Get Started
-            </PreviewButton>
-          </div>
-        </div>
+        )}
       </header>
+      
+            {currentPage === 'home' && <HomePage theme={theme} colors={colors} breakpoint={breakpoint} />}
+            {currentPage === 'lp' && <LPPage theme={theme} colors={colors} breakpoint={breakpoint} />}
+            {currentPage === 'features' && <FeaturesPage theme={theme} colors={colors} breakpoint={breakpoint} />}
+            {currentPage === 'pricing' && <PricingPage theme={theme} colors={colors} breakpoint={breakpoint} />}
+            {currentPage === 'dashboard' && <DashboardPage theme={theme} colors={colors} breakpoint={breakpoint} />}
+          </div>
 
-      {/* Page Content */}
-      <div className="flex-1">
-        {currentPage === 'home' && <HomePage theme={theme} colors={colors} />}
-        {currentPage === 'lp' && <LPPage theme={theme} colors={colors} />}
-        {currentPage === 'features' && <FeaturesPage theme={theme} colors={colors} />}
-        {currentPage === 'pricing' && <PricingPage theme={theme} colors={colors} />}
-        {currentPage === 'dashboard' && <DashboardPage theme={theme} colors={colors} />}
+          {/* Footer */}
+          <PreviewFooter theme={theme} colors={colors} breakpoint={breakpoint} />
+        </div>
       </div>
-
-      {/* Footer */}
-      <PreviewFooter theme={theme} colors={colors} />
     </div>
   );
 }
@@ -189,19 +294,28 @@ export function ThemePreview({ theme, mode, onModeChange }: ThemePreviewProps) {
 interface PageProps {
   theme: BrandTheme;
   colors: ColorTokens;
+  breakpoint: 'desktop' | 'tablet' | 'mobile';
 }
 
-function HomePage({ theme, colors }: PageProps) {
+function HomePage({ theme, colors, breakpoint }: PageProps) {
   return (
     <>
       {/* Hero Section */}
-      <section 
-        className="relative overflow-hidden py-24"
+      <section
+        className="relative overflow-hidden"
         style={{
           background: `radial-gradient(ellipse at top, ${colors.primary}20, ${colors.background} 70%)`,
+          paddingTop: theme.spacing.py[breakpoint],
+          paddingBottom: theme.spacing.py[breakpoint],
         }}
       >
-        <div className="max-w-6xl mx-auto px-6">
+        <div
+          className="max-w-6xl mx-auto"
+          style={{
+            paddingLeft: theme.spacing.px[breakpoint],
+            paddingRight: theme.spacing.px[breakpoint],
+          }}
+        >
           <div className="mx-auto max-w-4xl text-center">
             <div 
               className="mb-8 inline-flex items-center gap-2 px-4 py-2 text-sm font-medium"
@@ -255,7 +369,13 @@ function HomePage({ theme, colors }: PageProps) {
             >
               Token-optimized UI components designed for AI efficiency. Ship production-ready interfaces faster using clear, structured code that minimizes context and maximizes output quality.
             </p>
-            <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+            <div
+              className="mt-10 flex items-center gap-4"
+              style={{
+                flexDirection: breakpoint === 'mobile' ? 'column' : 'row',
+                justifyContent: 'center',
+              }}
+            >
               <PreviewButton 
                 colors={colors} 
                 radius={theme.buttons.borderRadius}
@@ -285,14 +405,20 @@ function HomePage({ theme, colors }: PageProps) {
       </section>
 
       {/* Logos Section */}
-      <section 
+      <section
         className="border-y py-12"
         style={{
           backgroundColor: `${colors.muted}50`,
           borderColor: colors.border,
         }}
       >
-        <div className="max-w-6xl mx-auto px-6">
+        <div
+          className="max-w-6xl mx-auto"
+          style={{
+            paddingLeft: theme.spacing.px[breakpoint],
+            paddingRight: theme.spacing.px[breakpoint],
+          }}
+        >
           <p 
             className="mb-8 text-center text-sm font-medium uppercase tracking-wider"
             style={{ color: colors.mutedForeground }}
@@ -314,10 +440,21 @@ function HomePage({ theme, colors }: PageProps) {
       </section>
 
       {/* Features Grid */}
-      <section className="py-24">
-        <div className="max-w-6xl mx-auto px-6">
+      <section
+        style={{
+          paddingTop: theme.spacing.py[breakpoint],
+          paddingBottom: theme.spacing.py[breakpoint],
+        }}
+      >
+        <div
+          className="max-w-6xl mx-auto"
+          style={{
+            paddingLeft: theme.spacing.px[breakpoint],
+            paddingRight: theme.spacing.px[breakpoint],
+          }}
+        >
           <div className="mx-auto max-w-4xl text-center">
-            <p 
+            <p
               className="text-sm font-semibold uppercase tracking-wider"
               style={{ color: colors.primary }}
             >
@@ -343,27 +480,45 @@ function HomePage({ theme, colors }: PageProps) {
               Built with modern tools and best practices for production-ready applications
             </p>
           </div>
-          <div className="mx-auto mt-16 grid max-w-5xl gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            <FeatureCard theme={theme} colors={colors} icon={Zap} title="AI-First Components" description="Pre-built pages and layouts AI assistants understand instantly." />
-            <FeatureCard theme={theme} colors={colors} icon={Code} title="Token-Efficient" description="Flat structures and clear naming reduce context overhead." />
-            <FeatureCard theme={theme} colors={colors} icon={Palette} title="Visual Theme Editor" description="Live customization with instant preview across your app." />
-            <FeatureCard theme={theme} colors={colors} icon={Database} title="InstantDB Ready" description="Type-safe real-time queries with pre-configured schema." />
-            <FeatureCard theme={theme} colors={colors} icon={Lock} title="Auth Pre-wired" description="OAuth with Google/GitHub ready out of the box." />
-            <FeatureCard theme={theme} colors={colors} icon={Smartphone} title="Responsive Patterns" description="Mobile-first layouts with predictable breakpoints." />
+          <div
+            className="mx-auto mt-16 grid max-w-5xl"
+            style={{
+              gap: theme.spacing.spaceY[breakpoint],
+              gridTemplateColumns: breakpoint === 'mobile' ? '1fr' : breakpoint === 'tablet' ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)',
+            }}
+          >
+            <FeatureCard theme={theme} colors={colors} breakpoint={breakpoint} icon={Zap} title="AI-First Components" description="Pre-built pages and layouts AI assistants understand instantly." />
+            <FeatureCard theme={theme} colors={colors} breakpoint={breakpoint} icon={Code} title="Token-Efficient" description="Flat structures and clear naming reduce context overhead." />
+            <FeatureCard theme={theme} colors={colors} breakpoint={breakpoint} icon={Palette} title="Visual Theme Editor" description="Live customization with instant preview across your app." />
+            <FeatureCard theme={theme} colors={colors} breakpoint={breakpoint} icon={Database} title="InstantDB Ready" description="Type-safe real-time queries with pre-configured schema." />
+            <FeatureCard theme={theme} colors={colors} breakpoint={breakpoint} icon={Lock} title="Auth Pre-wired" description="OAuth with Google/GitHub ready out of the box." />
+            <FeatureCard theme={theme} colors={colors} breakpoint={breakpoint} icon={Smartphone} title="Responsive Patterns" description="Mobile-first layouts with predictable breakpoints." />
           </div>
         </div>
       </section>
 
       {/* Stats Section */}
-      <section 
+      <section
         className="border-y py-16"
         style={{
           backgroundColor: `${colors.muted}50`,
           borderColor: colors.border,
         }}
       >
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        <div
+          className="max-w-6xl mx-auto"
+          style={{
+            paddingLeft: theme.spacing.px[breakpoint],
+            paddingRight: theme.spacing.px[breakpoint],
+          }}
+        >
+          <div
+            className="grid"
+            style={{
+              gap: theme.spacing.spaceY[breakpoint],
+              gridTemplateColumns: breakpoint === 'mobile' ? '1fr' : breakpoint === 'tablet' ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)',
+            }}
+          >
             <StatItem colors={colors} value="70%" label="Fewer Tokens" />
             <StatItem colors={colors} value="Instant" label="AI Onboarding" />
             <StatItem colors={colors} value="100%" label="Type Safe" />
@@ -373,9 +528,20 @@ function HomePage({ theme, colors }: PageProps) {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24">
-        <div className="max-w-6xl mx-auto px-6">
-          <div 
+      <section
+        style={{
+          paddingTop: theme.spacing.py[breakpoint],
+          paddingBottom: theme.spacing.py[breakpoint],
+        }}
+      >
+        <div
+          className="max-w-6xl mx-auto"
+          style={{
+            paddingLeft: theme.spacing.px[breakpoint],
+            paddingRight: theme.spacing.px[breakpoint],
+          }}
+        >
+          <div
             className="relative overflow-hidden px-6 py-20 sm:px-12 sm:py-28"
             style={{
               backgroundColor: colors.primary,
@@ -408,7 +574,13 @@ function HomePage({ theme, colors }: PageProps) {
               >
                 Join developers building production-ready UIs with AI assistance. Start free today.
               </p>
-              <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+              <div
+                className="mt-8 flex items-center gap-4"
+                style={{
+                  flexDirection: breakpoint === 'mobile' ? 'column' : 'row',
+                  justifyContent: 'center',
+                }}
+              >
                 <PreviewButton 
                   colors={colors} 
                   radius={theme.buttons.borderRadius}
@@ -429,17 +601,25 @@ function HomePage({ theme, colors }: PageProps) {
   );
 }
 
-function FeaturesPage({ theme, colors }: PageProps) {
+function FeaturesPage({ theme, colors , breakpoint }: PageProps) {
   return (
     <>
       {/* Hero Section */}
-      <section 
-        className="relative overflow-hidden py-24"
+      <section
+        className="relative overflow-hidden"
         style={{
           background: `radial-gradient(ellipse at top, ${colors.primary}20, ${colors.background} 70%)`,
+          paddingTop: theme.spacing.py[breakpoint],
+          paddingBottom: theme.spacing.py[breakpoint],
         }}
       >
-        <div className="max-w-6xl mx-auto px-6">
+        <div
+          className="max-w-6xl mx-auto"
+          style={{
+            paddingLeft: theme.spacing.px[breakpoint],
+            paddingRight: theme.spacing.px[breakpoint],
+          }}
+        >
           <div className="mx-auto max-w-3xl text-center">
             <p 
               className="text-sm font-semibold uppercase tracking-wider"
@@ -483,12 +663,30 @@ function FeaturesPage({ theme, colors }: PageProps) {
       </section>
 
       {/* Large Feature Cards */}
-      <section className="py-24">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="grid gap-8 lg:grid-cols-2">
+      <section
+        style={{
+          paddingTop: theme.spacing.py[breakpoint],
+          paddingBottom: theme.spacing.py[breakpoint],
+        }}
+      >
+        <div
+          className="max-w-6xl mx-auto"
+          style={{
+            paddingLeft: theme.spacing.px[breakpoint],
+            paddingRight: theme.spacing.px[breakpoint],
+          }}
+        >
+          <div
+            className="grid"
+            style={{
+              gap: theme.spacing.spaceY[breakpoint],
+              gridTemplateColumns: breakpoint === 'mobile' ? '1fr' : 'repeat(2, 1fr)',
+            }}
+          >
             <LargeFeatureCard
               theme={theme}
               colors={colors}
+              breakpoint={breakpoint}
               icon={Zap}
               title="AI-Optimized Architecture"
               description="Flat directory structures, explicit file naming, and comprehensive design guide. AI assistants generate consistent UI without chasing design decisions."
@@ -497,6 +695,7 @@ function FeaturesPage({ theme, colors }: PageProps) {
             <LargeFeatureCard
               theme={theme}
               colors={colors}
+              breakpoint={breakpoint}
               icon={Code}
               title="Token-Efficient Patterns"
               description="Predictable component APIs, consistent styling patterns, and self-documenting code. Get more done before hitting context limits."
@@ -507,14 +706,22 @@ function FeaturesPage({ theme, colors }: PageProps) {
       </section>
 
       {/* Features Grid */}
-      <section 
-        className="border-y py-24"
+      <section
+        className="border-y"
         style={{
+          paddingTop: theme.spacing.py[breakpoint],
+          paddingBottom: theme.spacing.py[breakpoint],
           backgroundColor: `${colors.muted}30`,
           borderColor: colors.border,
         }}
       >
-        <div className="max-w-6xl mx-auto px-6">
+        <div
+          className="max-w-6xl mx-auto"
+          style={{
+            paddingLeft: theme.spacing.px[breakpoint],
+            paddingRight: theme.spacing.px[breakpoint],
+          }}
+        >
           <div className="mx-auto max-w-4xl text-center mb-16">
             <h2 
               className="font-bold tracking-tight"
@@ -536,21 +743,44 @@ function FeaturesPage({ theme, colors }: PageProps) {
               A carefully curated tech stack for maximum productivity
             </p>
           </div>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            <FeatureCard theme={theme} colors={colors} icon={Palette} title="Tailwind CSS" description="Design tokens as CSS variables. AI tools generate consistent styles without color mismatches." />
-            <FeatureCard theme={theme} colors={colors} icon={Database} title="shadcn/ui" description="Composable components with explicit props. AI assistants scaffold new UI predictably." />
-            <FeatureCard theme={theme} colors={colors} icon={Database} title="InstantDB" description="Type-safe real-time queries. Pre-configured schema patterns for rapid feature development." />
-            <FeatureCard theme={theme} colors={colors} icon={Lock} title="Auth Ready" description="OAuth with Google/GitHub pre-wired. Skip the boilerplate, ship the feature." />
-            <FeatureCard theme={theme} colors={colors} icon={Settings} title="Theme Editor" description="Visual customization with instant preview. Design tokens AI tools can reference." />
-            <FeatureCard theme={theme} colors={colors} icon={Smartphone} title="Responsive" description="Mobile-first layouts with consistent breakpoints. Predictable responsive patterns." />
+          <div
+            className="grid"
+            style={{
+              gap: theme.spacing.spaceY[breakpoint],
+              gridTemplateColumns: breakpoint === 'mobile' ? '1fr' : breakpoint === 'tablet' ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)',
+            }}
+          >
+            <FeatureCard theme={theme} colors={colors} breakpoint={breakpoint} icon={Palette} title="Tailwind CSS" description="Design tokens as CSS variables. AI tools generate consistent styles without color mismatches." />
+            <FeatureCard theme={theme} colors={colors} breakpoint={breakpoint} icon={Database} title="shadcn/ui" description="Composable components with explicit props. AI assistants scaffold new UI predictably." />
+            <FeatureCard theme={theme} colors={colors} breakpoint={breakpoint} icon={Database} title="InstantDB" description="Type-safe real-time queries. Pre-configured schema patterns for rapid feature development." />
+            <FeatureCard theme={theme} colors={colors} breakpoint={breakpoint} icon={Lock} title="Auth Ready" description="OAuth with Google/GitHub pre-wired. Skip the boilerplate, ship the feature." />
+            <FeatureCard theme={theme} colors={colors} breakpoint={breakpoint} icon={Settings} title="Theme Editor" description="Visual customization with instant preview. Design tokens AI tools can reference." />
+            <FeatureCard theme={theme} colors={colors} breakpoint={breakpoint} icon={Smartphone} title="Responsive" description="Mobile-first layouts with consistent breakpoints. Predictable responsive patterns." />
           </div>
         </div>
       </section>
 
       {/* Performance Section */}
-      <section className="py-24">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
+      <section
+        style={{
+          paddingTop: theme.spacing.py[breakpoint],
+          paddingBottom: theme.spacing.py[breakpoint],
+        }}
+      >
+        <div
+          className="max-w-6xl mx-auto"
+          style={{
+            paddingLeft: theme.spacing.px[breakpoint],
+            paddingRight: theme.spacing.px[breakpoint],
+          }}
+        >
+          <div
+            className="grid gap-12"
+            style={{
+              gridTemplateColumns: breakpoint === 'mobile' ? '1fr' : 'repeat(2, 1fr)',
+              alignItems: 'center',
+            }}
+          >
             <div>
               <p 
                 className="text-sm font-semibold uppercase tracking-wider"
@@ -608,7 +838,7 @@ function FeaturesPage({ theme, colors }: PageProps) {
   );
 }
 
-function PricingPage({ theme, colors }: PageProps) {
+function PricingPage({ theme, colors , breakpoint }: PageProps) {
   return (
     <>
       {/* Hero Section */}
@@ -618,7 +848,13 @@ function PricingPage({ theme, colors }: PageProps) {
           background: `radial-gradient(ellipse at top, ${colors.primary}20, ${colors.background} 70%)`,
         }}
       >
-        <div className="max-w-6xl mx-auto px-6">
+        <div
+          className="max-w-6xl mx-auto"
+          style={{
+            paddingLeft: theme.spacing.px[breakpoint],
+            paddingRight: theme.spacing.px[breakpoint],
+          }}
+        >
           <div className="mx-auto max-w-3xl text-center">
             <p 
               className="text-sm font-semibold uppercase tracking-wider"
@@ -663,11 +899,24 @@ function PricingPage({ theme, colors }: PageProps) {
 
       {/* Pricing Cards */}
       <section className="py-16">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="mx-auto grid max-w-4xl gap-8 lg:grid-cols-2">
+        <div
+          className="max-w-6xl mx-auto"
+          style={{
+            paddingLeft: theme.spacing.px[breakpoint],
+            paddingRight: theme.spacing.px[breakpoint],
+          }}
+        >
+          <div
+            className="mx-auto grid max-w-4xl"
+            style={{
+              gap: theme.spacing.spaceY[breakpoint],
+              gridTemplateColumns: breakpoint === 'mobile' ? '1fr' : 'repeat(2, 1fr)',
+            }}
+          >
             <PricingCard
               theme={theme}
               colors={colors}
+              breakpoint={breakpoint}
               name="Free"
               price="$0"
               period="/month"
@@ -679,6 +928,7 @@ function PricingPage({ theme, colors }: PageProps) {
             <PricingCard
               theme={theme}
               colors={colors}
+              breakpoint={breakpoint}
               name="Pro"
               price="$7"
               period="/month"
@@ -694,14 +944,22 @@ function PricingPage({ theme, colors }: PageProps) {
       </section>
 
       {/* FAQ Section */}
-      <section 
-        className="border-y py-24"
+      <section
+        className="border-y"
         style={{
+          paddingTop: theme.spacing.py[breakpoint],
+          paddingBottom: theme.spacing.py[breakpoint],
           backgroundColor: `${colors.muted}30`,
           borderColor: colors.border,
         }}
       >
-        <div className="max-w-6xl mx-auto px-6">
+        <div
+          className="max-w-6xl mx-auto"
+          style={{
+            paddingLeft: theme.spacing.px[breakpoint],
+            paddingRight: theme.spacing.px[breakpoint],
+          }}
+        >
           <div className="mx-auto max-w-4xl text-center mb-16">
             <h2 
               className="font-bold tracking-tight"
@@ -735,17 +993,25 @@ function PricingPage({ theme, colors }: PageProps) {
   );
 }
 
-function DashboardPage({ theme, colors }: PageProps) {
+function DashboardPage({ theme, colors , breakpoint }: PageProps) {
   return (
     <div className="p-6">
       <div className="max-w-6xl mx-auto space-y-6">
         {/* Page Header */}
-        <div className="flex items-center justify-between">
+        <div
+          className="flex items-center"
+          style={{
+            flexDirection: breakpoint === 'mobile' ? 'column' : 'row',
+            justifyContent: 'space-between',
+            alignItems: breakpoint === 'mobile' ? 'flex-start' : 'center',
+            gap: breakpoint === 'mobile' ? '1rem' : '0',
+          }}
+        >
           <div>
-            <h1 
-              className="font-bold" 
-              style={{ 
-                color: colors.foreground, 
+            <h1
+              className="font-bold"
+              style={{
+                color: colors.foreground,
                 fontFamily: theme.fonts.heading,
                 fontSize: theme.typographySizes.h2,
               }}
@@ -756,7 +1022,14 @@ function DashboardPage({ theme, colors }: PageProps) {
               Live preview of your theme tokens
             </p>
           </div>
-          <div className="flex items-center gap-2">
+          <div
+            className="flex gap-2"
+            style={{
+              flexDirection: breakpoint === 'mobile' ? 'column' : 'row',
+              alignItems: breakpoint === 'mobile' ? 'stretch' : 'center',
+              width: breakpoint === 'mobile' ? '100%' : 'auto',
+            }}
+          >
             <PreviewButton
               colors={colors}
               radius={theme.buttons.borderRadius}
@@ -783,18 +1056,28 @@ function DashboardPage({ theme, colors }: PageProps) {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-4 gap-4">
-          <DashboardStatCard colors={colors} radius={theme.radius.xl} title="Total Revenue" value="$45,231.89" change="+20.1%" icon={DollarSign} />
-          <DashboardStatCard colors={colors} radius={theme.radius.xl} title="Subscriptions" value="+2,350" change="+180.1%" icon={Users} />
-          <DashboardStatCard colors={colors} radius={theme.radius.xl} title="Active Users" value="+12,234" change="+19%" icon={Activity} />
-          <DashboardStatCard colors={colors} radius={theme.radius.xl} title="Growth" value="+573" change="+201" icon={TrendingUp} />
+        <div
+          className="grid gap-4"
+          style={{
+            gridTemplateColumns: breakpoint === 'mobile' ? '1fr' : breakpoint === 'tablet' ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)',
+          }}
+        >
+          <DashboardStatCard colors={colors} radius={theme.radius.xl} cardPadding={theme.spacing.p[breakpoint]} title="Total Revenue" value="$45,231.89" change="+20.1%" icon={DollarSign} />
+          <DashboardStatCard colors={colors} radius={theme.radius.xl} cardPadding={theme.spacing.p[breakpoint]} title="Subscriptions" value="+2,350" change="+180.1%" icon={Users} />
+          <DashboardStatCard colors={colors} radius={theme.radius.xl} cardPadding={theme.spacing.p[breakpoint]} title="Active Users" value="+12,234" change="+19%" icon={Activity} />
+          <DashboardStatCard colors={colors} radius={theme.radius.xl} cardPadding={theme.spacing.p[breakpoint]} title="Growth" value="+573" change="+201" icon={TrendingUp} />
         </div>
 
         {/* Main Content Grid */}
-        <div className="grid grid-cols-3 gap-6">
+        <div
+          className="grid gap-6"
+          style={{
+            gridTemplateColumns: breakpoint === 'desktop' ? '2fr 1fr' : '1fr',
+          }}
+        >
           {/* Chart Card */}
           <div
-            className="col-span-2 p-6"
+            className="p-6"
             style={{
               backgroundColor: colors.card,
               borderRadius: theme.radius.xl,
@@ -910,7 +1193,12 @@ function DashboardPage({ theme, colors }: PageProps) {
           <h3 className="font-semibold mb-4" style={{ color: colors.cardForeground, fontFamily: theme.fonts.heading, fontSize: theme.typographySizes.h3 }}>
             Form Elements
           </h3>
-          <div className="grid grid-cols-2 gap-4 max-w-4xl">
+          <div
+            className="grid gap-4 max-w-4xl"
+            style={{
+              gridTemplateColumns: breakpoint === 'mobile' ? '1fr' : 'repeat(2, 1fr)',
+            }}
+          >
             <div>
               <label className="font-medium block mb-1.5" style={{ color: colors.foreground, fontSize: theme.typographySizes.label }}>Name</label>
               <input
@@ -956,14 +1244,24 @@ function DashboardPage({ theme, colors }: PageProps) {
           <h3 className="font-semibold mb-4" style={{ color: colors.cardForeground, fontFamily: theme.fonts.heading, fontSize: theme.typographySizes.h3 }}>
             Color Palette
           </h3>
-          <div className="grid grid-cols-5 gap-4">
+          <div
+            className="grid gap-4"
+            style={{
+              gridTemplateColumns: breakpoint === 'mobile' ? 'repeat(2, 1fr)' : breakpoint === 'tablet' ? 'repeat(3, 1fr)' : 'repeat(5, 1fr)',
+            }}
+          >
             <ColorSwatch color={colors.primary} label="Primary" radius={theme.radius.md} foreground={colors.cardForeground} />
             <ColorSwatch color={colors.secondary} label="Secondary" radius={theme.radius.md} foreground={colors.cardForeground} />
             <ColorSwatch color={colors.accent} label="Accent" radius={theme.radius.md} foreground={colors.cardForeground} />
             <ColorSwatch color={colors.muted} label="Muted" radius={theme.radius.md} foreground={colors.cardForeground} />
             <ColorSwatch color={colors.destructive} label="Destructive" radius={theme.radius.md} foreground={colors.cardForeground} />
           </div>
-          <div className="grid grid-cols-5 gap-4 mt-4">
+          <div
+            className="grid gap-4 mt-4"
+            style={{
+              gridTemplateColumns: breakpoint === 'mobile' ? 'repeat(2, 1fr)' : breakpoint === 'tablet' ? 'repeat(3, 1fr)' : 'repeat(5, 1fr)',
+            }}
+          >
             <ColorSwatch color={colors.chart1} label="Chart 1" radius={theme.radius.md} foreground={colors.cardForeground} />
             <ColorSwatch color={colors.chart2} label="Chart 2" radius={theme.radius.md} foreground={colors.cardForeground} />
             <ColorSwatch color={colors.chart3} label="Chart 3" radius={theme.radius.md} foreground={colors.cardForeground} />
@@ -976,7 +1274,7 @@ function DashboardPage({ theme, colors }: PageProps) {
   );
 }
 
-function LPPage({ theme, colors }: PageProps) {
+function LPPage({ theme, colors , breakpoint }: PageProps) {
   return (
     <>
       {/* Hero Section - Bold Typography */}
@@ -996,7 +1294,12 @@ function LPPage({ theme, colors }: PageProps) {
         />
 
         <div className="relative max-w-6xl mx-auto px-6 py-20">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div
+            className="grid gap-12 items-center"
+            style={{
+              gridTemplateColumns: breakpoint === 'mobile' ? '1fr' : 'repeat(2, 1fr)',
+            }}
+          >
             <div className="space-y-8">
               {/* Floating Tag */}
               <div
@@ -1050,7 +1353,13 @@ function LPPage({ theme, colors }: PageProps) {
               </p>
 
               {/* CTA Buttons */}
-              <div className="flex flex-wrap gap-4 pt-4">
+              <div
+                className="flex gap-4 pt-4"
+                style={{
+                  flexDirection: breakpoint === 'mobile' ? 'column' : 'row',
+                  alignItems: breakpoint === 'mobile' ? 'stretch' : 'flex-start',
+                }}
+              >
                 <PreviewButton
                   colors={colors}
                   radius="9999px"
@@ -1162,8 +1471,19 @@ function LPPage({ theme, colors }: PageProps) {
       </section>
 
       {/* Features Bento Grid */}
-      <section className="py-24">
-        <div className="max-w-6xl mx-auto px-6">
+      <section
+        style={{
+          paddingTop: theme.spacing.py[breakpoint],
+          paddingBottom: theme.spacing.py[breakpoint],
+        }}
+      >
+        <div
+          className="max-w-6xl mx-auto"
+          style={{
+            paddingLeft: theme.spacing.px[breakpoint],
+            paddingRight: theme.spacing.px[breakpoint],
+          }}
+        >
           <div className="text-center mb-16">
             <span
               className="inline-block px-4 py-1.5 text-sm font-semibold tracking-wider uppercase mb-6"
@@ -1190,17 +1510,29 @@ function LPPage({ theme, colors }: PageProps) {
           </div>
 
           {/* Bento Grid */}
-          <div className="grid md:grid-cols-3 gap-6">
+          <div
+            className="grid"
+            style={{
+              gap: theme.spacing.spaceY[breakpoint],
+              gridTemplateColumns: breakpoint === 'mobile' ? '1fr' : breakpoint === 'tablet' ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)',
+            }}
+          >
             {/* Large Card */}
             <div
-              className="md:col-span-2 p-8"
+              className="p-8"
               style={{
+                gridColumn: breakpoint === 'mobile' ? 'span 1' : 'span 2',
                 backgroundColor: `${colors.card}80`,
                 border: `1px solid ${colors.border}50`,
                 borderRadius: theme.radius.xl,
               }}
             >
-              <div className="flex flex-col md:flex-row gap-8">
+              <div
+                className="flex gap-8"
+                style={{
+                  flexDirection: breakpoint === 'mobile' ? 'column' : 'row',
+                }}
+              >
                 <div className="flex-1 space-y-4">
                   <div
                     className="h-14 w-14 flex items-center justify-center"
@@ -1259,8 +1591,9 @@ function LPPage({ theme, colors }: PageProps) {
 
             {/* Tall Card */}
             <div
-              className="row-span-2 p-8"
+              className="p-8"
               style={{
+                gridRow: breakpoint === 'desktop' ? 'span 2' : 'span 1',
                 backgroundColor: `${colors.card}80`,
                 border: `1px solid ${colors.border}50`,
                 borderRadius: theme.radius.xl,
@@ -1333,8 +1666,19 @@ function LPPage({ theme, colors }: PageProps) {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24">
-        <div className="max-w-6xl mx-auto px-6">
+      <section
+        style={{
+          paddingTop: theme.spacing.py[breakpoint],
+          paddingBottom: theme.spacing.py[breakpoint],
+        }}
+      >
+        <div
+          className="max-w-6xl mx-auto"
+          style={{
+            paddingLeft: theme.spacing.px[breakpoint],
+            paddingRight: theme.spacing.px[breakpoint],
+          }}
+        >
           <div
             className="relative overflow-hidden px-8 py-20"
             style={{
@@ -1371,7 +1715,14 @@ function LPPage({ theme, colors }: PageProps) {
               >
                 Join developers building production-ready UIs with AI assistance. Start free today.
               </p>
-              <div className="flex gap-4 justify-center">
+              <div
+                className="flex gap-4"
+                style={{
+                  flexDirection: breakpoint === 'mobile' ? 'column' : 'row',
+                  justifyContent: 'center',
+                  alignItems: breakpoint === 'mobile' ? 'stretch' : 'center',
+                }}
+              >
                 <PreviewButton
                   colors={colors}
                   radius="9999px"
@@ -1478,7 +1829,7 @@ function PreviewButton({
   );
 }
 
-function PreviewFooter({ theme, colors }: PageProps) {
+function PreviewFooter({ theme, colors , breakpoint }: PageProps) {
   return (
     <footer
       className="border-t mt-auto"
@@ -1487,8 +1838,21 @@ function PreviewFooter({ theme, colors }: PageProps) {
         borderColor: colors.border,
       }}
     >
-      <div className="max-w-6xl mx-auto px-6 py-12">
-        <div className="grid grid-cols-4 gap-8">
+      <div
+        className="max-w-6xl mx-auto"
+        style={{
+          paddingLeft: theme.spacing.px[breakpoint],
+          paddingRight: theme.spacing.px[breakpoint],
+          paddingTop: theme.spacing.py[breakpoint],
+          paddingBottom: theme.spacing.py[breakpoint],
+        }}
+      >
+        <div
+          className="grid gap-8"
+          style={{
+            gridTemplateColumns: breakpoint === 'mobile' ? 'repeat(2, 1fr)' : breakpoint === 'tablet' ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)',
+          }}
+        >
           {/* Brand Column */}
           <div className="col-span-1">
             <div className="flex items-center gap-2 mb-4">
@@ -1560,12 +1924,23 @@ function PreviewFooter({ theme, colors }: PageProps) {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t pt-8 mt-8 flex items-center justify-between" style={{ borderColor: colors.border }}>
+        <div
+          className="border-t pt-8 mt-8 flex items-center"
+          style={{
+            borderColor: colors.border,
+            flexDirection: breakpoint === 'mobile' ? 'column' : 'row',
+            justifyContent: breakpoint === 'mobile' ? 'center' : 'space-between',
+            gap: breakpoint === 'mobile' ? '1rem' : '0',
+            textAlign: breakpoint === 'mobile' ? 'center' : 'left',
+          }}
+        >
           <p className="text-sm" style={{ color: colors.mutedForeground }}>© 2025 VibeCN. All rights reserved.</p>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center" style={{ gap: breakpoint === 'mobile' ? '0.75rem' : '1rem' }}>
             <a href="#" className="text-sm transition-colors hover:opacity-80" style={{ color: colors.mutedForeground }}>Privacy</a>
             <a href="#" className="text-sm transition-colors hover:opacity-80" style={{ color: colors.mutedForeground }}>Terms</a>
-            <a href="#" className="text-sm transition-colors hover:opacity-80" style={{ color: colors.mutedForeground }}>Cookies</a>
+            {breakpoint !== 'mobile' && (
+              <a href="#" className="text-sm transition-colors hover:opacity-80" style={{ color: colors.mutedForeground }}>Cookies</a>
+            )}
           </div>
         </div>
       </div>
@@ -1580,19 +1955,21 @@ function PreviewFooter({ theme, colors }: PageProps) {
 interface FeatureCardProps {
   theme: BrandTheme;
   colors: ColorTokens;
+  breakpoint: 'desktop' | 'tablet' | 'mobile';
   icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>;
   title: string;
   description: string;
 }
 
-function FeatureCard({ theme, colors, icon: Icon, title, description }: FeatureCardProps) {
+function FeatureCard({ theme, colors, breakpoint, icon: Icon, title, description }: FeatureCardProps) {
   return (
     <div
-      className="p-6 transition-all hover:shadow-lg"
+      className="transition-all hover:shadow-lg"
       style={{
         backgroundColor: `${colors.card}80`,
         border: `1px solid ${colors.border}`,
         borderRadius: theme.radius.xl,
+        padding: theme.spacing.p[breakpoint],
       }}
     >
       <div
@@ -1618,20 +1995,21 @@ function FeatureCard({ theme, colors, icon: Icon, title, description }: FeatureC
 interface LargeFeatureCardProps {
   theme: BrandTheme;
   colors: ColorTokens;
+  breakpoint: 'desktop' | 'tablet' | 'mobile';
   icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>;
   title: string;
   description: string;
   features: string[];
 }
 
-function LargeFeatureCard({ theme, colors, icon: Icon, title, description, features }: LargeFeatureCardProps) {
+function LargeFeatureCard({ theme, colors, breakpoint, icon: Icon, title, description, features }: LargeFeatureCardProps) {
   return (
     <div
-      className="p-8"
       style={{
         backgroundColor: `${colors.card}80`,
         border: `1px solid ${colors.border}`,
         borderRadius: theme.radius.xl,
+        padding: theme.spacing.p[breakpoint],
       }}
     >
       <div
@@ -1713,6 +2091,7 @@ interface PricingFeature {
 interface PricingCardProps {
   theme: BrandTheme;
   colors: ColorTokens;
+  breakpoint: 'desktop' | 'tablet' | 'mobile';
   name: string;
   price: string;
   period: string;
@@ -1724,16 +2103,17 @@ interface PricingCardProps {
   badge?: string;
 }
 
-function PricingCard({ theme, colors, name, price, period, description, features, buttonText, buttonVariant, highlighted, badge }: PricingCardProps) {
+function PricingCard({ theme, colors, breakpoint, name, price, period, description, features, buttonText, buttonVariant, highlighted, badge }: PricingCardProps) {
   return (
     <div
-      className="relative overflow-hidden p-6"
+      className="relative overflow-hidden"
       style={{
         backgroundColor: colors.card,
         border: highlighted ? `2px solid ${colors.primary}` : `1px solid ${colors.border}`,
         borderRadius: theme.radius.xl,
         transform: highlighted ? 'scale(1.05)' : 'none',
         boxShadow: highlighted ? '0 25px 50px -12px rgba(0, 0, 0, 0.25)' : 'none',
+        padding: theme.spacing.p[breakpoint],
       }}
     >
       {badge && (
@@ -1811,20 +2191,21 @@ function FaqItem({ theme, colors, question, answer }: FaqItemProps) {
 interface DashboardStatCardProps {
   colors: ColorTokens;
   radius: string;
+  cardPadding: string;
   title: string;
   value: string;
   change: string;
   icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>;
 }
 
-function DashboardStatCard({ colors, radius, title, value, change, icon: Icon }: DashboardStatCardProps) {
+function DashboardStatCard({ colors, radius, cardPadding, title, value, change, icon: Icon }: DashboardStatCardProps) {
   return (
     <div
-      className="p-4"
       style={{
         backgroundColor: colors.card,
         borderRadius: radius,
         border: `1px solid ${colors.border}`,
+        padding: cardPadding,
       }}
     >
       <div className="flex items-center justify-between">

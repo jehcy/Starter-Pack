@@ -31,13 +31,26 @@ export interface ColorTokens {
   chart5: string;
 }
 
+export interface ResponsiveSpacingValue {
+  desktop: string; // lg+ (1024px and up)
+  tablet: string; // md (768px - 1023px)
+  mobile: string; // below 768px
+}
+
 export interface SpacingTokens {
+  // Scale tokens
   xs: string;
   sm: string;
   md: string;
   lg: string;
   xl: string;
   '2xl': string;
+  // Responsive directional tokens
+  px: ResponsiveSpacingValue; // horizontal padding for containers
+  py: ResponsiveSpacingValue; // vertical padding for sections
+  spaceX: ResponsiveSpacingValue; // horizontal gap between elements
+  spaceY: ResponsiveSpacingValue; // vertical gap between elements
+  p: ResponsiveSpacingValue; // global div padding
 }
 
 export interface RadiusTokens {
@@ -87,6 +100,43 @@ export interface ButtonTokens {
   inputFontWeight: string;
 }
 
+export interface BrandAsset {
+  id: string;
+  url: string;
+  publicId: string;
+  format: string;
+  width?: number;
+  height?: number;
+  uploadedAt: number;
+  alt?: string;
+}
+
+export interface VideoAsset extends BrandAsset {
+  type: 'upload' | 'embed';
+  embedUrl?: string;
+  duration?: number;
+}
+
+export interface BrandAssets {
+  logo: BrandAsset | null;
+  logoDark: BrandAsset | null;
+  favicon: BrandAsset | null;
+  ogImage: BrandAsset | null;
+  heroImages: BrandAsset[];
+  productImages: BrandAsset[];
+  videos: VideoAsset[];
+}
+
+export const DEFAULT_BRAND_ASSETS: BrandAssets = {
+  logo: null,
+  logoDark: null,
+  favicon: null,
+  ogImage: null,
+  heroImages: [],
+  productImages: [],
+  videos: [],
+};
+
 export interface BrandTheme {
   name: string;
   colors: {
@@ -99,6 +149,7 @@ export interface BrandTheme {
   typographySizes: TypographySizeTokens;
   typographyStyles: TypographyStyleTokens;
   buttons: ButtonTokens;
+  assets: BrandAssets;
 }
 
 export const DEFAULT_LIGHT_COLORS: ColorTokens = {
@@ -162,6 +213,12 @@ export const DEFAULT_SPACING: SpacingTokens = {
   lg: '1.5rem',
   xl: '2rem',
   '2xl': '3rem',
+  // Responsive directional defaults
+  px: { desktop: '1.5rem', tablet: '1rem', mobile: '0.75rem' },
+  py: { desktop: '6rem', tablet: '4rem', mobile: '3rem' },
+  spaceX: { desktop: '1rem', tablet: '0.75rem', mobile: '0.5rem' },
+  spaceY: { desktop: '1.5rem', tablet: '1rem', mobile: '0.75rem' },
+  p: { desktop: '1.5rem', tablet: '1rem', mobile: '0.75rem' },
 };
 
 export const DEFAULT_RADIUS: RadiusTokens = {
@@ -224,6 +281,7 @@ export function getDefaultTheme(): BrandTheme {
     typographySizes: { ...DEFAULT_TYPOGRAPHY_SIZES },
     typographyStyles: { ...DEFAULT_TYPOGRAPHY_STYLES },
     buttons: { ...DEFAULT_BUTTONS },
+    assets: { ...DEFAULT_BRAND_ASSETS },
   };
 }
 
@@ -427,7 +485,12 @@ export function generateGlobalsCss(theme: BrandTheme): { root: string; dark: str
 
   // Generate spacing variables
   const spacingVars = Object.entries(theme.spacing)
-    .map(([key, value]) => `  --spacing-${key}: ${value};`)
+    .map(([key, value]) => {
+      const cssKey = key.replace(/([A-Z])/g, '-$1').toLowerCase();
+      // Handle responsive values (use desktop as default for globals.css)
+      const cssValue = typeof value === 'string' ? value : value.desktop;
+      return `  --spacing-${cssKey}: ${cssValue};`;
+    })
     .join('\n');
 
   // Generate radius variables
@@ -528,14 +591,31 @@ export function isValidHex(hex: string): boolean {
 export const THEME_STORAGE_KEY = 'starter-pack-brand-theme';
 
 /**
- * Load theme from localStorage
+ * Load theme from localStorage with proper migration for missing properties
  */
 export function loadThemeFromStorage(): BrandTheme | null {
   if (typeof window === 'undefined') return null;
   try {
     const stored = localStorage.getItem(THEME_STORAGE_KEY);
     if (!stored) return null;
-    return JSON.parse(stored) as BrandTheme;
+    const parsed = JSON.parse(stored) as Partial<BrandTheme>;
+
+    // Merge with defaults to ensure all properties exist (handles schema updates)
+    const defaultTheme = getDefaultTheme();
+    return {
+      name: parsed.name ?? defaultTheme.name,
+      colors: {
+        light: { ...defaultTheme.colors.light, ...parsed.colors?.light },
+        dark: { ...defaultTheme.colors.dark, ...parsed.colors?.dark },
+      },
+      spacing: { ...defaultTheme.spacing, ...parsed.spacing },
+      radius: { ...defaultTheme.radius, ...parsed.radius },
+      fonts: { ...defaultTheme.fonts, ...parsed.fonts },
+      typographySizes: { ...defaultTheme.typographySizes, ...parsed.typographySizes },
+      typographyStyles: { ...defaultTheme.typographyStyles, ...parsed.typographyStyles },
+      buttons: { ...defaultTheme.buttons, ...parsed.buttons },
+      assets: { ...defaultTheme.assets, ...parsed.assets },
+    };
   } catch {
     return null;
   }
@@ -572,7 +652,11 @@ export function applyThemeToDOM(theme: BrandTheme): void {
 
   // Apply spacing variables
   Object.entries(theme.spacing).forEach(([key, value]) => {
-    root.style.setProperty(`--spacing-${key}`, value);
+    // Convert camelCase to kebab-case for CSS variables
+    const cssKey = key.replace(/([A-Z])/g, '-$1').toLowerCase();
+    // Handle responsive values (use desktop as default)
+    const cssValue = typeof value === 'string' ? value : value.desktop;
+    root.style.setProperty(`--spacing-${cssKey}`, cssValue);
   });
 
   // Apply radius variables

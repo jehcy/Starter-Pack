@@ -47,10 +47,18 @@ export function generateTokensJson(theme: BrandTheme): string {
       ),
     },
     spacing: Object.fromEntries(
-      Object.entries(theme.spacing).map(([key, value]) => [
-        key,
-        { value, type: 'dimension' },
-      ])
+      Object.entries(theme.spacing).flatMap(([key, value]) => {
+        // Handle responsive values by expanding to desktop/tablet/mobile
+        if (typeof value === 'object' && 'desktop' in value) {
+          return [
+            [`${key}-desktop`, { value: value.desktop, type: 'dimension' }],
+            [`${key}-tablet`, { value: value.tablet, type: 'dimension' }],
+            [`${key}-mobile`, { value: value.mobile, type: 'dimension' }],
+          ];
+        }
+        // Handle simple string values
+        return [[key, { value, type: 'dimension' }]];
+      })
     ),
     radius: Object.fromEntries(
       Object.entries(theme.radius).map(([key, value]) => [
@@ -182,6 +190,13 @@ module.exports = {
         lg: 'var(--spacing-lg)',
         xl: 'var(--spacing-xl)',
         '2xl': 'var(--spacing-2xl)',
+        // Directional spacing (responsive via CSS variables)
+        px: 'var(--spacing-px)',
+        py: 'var(--spacing-py)',
+        'space-x': 'var(--spacing-space-x)',
+        'space-y': 'var(--spacing-space-y)',
+        // Global padding (responsive via CSS variables)
+        p: 'var(--spacing-p)',
       },
       borderRadius: {
         none: 'var(--radius-none)',
@@ -337,6 +352,33 @@ export const theme = {
     lg: '${theme.spacing.lg}',
     xl: '${theme.spacing.xl}',
     '2xl': '${theme.spacing['2xl']}',
+    // Responsive directional spacing (desktop, tablet, mobile)
+    px: {
+      desktop: '${theme.spacing.px.desktop}',
+      tablet: '${theme.spacing.px.tablet}',
+      mobile: '${theme.spacing.px.mobile}',
+    },
+    py: {
+      desktop: '${theme.spacing.py.desktop}',
+      tablet: '${theme.spacing.py.tablet}',
+      mobile: '${theme.spacing.py.mobile}',
+    },
+    spaceX: {
+      desktop: '${theme.spacing.spaceX.desktop}',
+      tablet: '${theme.spacing.spaceX.tablet}',
+      mobile: '${theme.spacing.spaceX.mobile}',
+    },
+    spaceY: {
+      desktop: '${theme.spacing.spaceY.desktop}',
+      tablet: '${theme.spacing.spaceY.tablet}',
+      mobile: '${theme.spacing.spaceY.mobile}',
+    },
+    // Responsive global padding (desktop, tablet, mobile)
+    p: {
+      desktop: '${theme.spacing.p.desktop}',
+      tablet: '${theme.spacing.p.tablet}',
+      mobile: '${theme.spacing.p.mobile}',
+    },
   },
 
   radius: {

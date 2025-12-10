@@ -11,6 +11,7 @@ import {
   DEFAULT_TYPOGRAPHY_SIZES,
   DEFAULT_TYPOGRAPHY_STYLES,
   DEFAULT_BUTTONS,
+  DEFAULT_BRAND_ASSETS,
 } from './brand-theme';
 
 export interface ThemePreset {
@@ -39,6 +40,7 @@ function createTheme(
     typographySizes: { ...DEFAULT_TYPOGRAPHY_SIZES },
     typographyStyles: { ...DEFAULT_TYPOGRAPHY_STYLES },
     buttons: { ...DEFAULT_BUTTONS },
+    assets: { ...DEFAULT_BRAND_ASSETS },
   };
 }
 

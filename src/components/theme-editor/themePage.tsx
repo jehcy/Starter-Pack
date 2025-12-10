@@ -5,12 +5,14 @@ import { useTheme } from 'next-themes';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { useAuthGate } from '@/hooks/useAuthGate';
+import { useAuth } from '@/hooks/useAuth';
 import {
   Palette,
   Type,
   Space,
   Circle,
   SquareIcon,
+  ImageIcon,
   RotateCcw,
   FolderDown,
   Sun,
@@ -23,6 +25,10 @@ import {
   Braces,
   BookOpen,
   HelpCircle,
+  X,
+  Monitor,
+  Tablet,
+  Smartphone,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -33,6 +39,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Select,
   SelectContent,
@@ -52,8 +59,11 @@ import {
 import {
   type BrandTheme,
   type ColorTokens,
+  type ResponsiveSpacingValue,
   type TypographySizeTokens,
   type TypographyStyleTokens,
+  type BrandAsset,
+  type VideoAsset,
   getDefaultTheme,
   isValidHex,
   DEFAULT_LIGHT_COLORS,
@@ -64,6 +74,7 @@ import {
   DEFAULT_TYPOGRAPHY_SIZES,
   DEFAULT_TYPOGRAPHY_STYLES,
   DEFAULT_BUTTONS,
+  DEFAULT_BRAND_ASSETS,
   saveThemeToStorage,
   applyThemeToDOM,
 } from '@/lib/brand-theme';
@@ -78,6 +89,7 @@ import { ThemePreview } from './ThemePreview';
 import { CssPreviewModal } from './CssPreviewModal';
 import { PresetPicker } from './PresetPicker';
 import { UserMenuDropdown } from './UserMenuDropdown';
+import { BrandAssetsSection } from './brand-assets';
 import { generateStarterProject, slugify } from '@/lib/project-generator';
 import { applyThemeToGlobals } from '@/app/theme/actions';
 import { useThemeEditorTour } from '@/hooks/useThemeEditorTour';
@@ -86,7 +98,8 @@ import { useThemeEditorTour } from '@/hooks/useThemeEditorTour';
 // Helper functions for slider value conversion
 // ─────────────────────────────────────────────────────────────────────────────
 
-function remToNumber(rem: string): number {
+function remToNumber(rem: string | undefined): number {
+  if (!rem) return 0;
   const match = rem.match(/^([\d.]+)rem$/);
   return match ? parseFloat(match[1]) : 0;
 }
@@ -347,12 +360,22 @@ type ThemeAction =
   | { type: 'SET_NAME'; payload: string }
   | { type: 'SET_LIGHT_COLOR'; key: keyof ColorTokens; value: string }
   | { type: 'SET_DARK_COLOR'; key: keyof ColorTokens; value: string }
-  | { type: 'SET_SPACING'; key: string; value: string }
+  | { type: 'SET_SPACING'; key: string; value: string | ResponsiveSpacingValue }
   | { type: 'SET_RADIUS'; key: string; value: string }
   | { type: 'SET_FONT'; key: string; value: string }
   | { type: 'SET_TYPOGRAPHY_SIZE'; key: keyof TypographySizeTokens; value: string }
   | { type: 'SET_TYPOGRAPHY_STYLE'; key: keyof TypographyStyleTokens; value: string }
   | { type: 'SET_BUTTON'; key: string; value: string }
+  | { type: 'SET_LOGO'; payload: BrandAsset | null }
+  | { type: 'SET_LOGO_DARK'; payload: BrandAsset | null }
+  | { type: 'SET_FAVICON'; payload: BrandAsset | null }
+  | { type: 'SET_OG_IMAGE'; payload: BrandAsset | null }
+  | { type: 'ADD_HERO_IMAGE'; payload: BrandAsset }
+  | { type: 'REMOVE_HERO_IMAGE'; payload: string }
+  | { type: 'ADD_PRODUCT_IMAGE'; payload: BrandAsset }
+  | { type: 'REMOVE_PRODUCT_IMAGE'; payload: string }
+  | { type: 'ADD_VIDEO'; payload: VideoAsset }
+  | { type: 'REMOVE_VIDEO'; payload: string }
   | { type: 'RESET' }
   | { type: 'RESET_COLORS' }
   | { type: 'RESET_SPACING' }
@@ -360,7 +383,8 @@ type ThemeAction =
   | { type: 'RESET_FONTS' }
   | { type: 'RESET_TYPOGRAPHY_SIZES' }
   | { type: 'RESET_TYPOGRAPHY_STYLES' }
-  | { type: 'RESET_BUTTONS' };
+  | { type: 'RESET_BUTTONS' }
+  | { type: 'RESET_ASSETS' };
 
 function themeReducer(state: BrandTheme, action: ThemeAction): BrandTheme {
   switch (action.type) {
@@ -454,6 +478,64 @@ function themeReducer(state: BrandTheme, action: ThemeAction): BrandTheme {
         ...state,
         buttons: { ...DEFAULT_BUTTONS },
       };
+    case 'SET_LOGO':
+      return { ...state, assets: { ...state.assets, logo: action.payload } };
+    case 'SET_LOGO_DARK':
+      return { ...state, assets: { ...state.assets, logoDark: action.payload } };
+    case 'SET_FAVICON':
+      return { ...state, assets: { ...state.assets, favicon: action.payload } };
+    case 'SET_OG_IMAGE':
+      return { ...state, assets: { ...state.assets, ogImage: action.payload } };
+    case 'ADD_HERO_IMAGE':
+      return {
+        ...state,
+        assets: {
+          ...state.assets,
+          heroImages: [...state.assets.heroImages, action.payload],
+        },
+      };
+    case 'REMOVE_HERO_IMAGE':
+      return {
+        ...state,
+        assets: {
+          ...state.assets,
+          heroImages: state.assets.heroImages.filter((img) => img.id !== action.payload),
+        },
+      };
+    case 'ADD_PRODUCT_IMAGE':
+      return {
+        ...state,
+        assets: {
+          ...state.assets,
+          productImages: [...state.assets.productImages, action.payload],
+        },
+      };
+    case 'REMOVE_PRODUCT_IMAGE':
+      return {
+        ...state,
+        assets: {
+          ...state.assets,
+          productImages: state.assets.productImages.filter((img) => img.id !== action.payload),
+        },
+      };
+    case 'ADD_VIDEO':
+      return {
+        ...state,
+        assets: {
+          ...state.assets,
+          videos: [...state.assets.videos, action.payload],
+        },
+      };
+    case 'REMOVE_VIDEO':
+      return {
+        ...state,
+        assets: {
+          ...state.assets,
+          videos: state.assets.videos.filter((v) => v.id !== action.payload),
+        },
+      };
+    case 'RESET_ASSETS':
+      return { ...state, assets: { ...DEFAULT_BRAND_ASSETS } };
     default:
       return state;
   }
@@ -514,7 +596,7 @@ interface ThemePageProps {
   initialTheme: BrandTheme;
 }
 
-type ActiveSection = 'colors' | 'spacing' | 'radius' | 'fonts' | 'buttons';
+type ActiveSection = 'colors' | 'spacing' | 'radius' | 'fonts' | 'buttons' | 'brand';
 
 const NAV_ITEMS: { id: ActiveSection; icon: typeof Palette; label: string }[] = [
   { id: 'colors', icon: Palette, label: 'Colors' },
@@ -522,12 +604,14 @@ const NAV_ITEMS: { id: ActiveSection; icon: typeof Palette; label: string }[] = 
   { id: 'radius', icon: Circle, label: 'Radius' },
   { id: 'fonts', icon: Type, label: 'Fonts' },
   { id: 'buttons', icon: SquareIcon, label: 'Buttons' },
+  { id: 'brand', icon: ImageIcon, label: 'Brand' },
 ];
 
 export function ThemePage({ initialTheme }: ThemePageProps) {
   const [theme, dispatch] = useReducer(themeReducer, initialTheme);
   const { theme: currentTheme, setTheme: setGlobalTheme } = useTheme();
   const { requireAuth, AuthGateModalComponent } = useAuthGate();
+  const { isAuthenticated } = useAuth();
   const router = useRouter();
   const [previewMode, setPreviewMode] = useState<'light' | 'dark'>(() => {
     // Auto-detect current theme, default to dark
@@ -536,6 +620,7 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
   const [activeSection, setActiveSection] = useState<ActiveSection>('colors');
   const [isGenerating, setIsGenerating] = useState(false);
   const [isApplying, setIsApplying] = useState(false);
+  const [activeBreakpoint, setActiveBreakpoint] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
 
   // Detect if running in development mode
   const isDevelopment = process.env.NODE_ENV === 'development';
@@ -818,6 +903,27 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
             className="w-48 h-8"
             placeholder="Theme name"
           />
+          {/* Responsive Breakpoint Tabs */}
+          <Tabs
+            value={activeBreakpoint}
+            onValueChange={(v) => setActiveBreakpoint(v as 'desktop' | 'tablet' | 'mobile')}
+            className="shrink-0"
+          >
+            <TabsList className="h-8">
+              <TabsTrigger value="desktop" className="gap-1.5 text-xs px-2.5">
+                <Monitor className="size-3.5" />
+                <span className="hidden lg:inline">Desktop</span>
+              </TabsTrigger>
+              <TabsTrigger value="tablet" className="gap-1.5 text-xs px-2.5">
+                <Tablet className="size-3.5" />
+                <span className="hidden lg:inline">Tablet</span>
+              </TabsTrigger>
+              <TabsTrigger value="mobile" className="gap-1.5 text-xs px-2.5">
+                <Smartphone className="size-3.5" />
+                <span className="hidden lg:inline">Mobile</span>
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
         </div>
         <div className="flex items-center gap-1">
           <Button
@@ -915,6 +1021,16 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
           <Button variant="ghost" size="sm" onClick={handleReset} title="Reset all">
             <RotateCcw className="size-4" />
           </Button>
+          {!isAuthenticated && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => router.push('/')}
+              title="Close and return to homepage"
+            >
+              <X className="size-4" />
+            </Button>
+          )}
           <UserMenuDropdown />
         </div>
       </header>
@@ -951,7 +1067,7 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
 
         {/* Center - Preview */}
         <main data-tour="preview-area" className="flex-1 overflow-hidden">
-          <ThemePreview theme={theme} mode={previewMode} onModeChange={handlePreviewModeChange} />
+          <ThemePreview theme={theme} mode={previewMode} onModeChange={handlePreviewModeChange} breakpoint={activeBreakpoint} onBreakpointChange={setActiveBreakpoint} />
         </main>
 
         {/* Right Sidebar - Settings */}
@@ -1039,7 +1155,7 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
                 <div className="space-y-4">
               <div className="flex items-center justify-between gap-2">
                 <p className="text-sm text-muted-foreground">
-                  Define your spacing scale used throughout the UI.
+                  Control responsive padding and gaps for desktop, tablet, and mobile screens.
                 </p>
                 <Button
                   variant="outline"
@@ -1051,26 +1167,181 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
                   Reset
                 </Button>
               </div>
-              {Object.entries(theme.spacing).map(([key, value]) => (
-                <div key={key}>
+
+              {/* Breakpoint Tabs */}
+              <Tabs value={activeBreakpoint} onValueChange={(v) => setActiveBreakpoint(v as 'desktop' | 'tablet' | 'mobile')}>
+                <TabsList className="grid w-full grid-cols-3">
+                  <TabsTrigger value="desktop">
+                    <Monitor className="size-4 mr-1.5" />
+                    Desktop
+                  </TabsTrigger>
+                  <TabsTrigger value="tablet">
+                    <Tablet className="size-4 mr-1.5" />
+                    Tablet
+                  </TabsTrigger>
+                  <TabsTrigger value="mobile">
+                    <Smartphone className="size-4 mr-1.5" />
+                    Mobile
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
+
+                {/* Horizontal Padding (px) */}
+                <div className="mb-4">
                   <div className="flex items-center justify-between mb-2">
-                    <Label className="text-sm">{key.toUpperCase()}</Label>
+                    <div>
+                      <Label className="text-sm">Horizontal Padding (px)</Label>
+                      <p className="text-xs text-muted-foreground">Container side padding</p>
+                    </div>
                     <span className="text-xs font-mono text-muted-foreground">
-                      {value}
+                      {theme.spacing.px[activeBreakpoint]}
                     </span>
                   </div>
                   <Slider
-                    value={[remToNumber(value)]}
+                    value={[remToNumber(theme.spacing.px[activeBreakpoint])]}
                     onValueChange={([num]) =>
-                      dispatch({ type: 'SET_SPACING', key, value: numberToRem(num) })
+                      dispatch({
+                        type: 'SET_SPACING',
+                        key: 'px',
+                        value: { ...theme.spacing.px, [activeBreakpoint]: numberToRem(num) }
+                      })
                     }
-                    min={0}
+                    min={0.5}
                     max={6}
-                    step={0.125}
+                    step={0.25}
                     className="w-full"
                   />
+                  <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                    <span>0.5rem</span>
+                    <span>6rem</span>
+                  </div>
                 </div>
-              ))}
+
+                {/* Vertical Padding (py) */}
+                <div className="mb-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <div>
+                      <Label className="text-sm">Vertical Padding (py)</Label>
+                      <p className="text-xs text-muted-foreground">Section top/bottom padding</p>
+                    </div>
+                    <span className="text-xs font-mono text-muted-foreground">
+                      {theme.spacing.py[activeBreakpoint]}
+                    </span>
+                  </div>
+                  <Slider
+                    value={[remToNumber(theme.spacing.py[activeBreakpoint])]}
+                    onValueChange={([num]) =>
+                      dispatch({
+                        type: 'SET_SPACING',
+                        key: 'py',
+                        value: { ...theme.spacing.py, [activeBreakpoint]: numberToRem(num) }
+                      })
+                    }
+                    min={2}
+                    max={12}
+                    step={0.5}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                    <span>2rem</span>
+                    <span>12rem</span>
+                  </div>
+                </div>
+
+                {/* Horizontal Gap (space-x) */}
+                <div className="mb-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <div>
+                      <Label className="text-sm">Horizontal Gap (space-x)</Label>
+                      <p className="text-xs text-muted-foreground">Gap between inline elements</p>
+                    </div>
+                    <span className="text-xs font-mono text-muted-foreground">
+                      {theme.spacing.spaceX[activeBreakpoint]}
+                    </span>
+                  </div>
+                  <Slider
+                    value={[remToNumber(theme.spacing.spaceX[activeBreakpoint])]}
+                    onValueChange={([num]) =>
+                      dispatch({
+                        type: 'SET_SPACING',
+                        key: 'spaceX',
+                        value: { ...theme.spacing.spaceX, [activeBreakpoint]: numberToRem(num) }
+                      })
+                    }
+                    min={0.25}
+                    max={4}
+                    step={0.25}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                    <span>0.25rem</span>
+                    <span>4rem</span>
+                  </div>
+                </div>
+
+                {/* Vertical Gap (space-y) */}
+                <div className="mb-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <div>
+                      <Label className="text-sm">Vertical Gap (space-y)</Label>
+                      <p className="text-xs text-muted-foreground">Gap between stacked elements</p>
+                    </div>
+                    <span className="text-xs font-mono text-muted-foreground">
+                      {theme.spacing.spaceY[activeBreakpoint]}
+                    </span>
+                  </div>
+                  <Slider
+                    value={[remToNumber(theme.spacing.spaceY[activeBreakpoint])]}
+                    onValueChange={([num]) =>
+                      dispatch({
+                        type: 'SET_SPACING',
+                        key: 'spaceY',
+                        value: { ...theme.spacing.spaceY, [activeBreakpoint]: numberToRem(num) }
+                      })
+                    }
+                    min={0.5}
+                    max={6}
+                    step={0.25}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                    <span>0.5rem</span>
+                    <span>6rem</span>
+                  </div>
+                </div>
+
+                <Separator className="my-4" />
+
+                {/* Global Padding (p) */}
+                <div className="mb-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <div>
+                      <Label className="text-sm">Global Padding (p)</Label>
+                      <p className="text-xs text-muted-foreground">General padding for divs and components</p>
+                    </div>
+                    <span className="text-xs font-mono text-muted-foreground">
+                      {theme.spacing.p[activeBreakpoint]}
+                    </span>
+                  </div>
+                  <Slider
+                    value={[remToNumber(theme.spacing.p[activeBreakpoint])]}
+                    onValueChange={([num]) =>
+                      dispatch({
+                        type: 'SET_SPACING',
+                        key: 'p',
+                        value: { ...theme.spacing.p, [activeBreakpoint]: numberToRem(num) }
+                      })
+                    }
+                    min={0.5}
+                    max={4}
+                    step={0.25}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                    <span>0.5rem</span>
+                    <span>4rem</span>
+                  </div>
+                </div>
                 </div>
               )}
 
@@ -1902,6 +2173,11 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
                 </div>
               </div>
                 </div>
+              )}
+
+              {/* Brand Assets Section */}
+              {activeSection === 'brand' && (
+                <BrandAssetsSection assets={theme.assets} dispatch={dispatch} />
               )}
             </div>
           </ScrollArea>

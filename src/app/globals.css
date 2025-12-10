@@ -21,30 +21,30 @@ h1, h2, h3 {
 
 :root {
   /* Brand Light Mode Colors - from brand.md */
-  --background: #ffffff;
-  --foreground: #0f1419;
-  --primary: #1e9df1;
+  --background: #f8f9fa;
+  --foreground: #0c0c1d;
+  --primary: #ff00c8;
   --primary-foreground: #ffffff;
-  --secondary: #0f1419;
-  --secondary-foreground: #ffffff;
-  --accent: #e3ecf6;
-  --accent-foreground: #1e9df1;
-  --muted: #e5e5e6;
-  --muted-foreground: #0f1419;
-  --destructive: #f4212e;
+  --secondary: #f0f0ff;
+  --secondary-foreground: #0c0c1d;
+  --accent: #00ffcc;
+  --accent-foreground: #0c0c1d;
+  --muted: #f0f0ff;
+  --muted-foreground: #0c0c1d;
+  --destructive: #ff3d00;
   --destructive-foreground: #ffffff;
-  --card: #f7f8f8;
-  --card-foreground: #0f1419;
+  --card: #ffffff;
+  --card-foreground: #0c0c1d;
   --popover: #ffffff;
-  --popover-foreground: #0f1419;
-  --border: #e1eaef;
-  --input: #f7f9fa;
-  --ring: #1da1f2;
-  --chart-1: #1e9df1;
-  --chart-2: #00b87a;
-  --chart-3: #f7b928;
-  --chart-4: #17bf63;
-  --chart-5: #e0245e;
+  --popover-foreground: #0c0c1d;
+  --border: #dfe6e9;
+  --input: #dfe6e9;
+  --ring: #ff00c8;
+  --chart-1: #ff00c8;
+  --chart-2: #9000ff;
+  --chart-3: #00e5ff;
+  --chart-4: #00ffcc;
+  --chart-5: #ffe600;
 
   /* Brand Spacing */
   --spacing-xs: 0.25rem;
@@ -53,6 +53,11 @@ h1, h2, h3 {
   --spacing-lg: 1.5rem;
   --spacing-xl: 2rem;
   --spacing-2xl: 3rem;
+  --spacing-px: 1.5rem;
+  --spacing-py: 6rem;
+  --spacing-space-x: 1rem;
+  --spacing-space-y: 1.5rem;
+  --spacing-p: 1.5rem;
 
   /* Brand Radius */
   --radius: 0.5rem;
@@ -100,49 +105,34 @@ h1, h2, h3 {
   --button-hover-opacity: 0.8;
   --button-hover-transform: none;
   --button-hover-shadow: none;
-
-  /* Max-Width Tokens */
-  --width-xs: 20rem;      /* 320px */
-  --width-sm: 24rem;      /* 384px */
-  --width-md: 28rem;      /* 448px */
-  --width-lg: 32rem;      /* 512px */
-  --width-xl: 36rem;      /* 576px */
-  --width-2xl: 42rem;     /* 672px */
-  --width-3xl: 48rem;     /* 768px */
-  --width-4xl: 56rem;     /* 896px */
-  --width-5xl: 64rem;     /* 1024px */
-  --width-6xl: 72rem;     /* 1152px */
-  --width-7xl: 80rem;     /* 1280px */
-  --width-full: 100%;
-  --width-none: none;
 }
 
 .dark {
   /* Brand Dark Mode Colors - from brand.md */
-  --background: #000000;
-  --foreground: #e7e9ea;
-  --primary: #1c9cf0;
+  --background: #0c0c1d;
+  --foreground: #eceff4;
+  --primary: #ff00c8;
   --primary-foreground: #ffffff;
-  --secondary: #f0f3f4;
-  --secondary-foreground: #0f1419;
-  --accent: #061622;
-  --accent-foreground: #1c9cf0;
-  --muted: #181818;
-  --muted-foreground: #72767a;
-  --destructive: #f4212e;
+  --secondary: #1e1e3f;
+  --secondary-foreground: #eceff4;
+  --accent: #00ffcc;
+  --accent-foreground: #0c0c1d;
+  --muted: #151530;
+  --muted-foreground: #8085a6;
+  --destructive: #ff3d00;
   --destructive-foreground: #ffffff;
-  --card: #17181c;
-  --card-foreground: #d9d9d9;
-  --popover: #000000;
-  --popover-foreground: #e7e9ea;
-  --border: #242628;
-  --input: #22303c;
-  --ring: #1da1f2;
-  --chart-1: #1e9df1;
-  --chart-2: #00b87a;
-  --chart-3: #f7b928;
-  --chart-4: #17bf63;
-  --chart-5: #e0245e;
+  --card: #1e1e3f;
+  --card-foreground: #eceff4;
+  --popover: #1e1e3f;
+  --popover-foreground: #eceff4;
+  --border: #2e2e5e;
+  --input: #2e2e5e;
+  --ring: #ff00c8;
+  --chart-1: #ff00c8;
+  --chart-2: #9000ff;
+  --chart-3: #00e5ff;
+  --chart-4: #00ffcc;
+  --chart-5: #ffe600;
 
   /* Dark Mode Button Hover */
   --button-hover-shadow: none;
@@ -254,4 +244,26 @@ input[type="submit"] {
 
 .animate-marquee:hover {
   animation-play-state: paused;
+}
+
+/* Fade in up animation for entrance effects */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+/* Grid/dot pattern for backgrounds */
+.bg-grid-pattern {
+  background-image: radial-gradient(circle, hsl(var(--border)) 1px, transparent 1px);
+  background-size: 24px 24px;
 }
