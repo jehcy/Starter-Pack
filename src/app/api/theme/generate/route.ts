@@ -47,8 +47,11 @@ export async function POST(request: Request) {
       );
     }
 
-    // 2. Check prompt limits for free users
-    const { userId, isPaid } = await getUserSubscriptionStatus(request);
+    // 2. Parse request body (do this before getUserSubscriptionStatus to avoid double-parsing)
+    const body = (await request.json()) as ThemeGenerationRequest;
+
+    // 3. Check prompt limits for free users
+    const { userId, isPaid } = await getUserSubscriptionStatus(body.userId);
 
     if (!isPaid) {
       const usage = await getPromptUsage(userId);
@@ -68,7 +71,7 @@ export async function POST(request: Request) {
       }
     }
 
-    // 3. Validate API key exists
+    // 4. Validate API key exists
     const apiKey = process.env.ANTHROPIC_API_KEY;
     if (!apiKey) {
       return NextResponse.json(
@@ -76,9 +79,6 @@ export async function POST(request: Request) {
         { status: 500 }
       );
     }
-
-    // 4. Parse request body
-    const body = (await request.json()) as ThemeGenerationRequest;
     const { prompt, images, url, currentTheme, recentMessages } = body;
 
     if (!prompt || typeof prompt !== 'string' || prompt.trim().length === 0) {

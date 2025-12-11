@@ -72,21 +72,16 @@ export async function recordPromptUsage(userId: string): Promise<void> {
 }
 
 /**
- * Get user subscription status from request
- * Extracts user ID from InstantDB auth and checks their subscription status
+ * Get user subscription status
+ * Checks the user's subscription status from their profile
  */
-export async function getUserSubscriptionStatus(request: Request): Promise<{
+export async function getUserSubscriptionStatus(userId: string | undefined): Promise<{
   userId: string;
   isPaid: boolean;
   isAdmin: boolean;
 }> {
-  // Get userId from request body
-  // The frontend should send this when making API calls
-  const body = await request.clone().json();
-  const userId = body.userId;
-
   if (!userId) {
-    throw new Error('User ID not found in request. Please ensure you are signed in.');
+    throw new Error('User ID not found. Please ensure you are signed in.');
   }
 
   try {

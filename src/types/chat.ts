@@ -28,6 +28,7 @@ export interface ChatMessage {
 
 export interface ThemeGenerationRequest {
   prompt: string;
+  userId?: string; // User ID for subscription status check
   images?: ChatImage[]; // Optional images for vision-based theme generation
   url?: string; // Optional website URL to scrape colors and styles from
   currentTheme?: BrandTheme; // Current theme for modification context
