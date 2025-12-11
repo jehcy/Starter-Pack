@@ -41,6 +41,14 @@ export function useUserProfile(): UseUserProfileReturn {
           userType: isAdminEmail ? 'admin' : 'free',
           createdAt: Date.now(),
           updatedAt: Date.now(),
+          // Subscription fields
+          paypalSubscriptionId: null,
+          subscriptionStatus: 'none',
+          subscribedAt: null,
+          currentPeriodStart: null,
+          currentPeriodEnd: null,
+          cancelledAt: null,
+          cancelAtPeriodEnd: false,
         })
       );
     }

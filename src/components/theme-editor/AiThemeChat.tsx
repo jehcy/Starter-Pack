@@ -14,6 +14,8 @@ import { validateAndFixContrast } from '@/lib/theme-generation';
 import Image from 'next/image';
 import { ColorPalette } from './ColorPalette';
 import { useAuth } from '@/hooks/useAuth';
+import { usePromptUsage } from '@/hooks/usePromptUsage';
+import { PromptUsageIndicator } from './PromptUsageIndicator';
 import Link from 'next/link';
 
 interface AiThemeChatProps {
@@ -23,6 +25,7 @@ interface AiThemeChatProps {
 
 export function AiThemeChat({ onApplyTheme, currentThemeName }: AiThemeChatProps) {
   const { user, isLoading: authLoading, isAuthenticated } = useAuth();
+  const { canUsePrompt, isUnlimited, recordPromptUsage } = usePromptUsage();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [urlInput, setUrlInput] = useState('');
@@ -169,6 +172,18 @@ export function AiThemeChat({ onApplyTheme, currentThemeName }: AiThemeChatProps
 
     if (!input.trim() || isLoading) return;
 
+    // Check if user can use prompt
+    if (!canUsePrompt) {
+      toast.error('Free prompt limit reached', {
+        description: 'Upgrade to Pro for unlimited AI theme generation.',
+        action: {
+          label: 'Upgrade',
+          onClick: () => (window.location.href = '/pricing'),
+        },
+      });
+      return;
+    }
+
     // Extract URL from the input text if present
     const urlRegex = /(https?:\/\/[^\s]+)/gi;
     const urlMatches = input.match(urlRegex);
@@ -206,9 +221,44 @@ export function AiThemeChat({ onApplyTheme, currentThemeName }: AiThemeChatProps
         content: msg.content,
       }));
 
+      // Get InstantDB auth token from storage
+      // InstantDB stores the refresh token in localStorage with key pattern:
+      // @instantdb/{appId}/refresh-token
+      let authToken: string | null = null;
+      if (typeof window !== 'undefined' && process.env.NEXT_PUBLIC_INSTANTDB_APP_ID) {
+        const appId = process.env.NEXT_PUBLIC_INSTANTDB_APP_ID;
+        // Try different possible key formats
+        authToken =
+          localStorage.getItem(`@instantdb/${appId}/refresh-token`) ||
+          localStorage.getItem(`instantdb-refresh-token-${appId}`) ||
+          localStorage.getItem(`__idb_${appId.replace(/-/g, '_')}_user_session`) ||
+          null;
+
+        // Debug logging
+        if (process.env.NODE_ENV === 'development') {
+          console.log('[AiThemeChat] User authenticated:', isAuthenticated);
+          console.log('[AiThemeChat] Auth token found:', !!authToken);
+          if (!authToken) {
+            // Log all localStorage keys to help debug
+            const keys = Object.keys(localStorage).filter(k => k.includes('instantdb') || k.includes('idb'));
+            console.log('[AiThemeChat] Available InstantDB keys:', keys);
+          }
+        }
+      }
+
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json',
+      };
+
+      // Add auth token if available
+      if (authToken) {
+        headers['Authorization'] = `Bearer ${authToken}`;
+      }
+
       const response = await fetch('/api/theme/generate', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
+        credentials: 'include', // Ensure cookies are sent
         body: JSON.stringify({
           prompt: input.trim(),
           images: imagesToSend.length > 0 ? imagesToSend : undefined,
@@ -228,6 +278,11 @@ export function AiThemeChat({ onApplyTheme, currentThemeName }: AiThemeChatProps
           });
         }
         throw new Error(data.error || 'Failed to generate theme');
+      }
+
+      // Record prompt usage for free users
+      if (!isUnlimited) {
+        await recordPromptUsage();
       }
 
       if (data.theme) {
@@ -379,19 +434,22 @@ export function AiThemeChat({ onApplyTheme, currentThemeName }: AiThemeChatProps
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="flex items-center justify-between pb-4 border-b">
-        <div className="flex items-center gap-2">
-          <Sparkles className="w-5 h-5 text-primary" />
-          <div>
-            <h3 className="font-semibold">AI Theme Generator</h3>
-            <p className="text-xs text-muted-foreground">Describe your desired theme</p>
+      <div className="pb-4 border-b space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-primary" />
+            <div>
+              <h3 className="font-semibold">AI Theme Generator</h3>
+              <p className="text-xs text-muted-foreground">Describe your desired theme</p>
+            </div>
           </div>
+          {messages.length > 0 && (
+            <Button variant="ghost" size="sm" onClick={handleClearChat}>
+              <Trash2 className="w-4 h-4" />
+            </Button>
+          )}
         </div>
-        {messages.length > 0 && (
-          <Button variant="ghost" size="sm" onClick={handleClearChat}>
-            <Trash2 className="w-4 h-4" />
-          </Button>
-        )}
+        <PromptUsageIndicator />
       </div>
 
       {/* Messages */}

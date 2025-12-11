@@ -9,21 +9,74 @@ import {
   extractThemeDetails,
 } from '@/lib/theme-generation';
 import { scrapeWebsiteDesign, formatScrapedDesignForPrompt } from '@/lib/website-scraper';
+import { getUserSubscriptionStatus, getPromptUsage, recordPromptUsage } from '@/lib/prompt-limits';
 
 export async function POST(request: Request) {
   try {
     // 1. Check authentication - InstantDB stores auth token in cookies
-    const cookies = request.headers.get('cookie') || '';
-    const hasInstantDBAuth = cookies.includes('instantdb-');
+    const appId = process.env.NEXT_PUBLIC_INSTANTDB_APP_ID;
 
-    if (!hasInstantDBAuth) {
+    if (!appId) {
+      return NextResponse.json(
+        { error: 'InstantDB app ID not configured' },
+        { status: 500 }
+      );
+    }
+
+    // Check for authentication via Authorization header or cookies
+    const authHeader = request.headers.get('authorization');
+    const cookies = request.headers.get('cookie') || '';
+
+    // Convert app ID to cookie format (replace hyphens with underscores)
+    const cookieAppId = appId.replace(/-/g, '_');
+
+    // Check for auth token in Authorization header (Bearer token)
+    let hasAuth = false;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      hasAuth = true;
+    } else {
+      // Fallback to checking cookies
+      // InstantDB uses cookies with pattern: __idb_{appId}_...
+      hasAuth = cookies.includes(`__idb_${cookieAppId}_`) || cookies.includes(`instantdb_${appId}`);
+    }
+
+    // Debug logging in development
+    if (!hasAuth && process.env.NODE_ENV === 'development') {
+      console.log('[Theme Gen] Auth check failed');
+      console.log('[Theme Gen] Auth header:', authHeader ? 'Present' : 'Missing');
+      console.log('[Theme Gen] Looking for cookie pattern:', `__idb_${cookieAppId}_`);
+      console.log('[Theme Gen] Available cookies:', cookies.split(';').map(c => c.trim().split('=')[0]).join(', '));
+    }
+
+    if (!hasAuth) {
       return NextResponse.json(
         { error: 'Authentication required. Please sign in to use the AI theme generator.' },
         { status: 401 }
       );
     }
 
-    // 2. Validate API key exists
+    // 2. Check prompt limits for free users
+    const { userId, isPaid } = await getUserSubscriptionStatus(request);
+
+    if (!isPaid) {
+      const usage = await getPromptUsage(userId);
+      const promptsUsed = usage?.promptCount ?? 0;
+
+      if (promptsUsed >= 3) {
+        return NextResponse.json(
+          {
+            error: 'Free prompt limit reached',
+            message: 'You have used all 3 free prompts this month. Upgrade to Pro for unlimited AI theme generation.',
+            upgradeUrl: '/pricing',
+            promptsUsed: 3,
+            promptsLimit: 3,
+          },
+          { status: 403 }
+        );
+      }
+    }
+
+    // 3. Validate API key exists
     const apiKey = process.env.ANTHROPIC_API_KEY;
     if (!apiKey) {
       return NextResponse.json(
@@ -160,7 +213,12 @@ export async function POST(request: Request) {
     // 17. Extract theme details from the response text
     const themeDetails = extractThemeDetails(content.text);
 
-    // 18. Return success response
+    // 18. Record prompt usage for free users
+    if (!isPaid) {
+      await recordPromptUsage(userId);
+    }
+
+    // 19. Return success response
     const result: ThemeGenerationResponse = {
       theme: completeTheme,
       message: `Generated "${completeTheme.name}" theme`,

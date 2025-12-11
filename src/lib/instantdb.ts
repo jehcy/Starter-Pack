@@ -34,6 +34,14 @@ export interface WorkspaceMember {
 
 export type UserType = 'free' | 'paid' | 'admin';
 
+export type SubscriptionStatus =
+  | 'none'       // Never subscribed
+  | 'active'     // Currently subscribed and paid
+  | 'pending'    // Subscription created but payment pending
+  | 'cancelled'  // User cancelled, still has access until period end
+  | 'expired'    // Subscription ended
+  | 'suspended'; // Payment failed
+
 /**
  * Admin email addresses
  * Users with these emails will automatically receive admin privileges
@@ -49,6 +57,35 @@ export interface UserProfile {
   userType: UserType;
   createdAt: number;
   updatedAt: number;
+
+  // Subscription fields
+  paypalSubscriptionId: string | null;
+  subscriptionStatus: SubscriptionStatus | null;
+  subscribedAt: number | null;
+  currentPeriodStart: number | null;
+  currentPeriodEnd: number | null;
+  cancelledAt: number | null;
+  cancelAtPeriodEnd: boolean | null;
+}
+
+export interface PromptUsage {
+  id: string;
+  userId: string;
+  periodStart: number;      // Unix timestamp for billing period start (month start)
+  periodEnd: number;        // Unix timestamp for billing period end (month end)
+  promptCount: number;      // Number of prompts used in this period
+  lastPromptAt: number;     // Timestamp of last prompt
+  createdAt: number;
+  updatedAt: number;
+}
+
+export interface SubscriptionEvent {
+  id: string;
+  userId: string;
+  eventType: 'created' | 'activated' | 'cancelled' | 'renewed' | 'payment_failed' | 'expired';
+  paypalSubscriptionId: string;
+  metadata: string;  // JSON string with event details
+  createdAt: number;
 }
 
 /**
