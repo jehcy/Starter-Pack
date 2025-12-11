@@ -18,7 +18,7 @@ const navLinks = [
   { href: '/features', label: 'Features' },
   { href: '/pricing', label: 'Pricing' },
   { href: '/docs', label: 'Docs' },
-  { href: '/blog', label: 'Blog' },
+  // { href: '/blog', label: 'Blog' },
 ];
 
 export function Navigation() {
@@ -35,11 +35,11 @@ export function Navigation() {
 
   return (
     <header
-      className={`sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-all duration-300 ${
+      className={`sticky top-0 z-50 bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/70 transition-all duration-300 ${
         scrolled ? 'border-b border-border' : 'border-b border-transparent'
       }`}
     >
-      <div className="w-2/3 mx-auto flex h-16 items-center justify-between">
+      <div className="container-wide mx-auto flex h-16 items-center justify-between">
         <div className="flex items-center gap-8">
           <Link href="/" className="flex items-center gap-2 group">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold transition-transform group-hover:scale-105">
@@ -115,7 +115,7 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
   return (
     <Link
       href={href}
-      className="relative text-sm font-medium text-muted-foreground transition-colors hover:text-foreground group"
+      className="relative text-sm font-medium text-foreground transition-colors hover:text-primary group"
     >
       {children}
       <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full" />

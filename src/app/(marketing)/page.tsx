@@ -103,7 +103,7 @@ export default function LandingPage() {
             </div>
 
             {/* Hero Visual */}
-            <div className="relative w-full flex items-center justify-center lg:justify-end">
+            <div className="relative w-full pl-0 sm:pl-6 md:pl-12 max-w-[400px] min-h-[auto] md:min-h-[auto] mx-auto lg:mx-0 flex items-center justify-center lg:justify-end">
               <HeroVisual />
             </div>
           </div>
@@ -284,15 +284,15 @@ function HeroVisual() {
       {screenshots.map((screenshot, index) => (
         <div
           key={screenshot.src}
-          className="absolute top-0 left-0 w-full rounded-lg border border-border overflow-hidden shadow-lg transition-all duration-700 ease-out"
+          className="absolute top-0 sm:top-[-50px] left-0 sm:left-[30px] w-full rounded-lg border border-border overflow-hidden shadow-lg transition-all duration-700 ease-out"
           style={{
             transform: `
-              translateY(${((index - activeCard + 3) % 3) * 20}px)
-              translateX(${((index - activeCard + 3) % 3) * 20}px)
+              translateY(${((index - activeCard + 3) % 3) * 30}px)
+              translateX(${((index - activeCard + 3) % 3) * 50}px)
               scale(${1 - ((index - activeCard + 3) % 3) * 0.05})
             `,
             zIndex: 3 - ((index - activeCard + 3) % 3),
-            opacity: 1 - ((index - activeCard + 3) % 3) * 0.3,
+            opacity: 1 - ((index - activeCard + 3) % 3) * 0.4,
           }}
         >
           <Image

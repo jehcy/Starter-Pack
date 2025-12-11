@@ -257,13 +257,14 @@ function HeroVisual() {
   ];
 
   return (
-    <div className="relative w-full max-w-[500px] min-h-[400px] md:min-h-[500px] mx-auto lg:mx-0">
+    <div className="relative w-full max-w-2xl min-h-[500px] mx-auto lg:mx-0">
       {screenshots.map((screenshot, index) => (
         <div
           key={screenshot.src}
-          className="absolute top-[-20px] left-0 w-full rounded-xl border border-border/50 backdrop-blur-sm transition-all duration-700 ease-out overflow-hidden shadow-2xl"
+          className="absolute top-1/2 left-1/2 w-full rounded-xl border border-border/50 backdrop-blur-sm transition-all duration-700 ease-out overflow-hidden shadow-2xl"
           style={{
             transform: `
+              translate(-50%, -50%)
               translateY(${(index - activeCard + 3) % 3 * 15}px)
               translateX(${(index - activeCard + 3) % 3 * 15}px)
               scale(${1 - ((index - activeCard + 3) % 3) * 0.05})
