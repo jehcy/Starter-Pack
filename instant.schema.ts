@@ -56,7 +56,7 @@ const _schema = i.schema({
     }),
 
     // Prompt usage tracking entity
-    promptUsage: i.entity({
+    promptUsages: i.entity({
       userId: i.string().indexed(),
       periodStart: i.number().indexed(),
       periodEnd: i.number(),
@@ -122,7 +122,7 @@ const _schema = i.schema({
     // Prompt usage to user relationship
     promptUsageUser: {
       forward: {
-        on: 'promptUsage',
+        on: 'promptUsages',
         has: 'one',
         label: 'user',
       },

@@ -221,50 +221,21 @@ export function AiThemeChat({ onApplyTheme, currentThemeName }: AiThemeChatProps
         content: msg.content,
       }));
 
-      // Get InstantDB auth token from storage
-      // InstantDB stores the refresh token in localStorage with key pattern:
-      // @instantdb/{appId}/refresh-token
-      let authToken: string | null = null;
-      if (typeof window !== 'undefined' && process.env.NEXT_PUBLIC_INSTANTDB_APP_ID) {
-        const appId = process.env.NEXT_PUBLIC_INSTANTDB_APP_ID;
-        // Try different possible key formats
-        authToken =
-          localStorage.getItem(`@instantdb/${appId}/refresh-token`) ||
-          localStorage.getItem(`instantdb-refresh-token-${appId}`) ||
-          localStorage.getItem(`__idb_${appId.replace(/-/g, '_')}_user_session`) ||
-          null;
-
-        // Debug logging
-        if (process.env.NODE_ENV === 'development') {
-          console.log('[AiThemeChat] User authenticated:', isAuthenticated);
-          console.log('[AiThemeChat] Auth token found:', !!authToken);
-          if (!authToken) {
-            // Log all localStorage keys to help debug
-            const keys = Object.keys(localStorage).filter(k => k.includes('instantdb') || k.includes('idb'));
-            console.log('[AiThemeChat] Available InstantDB keys:', keys);
-          }
-        }
-      }
-
-      const headers: HeadersInit = {
-        'Content-Type': 'application/json',
-      };
-
-      // Add auth token if available
-      if (authToken) {
-        headers['Authorization'] = `Bearer ${authToken}`;
-      }
-
+      // InstantDB automatically sends auth cookies with the request
+      // No need to manually add Authorization header
       const response = await fetch('/api/theme/generate', {
         method: 'POST',
-        headers,
-        credentials: 'include', // Ensure cookies are sent
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // Ensure cookies are sent (including InstantDB auth)
         body: JSON.stringify({
           prompt: input.trim(),
           images: imagesToSend.length > 0 ? imagesToSend : undefined,
           url: urlToSend.trim() || undefined,
           currentTheme: lastAppliedTheme || undefined,
           recentMessages: recentMessages.length > 0 ? recentMessages : undefined,
+          userId: user?.id, // Send user ID for subscription status check
         }),
       });
 

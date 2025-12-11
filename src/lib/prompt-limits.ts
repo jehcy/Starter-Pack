@@ -80,45 +80,64 @@ export async function getUserSubscriptionStatus(request: Request): Promise<{
   isPaid: boolean;
   isAdmin: boolean;
 }> {
-  // Note: This is a simplified implementation
-  // You'll need to properly extract the user ID from the InstantDB session cookie
-  // For now, we'll extract it from the request body or headers
-
-  const cookies = request.headers.get('cookie') || '';
-
-  // Extract InstantDB user token (this is a simplified example)
-  // In production, you'd need to verify the JWT token properly
-  const instantdbMatch = cookies.match(/instantdb-([^;]+)/);
-
-  if (!instantdbMatch) {
-    throw new Error('Not authenticated');
-  }
-
-  // For this implementation, we'll require the userId to be passed in the request body
-  // In production, you'd decode the InstantDB JWT token to get the user ID
+  // Get userId from request body
+  // The frontend should send this when making API calls
   const body = await request.clone().json();
   const userId = body.userId;
 
   if (!userId) {
-    throw new Error('User ID not found');
+    throw new Error('User ID not found in request. Please ensure you are signed in.');
   }
 
-  // Query user profile
-  const { userProfiles } = await adminDb.query({
-    userProfiles: {
-      $: {
-        where: {
-          userId,
+  try {
+    // Query user profile
+    const { userProfiles } = await adminDb.query({
+      userProfiles: {
+        $: {
+          where: {
+            userId,
+          },
         },
       },
-    },
-  });
+    });
 
-  const profile = userProfiles?.[0];
+    const profile = userProfiles?.[0];
 
-  return {
-    userId,
-    isPaid: profile?.userType === 'paid' || profile?.userType === 'admin',
-    isAdmin: profile?.userType === 'admin',
-  };
+    // If no profile exists, create a default free user profile
+    if (!profile) {
+      console.log('[getUserSubscriptionStatus] Creating default profile for user:', userId);
+
+      const newProfileId = generateId();
+      await adminDb.transact(
+        adminDb.tx.userProfiles[newProfileId].update({
+          userId,
+          email: '', // Will be updated when user provides email
+          userType: 'free',
+          subscriptionStatus: 'none',
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
+        })
+      );
+
+      return {
+        userId,
+        isPaid: false,
+        isAdmin: false,
+      };
+    }
+
+    return {
+      userId,
+      isPaid: profile.userType === 'paid' || profile.userType === 'admin',
+      isAdmin: profile.userType === 'admin',
+    };
+  } catch (error) {
+    console.error('[getUserSubscriptionStatus] Error:', error);
+    // If there's an error querying the profile, assume free user
+    return {
+      userId,
+      isPaid: false,
+      isAdmin: false,
+    };
+  }
 }

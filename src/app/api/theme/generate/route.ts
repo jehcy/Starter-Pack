@@ -23,32 +23,24 @@ export async function POST(request: Request) {
       );
     }
 
-    // Check for authentication via Authorization header or cookies
-    const authHeader = request.headers.get('authorization');
+    // Check for authentication via cookies
     const cookies = request.headers.get('cookie') || '';
 
-    // Convert app ID to cookie format (replace hyphens with underscores)
-    const cookieAppId = appId.replace(/-/g, '_');
-
-    // Check for auth token in Authorization header (Bearer token)
-    let hasAuth = false;
-    if (authHeader && authHeader.startsWith('Bearer ')) {
-      hasAuth = true;
-    } else {
-      // Fallback to checking cookies
-      // InstantDB uses cookies with pattern: __idb_{appId}_...
-      hasAuth = cookies.includes(`__idb_${cookieAppId}_`) || cookies.includes(`instantdb_${appId}`);
-    }
+    // InstantDB uses cookies - check for any instant-related cookies
+    // Common patterns: instant_user_id, instantdb-, __idb_, etc.
+    const hasInstantDBAuth =
+      cookies.includes('instant') ||
+      cookies.includes('__idb_') ||
+      cookies.includes('_idb_');
 
     // Debug logging in development
-    if (!hasAuth && process.env.NODE_ENV === 'development') {
+    if (!hasInstantDBAuth && process.env.NODE_ENV === 'development') {
       console.log('[Theme Gen] Auth check failed');
-      console.log('[Theme Gen] Auth header:', authHeader ? 'Present' : 'Missing');
-      console.log('[Theme Gen] Looking for cookie pattern:', `__idb_${cookieAppId}_`);
+      console.log('[Theme Gen] Looking for InstantDB auth cookies (instant*, __idb_*, _idb_*)');
       console.log('[Theme Gen] Available cookies:', cookies.split(';').map(c => c.trim().split('=')[0]).join(', '));
     }
 
-    if (!hasAuth) {
+    if (!hasInstantDBAuth) {
       return NextResponse.json(
         { error: 'Authentication required. Please sign in to use the AI theme generator.' },
         { status: 401 }
