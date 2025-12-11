@@ -29,6 +29,7 @@ import {
   Monitor,
   Tablet,
   Smartphone,
+  Sparkles,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -78,6 +79,8 @@ import {
   saveThemeToStorage,
   applyThemeToDOM,
 } from '@/lib/brand-theme';
+import { CONTRAST_PAIRS } from '@/lib/contrast';
+import { ContrastBadge } from './ContrastBadge';
 import {
   generateTokensJson,
   generateTailwindConfigZip,
@@ -90,6 +93,7 @@ import { CssPreviewModal } from './CssPreviewModal';
 import { PresetPicker } from './PresetPicker';
 import { UserMenuDropdown } from './UserMenuDropdown';
 import { BrandAssetsSection } from './brand-assets';
+import { AiThemeChat } from './AiThemeChat';
 import { generateStarterProject, slugify } from '@/lib/project-generator';
 import { applyThemeToGlobals } from '@/app/theme/actions';
 import { useThemeEditorTour } from '@/hooks/useThemeEditorTour';
@@ -596,7 +600,7 @@ interface ThemePageProps {
   initialTheme: BrandTheme;
 }
 
-type ActiveSection = 'colors' | 'spacing' | 'radius' | 'fonts' | 'buttons' | 'brand';
+type ActiveSection = 'colors' | 'spacing' | 'radius' | 'fonts' | 'buttons' | 'brand' | 'ai';
 
 const NAV_ITEMS: { id: ActiveSection; icon: typeof Palette; label: string }[] = [
   { id: 'colors', icon: Palette, label: 'Colors' },
@@ -605,6 +609,7 @@ const NAV_ITEMS: { id: ActiveSection; icon: typeof Palette; label: string }[] = 
   { id: 'fonts', icon: Type, label: 'Fonts' },
   { id: 'buttons', icon: SquareIcon, label: 'Buttons' },
   { id: 'brand', icon: ImageIcon, label: 'Brand' },
+  { id: 'ai', icon: Sparkles, label: 'AI' },
 ];
 
 export function ThemePage({ initialTheme }: ThemePageProps) {
@@ -1113,40 +1118,87 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
               {activeSection === 'colors' && (
                 <div className="space-y-6">
 
-              {colorGroups.map((group) => (
-                <div key={group.title}>
-                  <h3 className="text-sm font-medium mb-3">{group.title}</h3>
-                  <div className="space-y-2">
-                    {group.colors.map((colorKey) => (
-                      <div key={colorKey} data-tour={colorKey === 'primary' ? 'primary-color' : undefined}>
-                        <ColorInput
-                          label={formatLabel(colorKey)}
-                          value={
-                            previewMode === 'light'
-                              ? theme.colors.light[colorKey as keyof ColorTokens]
-                              : theme.colors.dark[colorKey as keyof ColorTokens]
-                          }
-                          onChange={(value) => {
-                            if (previewMode === 'light') {
-                              dispatch({
-                                type: 'SET_LIGHT_COLOR',
-                                key: colorKey as keyof ColorTokens,
-                                value,
-                              });
-                            } else {
-                              dispatch({
-                                type: 'SET_DARK_COLOR',
-                                key: colorKey as keyof ColorTokens,
-                                value,
-                              });
-                            }
-                          }}
-                        />
-                      </div>
-                    ))}
+              {colorGroups.map((group) => {
+                // Find if this group has a contrast pair
+                const contrastPair = CONTRAST_PAIRS.find(
+                  (pair) => group.colors.includes(pair.bg as never) && group.colors.includes(pair.fg as never)
+                );
+
+                return (
+                  <div key={group.title}>
+                    <h3 className="text-sm font-medium mb-3">{group.title}</h3>
+                    <div className="space-y-2">
+                      {group.colors.map((colorKey, index) => {
+                        // Check if this is a foreground color in a pair
+                        const isForegroundInPair = contrastPair && colorKey === contrastPair.fg;
+                        const backgroundKey = contrastPair?.bg;
+
+                        return (
+                          <div key={colorKey} data-tour={colorKey === 'primary' ? 'primary-color' : undefined}>
+                            <div className="flex items-center gap-2">
+                              <div className="flex-1">
+                                <ColorInput
+                                  label={formatLabel(colorKey)}
+                                  value={
+                                    previewMode === 'light'
+                                      ? theme.colors.light[colorKey as keyof ColorTokens]
+                                      : theme.colors.dark[colorKey as keyof ColorTokens]
+                                  }
+                                  onChange={(value) => {
+                                    if (previewMode === 'light') {
+                                      dispatch({
+                                        type: 'SET_LIGHT_COLOR',
+                                        key: colorKey as keyof ColorTokens,
+                                        value,
+                                      });
+                                    } else {
+                                      dispatch({
+                                        type: 'SET_DARK_COLOR',
+                                        key: colorKey as keyof ColorTokens,
+                                        value,
+                                      });
+                                    }
+                                  }}
+                                />
+                              </div>
+                              {/* Show contrast badge for foreground colors in pairs */}
+                              {isForegroundInPair && backgroundKey && (
+                                <ContrastBadge
+                                  bgColor={
+                                    previewMode === 'light'
+                                      ? theme.colors.light[backgroundKey as keyof ColorTokens]
+                                      : theme.colors.dark[backgroundKey as keyof ColorTokens]
+                                  }
+                                  fgColor={
+                                    previewMode === 'light'
+                                      ? theme.colors.light[colorKey as keyof ColorTokens]
+                                      : theme.colors.dark[colorKey as keyof ColorTokens]
+                                  }
+                                  onFix={(newFgColor) => {
+                                    if (previewMode === 'light') {
+                                      dispatch({
+                                        type: 'SET_LIGHT_COLOR',
+                                        key: colorKey as keyof ColorTokens,
+                                        value: newFgColor,
+                                      });
+                                    } else {
+                                      dispatch({
+                                        type: 'SET_DARK_COLOR',
+                                        key: colorKey as keyof ColorTokens,
+                                        value: newFgColor,
+                                      });
+                                    }
+                                  }}
+                                />
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
                 </div>
               )}
 
@@ -2178,6 +2230,14 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
               {/* Brand Assets Section */}
               {activeSection === 'brand' && (
                 <BrandAssetsSection assets={theme.assets} dispatch={dispatch} />
+              )}
+
+              {/* AI Theme Generator Section */}
+              {activeSection === 'ai' && (
+                <AiThemeChat
+                  onApplyTheme={(newTheme) => dispatch({ type: 'SET_THEME', payload: newTheme })}
+                  currentThemeName={theme.name}
+                />
               )}
             </div>
           </ScrollArea>

@@ -95,7 +95,7 @@ export function ThemePreview({ theme, mode, onModeChange, breakpoint = 'desktop'
      
 
       {/* Responsive Container */}
-      <div className="flex-1 flex justify-center" style={{ backgroundColor: colors.muted + '20', overflow: 'hidden' }}>
+      <div className="flex-1 flex justify-center overflow-hidden" style={{ backgroundColor: colors.muted + '20' }}>
         <div
           className="transition-all duration-300 ease-in-out overflow-auto"
           style={{
@@ -107,7 +107,10 @@ export function ThemePreview({ theme, mode, onModeChange, breakpoint = 'desktop'
           }}
         >
           {/* Page Content */}
-          <div className="flex-1">
+          <div
+            className="min-h-full flex flex-col"
+            style={{ backgroundColor: colors.background }}
+          >
 
           <header
         className="sticky top-0 z-10 border-b"

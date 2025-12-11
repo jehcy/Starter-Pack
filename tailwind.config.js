@@ -139,9 +139,14 @@ module.exports = {
           "0%": { transform: "translateX(0)" },
           "100%": { transform: "translateX(-50%)" },
         },
+        shimmer: {
+          "0%": { backgroundPosition: "-1000px 0" },
+          "100%": { backgroundPosition: "1000px 0" },
+        },
       },
       animation: {
         marquee: "marquee 30s linear infinite",
+        shimmer: "shimmer 2s linear infinite",
       },
     },
   },

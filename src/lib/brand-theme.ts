@@ -640,6 +640,11 @@ export function saveThemeToStorage(theme: BrandTheme): void {
 export function applyThemeToDOM(theme: BrandTheme): void {
   if (typeof window === 'undefined') return;
 
+  // Dynamically load Google Fonts if needed
+  import('./font-loader').then(({ loadGoogleFonts }) => {
+    loadGoogleFonts(theme.fonts);
+  });
+
   const root = document.documentElement;
   const isDark = root.classList.contains('dark');
   const colors = isDark ? theme.colors.dark : theme.colors.light;
