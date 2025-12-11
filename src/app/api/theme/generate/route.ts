@@ -26,18 +26,23 @@ export async function POST(request: Request) {
     // Check for authentication via cookies
     const cookies = request.headers.get('cookie') || '';
 
-    // InstantDB uses cookies - check for any instant-related cookies
-    // Common patterns: instant_user_id, instantdb-, __idb_, etc.
-    const hasInstantDBAuth =
-      cookies.includes('instant') ||
-      cookies.includes('__idb_') ||
-      cookies.includes('_idb_');
+    // InstantDB auth cookies - be specific to avoid false positives
+    // Look for actual auth-related cookies, not just any cookie with "instant" in it
+    const cookieNames = cookies.split(';').map(c => c.trim().split('=')[0]);
+    const hasInstantDBAuth = cookieNames.some(name =>
+      name.startsWith('__idb_') || // InstantDB session cookies
+      name === 'instant_user_id' || // User ID cookie
+      name === 'instant_user_email' || // User email cookie
+      name.startsWith('instantdb-') // Alternative cookie pattern
+    );
 
     // Debug logging in development
-    if (!hasInstantDBAuth && process.env.NODE_ENV === 'development') {
-      console.log('[Theme Gen] Auth check failed');
-      console.log('[Theme Gen] Looking for InstantDB auth cookies (instant*, __idb_*, _idb_*)');
-      console.log('[Theme Gen] Available cookies:', cookies.split(';').map(c => c.trim().split('=')[0]).join(', '));
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[Theme Gen] Auth check:', hasInstantDBAuth ? 'PASSED' : 'FAILED');
+      console.log('[Theme Gen] Available cookies:', cookieNames.join(', '));
+      if (!hasInstantDBAuth) {
+        console.log('[Theme Gen] Expected cookies: __idb_*, instant_user_id, instant_user_email, or instantdb-*');
+      }
     }
 
     if (!hasInstantDBAuth) {
