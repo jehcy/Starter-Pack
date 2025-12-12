@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { getDefaultTheme } from '@/lib/brand-theme';
 import { ThemePageWrapper } from './ThemePageWrapper';
 
@@ -9,5 +10,9 @@ export const metadata = {
 export default function ThemeEditorPage() {
   const defaultTheme = getDefaultTheme();
 
-  return <ThemePageWrapper initialTheme={defaultTheme} />;
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-background" />}>
+      <ThemePageWrapper initialTheme={defaultTheme} />
+    </Suspense>
+  );
 }

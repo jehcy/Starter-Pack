@@ -94,7 +94,7 @@ export async function GET(request: NextRequest) {
           if (errorJson.name === 'UNPROCESSABLE_ENTITY' && errorJson.details?.[0]?.issue === 'ORDER_ALREADY_CAPTURED') {
             console.log('[Credits Callback] ℹ️ Order already captured (webhook handled it)');
             // Use the existing order data and let webhook handle credit addition
-            return NextResponse.redirect(new URL('/pricing?purchase=success&credits=3', request.url));
+            return NextResponse.redirect(new URL('/theme?purchase=success&credits=3', request.url));
           }
         } catch (parseError) {
           console.error('[Credits Callback] Could not parse error:', parseError);
@@ -108,7 +108,7 @@ export async function GET(request: NextRequest) {
     } else if (orderData.status === 'COMPLETED') {
       console.log('[Credits Callback] Order already COMPLETED (webhook likely handled it)');
       // Webhook has already processed this - just redirect to success
-      return NextResponse.redirect(new URL('/pricing?purchase=success&credits=3', request.url));
+      return NextResponse.redirect(new URL('/theme?purchase=success&credits=3', request.url));
     } else {
       console.warn('[Credits Callback] Unexpected order status:', orderData.status);
       return NextResponse.redirect(new URL('/pricing?purchase=error&reason=unexpected_status', request.url));
@@ -149,8 +149,8 @@ export async function GET(request: NextRequest) {
           console.log(`[Credits Callback] ℹ️ Credits not added: ${result.reason} (likely webhook handled it)`);
         }
 
-        // Redirect to pricing with success message (even if credits were already added)
-        return NextResponse.redirect(new URL('/pricing?purchase=success&credits=3', request.url));
+        // Redirect to theme editor with success message
+        return NextResponse.redirect(new URL('/theme?purchase=success&credits=3', request.url));
       } catch (creditError) {
         console.error('[Credits Callback] ❌ Failed to add credits:', creditError);
         return NextResponse.redirect(new URL('/pricing?purchase=error&reason=credit_addition_failed', request.url));
