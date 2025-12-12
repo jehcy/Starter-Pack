@@ -76,6 +76,25 @@ const _schema = i.schema({
       metadata: i.json(), // Event details
       createdAt: i.number().indexed(),
     }),
+
+    // User credits entity
+    userCredits: i.entity({
+      userId: i.string().unique().indexed(),
+      freeCreditsUsed: i.boolean(),
+      purchasedCredits: i.number(),
+      totalPurchasedCredits: i.number().optional(),
+      createdAt: i.number(),
+      updatedAt: i.number(),
+    }),
+
+    // Credit transactions entity
+    creditTransactions: i.entity({
+      userId: i.string().indexed(),
+      type: i.string(), // 'free' | 'purchase' | 'usage'
+      amount: i.number(),
+      description: i.string(),
+      createdAt: i.number().indexed(),
+    }),
   },
 
   links: {

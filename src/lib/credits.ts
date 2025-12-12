@@ -41,6 +41,7 @@ async function initializeUserCredits(userId: string): Promise<UserCredits> {
     userId,
     freeCreditsUsed: false,
     purchasedCredits: 0,
+    totalPurchasedCredits: 0,
     createdAt: Date.now(),
     updatedAt: Date.now(),
   };
@@ -60,6 +61,7 @@ export async function getUserCredits(userId: string): Promise<{
   tier: 'free' | 'starter' | 'pro';
   freeCreditsRemaining: number;
   purchasedCredits: number;
+  totalPurchasedCredits: number;
   isUnlimited: boolean;
   monthlyUsage?: number;
   abuseWarning?: string;
@@ -83,6 +85,7 @@ export async function getUserCredits(userId: string): Promise<{
       tier: 'pro',
       freeCreditsRemaining: 0,
       purchasedCredits: 0,
+      totalPurchasedCredits: 0,
       isUnlimited: true,
       monthlyUsage,
       abuseWarning,
@@ -102,6 +105,7 @@ export async function getUserCredits(userId: string): Promise<{
     tier: totalCredits > 1 ? 'starter' : 'free',
     freeCreditsRemaining,
     purchasedCredits: creditsRecord.purchasedCredits,
+    totalPurchasedCredits: creditsRecord.totalPurchasedCredits ?? 0,
     isUnlimited: false,
   };
 }
@@ -191,9 +195,12 @@ export async function addPurchasedCredits(userId: string, amount: number): Promi
     creditsRecord = await initializeUserCredits(userId);
   }
 
+  const newTotalPurchased = (creditsRecord.totalPurchasedCredits ?? 0) + amount;
+
   await adminDb.transact(
     adminDb.tx.userCredits[creditsRecord.id].update({
       purchasedCredits: creditsRecord.purchasedCredits + amount,
+      totalPurchasedCredits: newTotalPurchased,
       updatedAt: Date.now(),
     })
   );

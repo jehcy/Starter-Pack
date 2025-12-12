@@ -14,8 +14,9 @@ import { validateAndFixContrast } from '@/lib/theme-generation';
 import Image from 'next/image';
 import { ColorPalette } from './ColorPalette';
 import { useAuth } from '@/hooks/useAuth';
-import { useCredits } from '@/hooks/useCredits';
+import { useCredits } from '@/contexts/CreditsContext';
 import { PromptUsageIndicator } from './PromptUsageIndicator';
+import { CreditPurchaseModal } from '@/components/credits/CreditPurchaseModal';
 import Link from 'next/link';
 
 interface AiThemeChatProps {
@@ -34,6 +35,7 @@ export function AiThemeChat({ onApplyTheme, currentThemeName }: AiThemeChatProps
   const [loadingStatus, setLoadingStatus] = useState('Thinking...');
   const [selectedImages, setSelectedImages] = useState<ChatImage[]>([]);
   const [lastAppliedTheme, setLastAppliedTheme] = useState<BrandTheme | null>(null);
+  const [showPurchaseModal, setShowPurchaseModal] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -175,13 +177,7 @@ export function AiThemeChat({ onApplyTheme, currentThemeName }: AiThemeChatProps
 
     // Check if user can use prompt
     if (!canUsePrompt) {
-      toast.error('Free prompt limit reached', {
-        description: 'Upgrade to Pro for unlimited AI theme generation.',
-        action: {
-          label: 'Upgrade',
-          onClick: () => (window.location.href = '/pricing'),
-        },
-      });
+      setShowPurchaseModal(true);
       return;
     }
 
@@ -434,17 +430,15 @@ export function AiThemeChat({ onApplyTheme, currentThemeName }: AiThemeChatProps
                 <div className="space-y-2">
                   <h3 className="font-semibold text-lg">No Credits Remaining</h3>
                   <p className="text-sm text-muted-foreground">
-                    You've used all your free AI theme generation credits.
+                    You've used all your AI theme generation credits.
                     Purchase more credits or upgrade to Pro for unlimited theme generation.
                   </p>
                 </div>
                 <div className="flex flex-col gap-2 pt-2">
-                  <Link href="/pricing">
-                    <Button className="w-full" size="lg">
-                      <Sparkles className="w-4 h-4 mr-2" />
-                      Get More Credits
-                    </Button>
-                  </Link>
+                  <Button className="w-full" size="lg" onClick={() => setShowPurchaseModal(true)}>
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    Get More Credits
+                  </Button>
                   <p className="text-xs text-muted-foreground">
                     Starting from just $3 for additional credits
                   </p>
@@ -788,6 +782,17 @@ export function AiThemeChat({ onApplyTheme, currentThemeName }: AiThemeChatProps
           </p>
         </div>
       </form>
+
+      <CreditPurchaseModal
+        open={showPurchaseModal}
+        onOpenChange={(open) => {
+          setShowPurchaseModal(open);
+          if (!open) {
+            // Refetch credits when modal closes (in case user purchased)
+            refetchCredits();
+          }
+        }}
+      />
     </div>
   );
 }

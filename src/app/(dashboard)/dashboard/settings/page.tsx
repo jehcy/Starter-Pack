@@ -8,13 +8,16 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { useUserProfile } from '@/hooks/useUserProfile';
+import { useCredits } from '@/hooks/useCredits';
 import { toast } from 'sonner';
+import { Sparkles, Infinity, Zap } from 'lucide-react';
 
 export default function SettingsPage() {
   const [isSaving, setIsSaving] = React.useState(false);
   const [isActivating, setIsActivating] = React.useState(false);
   const searchParams = useSearchParams();
   const { refreshToken, isPaid } = useUserProfile();
+  const { tier, creditsRemaining, isUnlimited, isLoading: creditsLoading } = useCredits();
 
   // Handle subscription success callback from PayPal
   React.useEffect(() => {
@@ -219,6 +222,93 @@ export default function SettingsPage() {
                   </Button>
                 </div>
               </form>
+            </CardContent>
+          </Card>
+
+          {/* Credits & Billing */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Credits & Billing</CardTitle>
+              <CardDescription>Manage your AI generation credits and subscription.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                {/* Credit Balance */}
+                <div className="rounded-lg border border-border p-4">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="h-5 w-5 text-primary" />
+                      <h3 className="font-semibold">Current Balance</h3>
+                    </div>
+                    {creditsLoading ? (
+                      <div className="h-8 w-20 bg-muted animate-pulse rounded" />
+                    ) : (
+                      <div className="text-right">
+                        {isUnlimited ? (
+                          <div className="flex items-center gap-1 text-primary">
+                            <Infinity className="h-5 w-5" />
+                            <span className="text-sm font-medium">Unlimited</span>
+                          </div>
+                        ) : (
+                          <div>
+                            <div className="text-2xl font-bold">{creditsRemaining}</div>
+                            <div className="text-xs text-muted-foreground">
+                              {creditsRemaining === 1 ? 'credit' : 'credits'}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="space-y-2 text-sm">
+                    <div className="flex items-center justify-between">
+                      <span className="text-muted-foreground">Current Plan:</span>
+                      <span className="font-medium capitalize">{tier || 'Free'}</span>
+                    </div>
+                    {tier === 'free' && (
+                      <p className="text-xs text-muted-foreground mt-2">
+                        Free users get 1 credit to try AI theme generation. Upgrade to get more!
+                      </p>
+                    )}
+                    {tier === 'starter' && (
+                      <p className="text-xs text-muted-foreground mt-2">
+                        Starter pack credits never expire. Purchase more anytime!
+                      </p>
+                    )}
+                    {tier === 'pro' && (
+                      <p className="text-xs text-muted-foreground mt-2">
+                        Pro users get unlimited AI theme generation!
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div className="flex flex-col gap-3">
+                  {!isPaid && (
+                    <Button
+                      variant="default"
+                      className="w-full"
+                      onClick={() => window.location.href = '/pricing'}
+                    >
+                      <Zap className="h-4 w-4 mr-2" />
+                      {tier === 'free' ? 'Buy Credits or Upgrade' : 'Buy More Credits'}
+                    </Button>
+                  )}
+                  {isPaid && (
+                    <Button
+                      variant="outline"
+                      className="w-full"
+                      onClick={() => {
+                        toast.info('Subscription management coming soon!');
+                      }}
+                    >
+                      Manage Subscription
+                    </Button>
+                  )}
+                </div>
+              </div>
             </CardContent>
           </Card>
 

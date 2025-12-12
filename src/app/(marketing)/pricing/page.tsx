@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/cards/card';
@@ -10,6 +10,29 @@ import { useUserProfile } from '@/hooks/useUserProfile';
 import { toast } from 'sonner';
 
 export default function PricingPage() {
+  const searchParams = useSearchParams();
+
+  // Show success/error toasts based on URL params
+  useEffect(() => {
+    const purchase = searchParams.get('purchase');
+    const credits = searchParams.get('credits');
+
+    if (purchase === 'success') {
+      toast.success('Purchase successful!', {
+        description: `${credits || '3'} AI credits have been added to your account.`,
+        duration: 5000,
+      });
+    } else if (purchase === 'cancelled') {
+      toast.info('Purchase cancelled', {
+        description: 'You can try again anytime.',
+      });
+    } else if (purchase === 'error') {
+      toast.error('Purchase failed', {
+        description: 'Something went wrong. Please try again or contact support.',
+      });
+    }
+  }, [searchParams]);
+
   return (
     <>
       {/* Hero Section */}

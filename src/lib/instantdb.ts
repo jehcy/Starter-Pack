@@ -95,7 +95,8 @@ export interface UserCredits {
   id: string;
   userId: string;
   freeCreditsUsed: boolean;      // Track if user used their 1 free credit
-  purchasedCredits: number;      // One-time purchased credits (never expire)
+  purchasedCredits: number;      // Remaining purchased credits (decrements on use)
+  totalPurchasedCredits: number | null; // Total ever purchased (for display purposes)
   // Pro users: tracked via PromptUsage (already exists) for abuse guard
   createdAt: number;
   updatedAt: number;

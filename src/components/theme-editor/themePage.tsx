@@ -97,9 +97,11 @@ import { PresetPicker } from './PresetPicker';
 import { UserMenuDropdown } from './UserMenuDropdown';
 import { BrandAssetsSection } from './brand-assets';
 import { AiThemeChat } from './AiThemeChat';
+import { CreditDisplay } from '@/components/credits/CreditDisplay';
 import { generateStarterProject, slugify } from '@/lib/project-generator';
 import { applyThemeToGlobals } from '@/app/theme/actions';
 import { useThemeEditorTour } from '@/hooks/useThemeEditorTour';
+import { CreditsProvider } from '@/contexts/CreditsContext';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Helper functions for slider value conversion
@@ -954,8 +956,9 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
   };
 
   return (
-    <div className="relative flex flex-col h-screen">
-      {AuthGateModalComponent}
+    <CreditsProvider>
+      <div className="relative flex flex-col h-screen">
+        {AuthGateModalComponent}
       {/* Top Header Bar */}
       <header className="h-14 border-b border-border bg-card px-4 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-3">
@@ -1129,6 +1132,7 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
               <X className="size-4" />
             </Button>
           )}
+          <CreditDisplay />
           <UserMenuDropdown />
         </div>
       </header>
@@ -2336,6 +2340,7 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
           </ScrollArea>
         </aside>
       </div>
-    </div>
+      </div>
+    </CreditsProvider>
   );
 }

@@ -202,28 +202,39 @@ async function handlePaymentFailed(resource: any) {
  * Handle order capture completed (one-time payments like starter pack)
  */
 async function handleOrderCaptureCompleted(resource: any) {
-  console.log('Order capture completed:', {
-    orderId: resource.id,
-    amount: resource.purchase_units?.[0]?.amount?.value,
-    currency: resource.purchase_units?.[0]?.amount?.currency_code,
-    status: resource.status,
-  });
+  console.log('[Webhook] ===== ORDER CAPTURE COMPLETED =====');
+  console.log('[Webhook] Full resource:', JSON.stringify(resource, null, 2));
 
   // Get custom_id (userId) from purchase_units
   const userId = resource.purchase_units?.[0]?.custom_id;
+  console.log('[Webhook] Extracted userId:', userId);
 
   if (!userId) {
-    console.error('No user ID found in order capture');
+    console.error('[Webhook] ❌ No user ID found in order capture');
     return;
   }
 
+  // Extract amount - PAYMENT.CAPTURE.COMPLETED sends the full order object
+  // Try both paths: direct and in captures
+  const directAmount = resource.purchase_units?.[0]?.amount?.value;
+  const captureAmount = resource.purchase_units?.[0]?.payments?.captures?.[0]?.amount?.value;
+  const amount = captureAmount || directAmount;
+
+  console.log('[Webhook] Direct amount:', directAmount);
+  console.log('[Webhook] Capture amount:', captureAmount);
+  console.log('[Webhook] Final amount:', amount);
+
   // Check if this is a starter pack purchase ($3)
-  const amount = resource.purchase_units?.[0]?.amount?.value;
   if (amount === '3.00') {
-    console.log(`Adding 3 credits to user ${userId}`);
-    await addPurchasedCredits(userId, 3);
+    console.log(`[Webhook] ✅ Adding 3 credits to user ${userId}`);
+    try {
+      await addPurchasedCredits(userId, 3);
+      console.log('[Webhook] ✅ Credits added successfully!');
+    } catch (error) {
+      console.error('[Webhook] ❌ Failed to add credits:', error);
+    }
   } else {
-    console.warn(`Unexpected order amount: ${amount}`);
+    console.warn(`[Webhook] ⚠️ Unexpected order amount: ${amount}`);
   }
 }
 

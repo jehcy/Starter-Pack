@@ -2,7 +2,7 @@
 
 import { Sparkles, Infinity, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
-import { useCredits } from '@/hooks/useCredits';
+import { useCredits } from '@/contexts/CreditsContext';
 import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
 

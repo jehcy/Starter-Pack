@@ -32,6 +32,7 @@ export async function POST(request: Request) {
       tier: credits.tier,
       freeCreditsRemaining: credits.freeCreditsRemaining,
       purchasedCredits: credits.purchasedCredits,
+      totalPurchasedCredits: credits.totalPurchasedCredits,
       totalCredits: credits.isUnlimited
         ? 'unlimited'
         : credits.freeCreditsRemaining + credits.purchasedCredits,

@@ -7,6 +7,7 @@ interface CreditStatus {
   tier: 'free' | 'starter' | 'pro';
   freeCreditsRemaining: number;
   purchasedCredits: number;
+  totalPurchasedCredits: number;
   totalCredits: number | 'unlimited';
   isUnlimited: boolean;
   monthlyUsage?: number;
@@ -76,14 +77,29 @@ export function useCredits(): UseCreditsReturn {
 
   // Calculate derived values
   const isUnlimited = creditStatus?.isUnlimited ?? false;
-  const totalCredits = creditStatus?.totalCredits ?? 0;
-  const maxCredits = isUnlimited
-    ? Infinity
-    : (typeof totalCredits === 'number' ? totalCredits : 0);
+  const tier = creditStatus?.tier ?? null;
+  const freeCreditsRemaining = creditStatus?.freeCreditsRemaining ?? 0;
+  const purchasedCredits = creditStatus?.purchasedCredits ?? 0;
+  const totalPurchasedCredits = creditStatus?.totalPurchasedCredits ?? 0;
 
+  // Calculate creditsRemaining
   const creditsRemaining = isUnlimited
     ? Infinity
-    : (creditStatus?.freeCreditsRemaining ?? 0) + (creditStatus?.purchasedCredits ?? 0);
+    : freeCreditsRemaining + purchasedCredits;
+
+  // Calculate maxCredits (original total the user ever had)
+  // For free users: always 1 credit total
+  // For starter users: 1 free + total purchased (from totalPurchasedCredits field)
+  // For pro users: unlimited
+  let maxCredits: number;
+  if (isUnlimited) {
+    maxCredits = Infinity;
+  } else if (tier === 'free' && totalPurchasedCredits === 0) {
+    maxCredits = 1; // Free users (never purchased) always had 1 credit max
+  } else {
+    // Starter tier or free user who purchased: 1 free + total ever purchased
+    maxCredits = 1 + totalPurchasedCredits;
+  }
 
   const creditsUsed = isUnlimited
     ? 0

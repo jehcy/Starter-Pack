@@ -32,7 +32,7 @@ export async function POST(request: Request) {
 
     // Get base URL for return/cancel URLs
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-    const returnUrl = `${baseUrl}/pricing?purchase=success`;
+    const returnUrl = `${baseUrl}/api/credits/callback`; // Callback route captures payment
     const cancelUrl = `${baseUrl}/pricing?purchase=cancelled`;
 
     // Create PayPal order for $3 starter pack
