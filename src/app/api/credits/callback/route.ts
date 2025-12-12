@@ -68,9 +68,28 @@ export async function GET(request: NextRequest) {
     console.log('[Credits Callback] Order status:', orderData.status);
     console.log('[Credits Callback] Full order data:', JSON.stringify(orderData, null, 2));
 
-    let finalData = orderData;
+    // Extract userId from the ORIGINAL order data (before capture)
+    // The capture response doesn't always include custom_id
+    const userId = orderData.purchase_units?.[0]?.custom_id;
+    console.log('[Credits Callback] Extracted userId from order:', userId);
 
-    // If order is not captured yet, capture it
+    if (!userId) {
+      console.error('[Credits Callback] ❌ No userId found in original order data');
+      console.error('[Credits Callback] Order purchase_units:', JSON.stringify(orderData.purchase_units, null, 2));
+      return NextResponse.redirect(new URL('/pricing?purchase=error&reason=no_user_id', request.url));
+    }
+
+    // Extract the order amount (always $3.00 for starter pack)
+    const orderAmount = orderData.purchase_units?.[0]?.amount?.value;
+    console.log('[Credits Callback] Order amount:', orderAmount);
+
+    // Handle different order statuses
+    if (orderData.status === 'COMPLETED') {
+      console.log('[Credits Callback] Order already COMPLETED (webhook likely handled it)');
+      // Webhook has already processed this - just redirect to success
+      return NextResponse.redirect(new URL('/theme?purchase=success&credits=3', request.url));
+    }
+
     if (orderData.status === 'APPROVED') {
       console.log('[Credits Callback] Order is APPROVED, capturing...');
       const captureResponse = await fetch(`${baseUrl}/v2/checkout/orders/${token}/capture`, {
@@ -103,38 +122,17 @@ export async function GET(request: NextRequest) {
         return NextResponse.redirect(new URL('/pricing?purchase=error&reason=capture_failed', request.url));
       }
 
-      finalData = await captureResponse.json();
+      const captureData = await captureResponse.json();
       console.log('[Credits Callback] ✅ Capture successful');
-    } else if (orderData.status === 'COMPLETED') {
-      console.log('[Credits Callback] Order already COMPLETED (webhook likely handled it)');
-      // Webhook has already processed this - just redirect to success
-      return NextResponse.redirect(new URL('/theme?purchase=success&credits=3', request.url));
+      console.log('[Credits Callback] Capture data:', JSON.stringify(captureData, null, 2));
     } else {
       console.warn('[Credits Callback] Unexpected order status:', orderData.status);
       return NextResponse.redirect(new URL('/pricing?purchase=error&reason=unexpected_status', request.url));
     }
 
-    console.log('[Credits Callback] Final data:', JSON.stringify(finalData, null, 2));
-
-    // Extract userId from custom_id
-    const userId = finalData.purchase_units?.[0]?.custom_id;
-    console.log('[Credits Callback] Extracted userId:', userId);
-
-    // Extract amount - try BOTH possible locations
-    const directAmount = finalData.purchase_units?.[0]?.amount?.value;
-    const capture = finalData.purchase_units?.[0]?.payments?.captures?.[0];
-    const captureAmount = capture?.amount?.value;
-
-    console.log('[Credits Callback] Direct amount path:', directAmount);
-    console.log('[Credits Callback] Capture amount path:', captureAmount);
-
-    const amount = captureAmount || directAmount;
-    console.log('[Credits Callback] Final amount:', amount);
-
-    if (!userId) {
-      console.error('[Credits Callback] ❌ No userId found in order');
-      return NextResponse.redirect(new URL('/pricing?purchase=error&reason=no_user_id', request.url));
-    }
+    // Use the order amount we extracted earlier
+    const amount = orderAmount;
+    console.log('[Credits Callback] Final amount for credit check:', amount);
 
     // Add credits if it's a $3 purchase
     if (amount === '3.00') {
