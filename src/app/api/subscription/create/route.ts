@@ -1,29 +1,46 @@
 import { NextResponse } from 'next/server';
 import { createSubscription } from '@/lib/paypal';
 import { headers } from 'next/headers';
+import { init } from '@instantdb/admin';
+
+// Initialize InstantDB admin client for server-side auth verification
+const adminDb = init({
+  appId: process.env.NEXT_PUBLIC_INSTANTDB_APP_ID!,
+  adminToken: process.env.INSTANTDB_ADMIN_TOKEN!,
+});
 
 export async function POST(request: Request) {
   try {
-    // Verify authentication via InstantDB cookie
+    // Parse request body
+    const { refreshToken } = await request.json();
+
+    // Verify authentication via refresh token
+    if (!refreshToken) {
+      return NextResponse.json(
+        { error: 'Authentication required. Please sign in to subscribe.' },
+        { status: 401 }
+      );
+    }
+
+    // Verify the refresh token server-side to get authenticated user
+    const authUser = await adminDb.auth.verifyToken(refreshToken);
+
+    if (!authUser) {
+      return NextResponse.json(
+        { error: 'Invalid or expired session. Please sign in again.' },
+        { status: 401 }
+      );
+    }
+
+    // Use verified user ID from token instead of trusting client-sent userId
+    const verifiedUserId = authUser.id;
+
     const headersList = await headers();
-    const cookies = headersList.get('cookie') || '';
-    const hasInstantDBAuth = cookies.includes('instantdb-');
-
-    if (!hasInstantDBAuth) {
-      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
-    }
-
-    const { userId } = await request.json();
-
-    if (!userId) {
-      return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
-    }
-
     const origin = headersList.get('origin') || 'http://localhost:3000';
     const returnUrl = `${origin}/dashboard/settings?subscription=success`;
     const cancelUrl = `${origin}/pricing?subscription=cancelled`;
 
-    const subscription = await createSubscription(userId, returnUrl, cancelUrl);
+    const subscription = await createSubscription(verifiedUserId, returnUrl, cancelUrl);
 
     // Find the approval URL
     const approvalLink = subscription.links?.find((link: { rel: string }) => link.rel === 'approve');

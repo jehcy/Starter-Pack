@@ -13,6 +13,7 @@ interface UseUserProfileReturn {
   isAdmin: boolean;
   isPaid: boolean;
   userType: UserType | null;
+  refreshToken: string | undefined;
   signOut: () => void;
   error: { message: string } | undefined;
 }
@@ -74,6 +75,7 @@ export function useUserProfile(): UseUserProfileReturn {
     isAdmin: profile?.userType === 'admin',
     isPaid: profile?.userType === 'paid' || profile?.userType === 'admin',
     userType: profile?.userType ?? null,
+    refreshToken: user?.refresh_token,
     signOut,
     error,
   };

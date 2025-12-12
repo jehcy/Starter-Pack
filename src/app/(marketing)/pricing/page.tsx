@@ -171,7 +171,7 @@ function PricingCard({
   planType,
 }: PricingCardProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const { user, isPaid, isAuthenticated } = useUserProfile();
+  const { user, isPaid, isAuthenticated, refreshToken } = useUserProfile();
   const router = useRouter();
 
   const handleClick = async () => {
@@ -196,7 +196,7 @@ function PricingCard({
       const response = await fetch('/api/subscription/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: user?.id }),
+        body: JSON.stringify({ userId: user?.id, refreshToken }),
       });
 
       const data = await response.json();

@@ -1,19 +1,35 @@
 import { NextResponse } from 'next/server';
-import { headers } from 'next/headers';
 import { getSubscriptionDetails } from '@/lib/paypal';
+import { init } from '@instantdb/admin';
 
-export async function GET(request: Request) {
+// Initialize InstantDB admin client for server-side auth verification
+const adminDb = init({
+  appId: process.env.NEXT_PUBLIC_INSTANTDB_APP_ID!,
+  adminToken: process.env.INSTANTDB_ADMIN_TOKEN!,
+});
+
+export async function POST(request: Request) {
   try {
-    const headersList = await headers();
-    const cookies = headersList.get('cookie') || '';
-    const hasInstantDBAuth = cookies.includes('instantdb-');
+    // Parse request body
+    const { refreshToken, subscriptionId } = await request.json();
 
-    if (!hasInstantDBAuth) {
-      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+    // Verify authentication via refresh token
+    if (!refreshToken) {
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 }
+      );
     }
 
-    const { searchParams } = new URL(request.url);
-    const subscriptionId = searchParams.get('subscriptionId');
+    // Verify the refresh token server-side to get authenticated user
+    const authUser = await adminDb.auth.verifyToken(refreshToken);
+
+    if (!authUser) {
+      return NextResponse.json(
+        { error: 'Invalid or expired session' },
+        { status: 401 }
+      );
+    }
 
     if (!subscriptionId) {
       return NextResponse.json({ error: 'Subscription ID required' }, { status: 400 });

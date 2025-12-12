@@ -11,7 +11,7 @@ import { CreditCard, CheckCircle, XCircle, Clock, AlertTriangle, Sparkles } from
 import { Skeleton } from '@/components/ui/skeleton';
 
 export function SubscriptionManager() {
-  const { profile, isPaid, isLoading } = useUserProfile();
+  const { profile, isPaid, isLoading, refreshToken } = useUserProfile();
   const [isCancelling, setIsCancelling] = useState(false);
 
   const handleCancel = async () => {
@@ -31,6 +31,7 @@ export function SubscriptionManager() {
         body: JSON.stringify({
           subscriptionId: profile.paypalSubscriptionId,
           reason: 'User requested cancellation',
+          refreshToken,
         }),
       });
 
