@@ -25,6 +25,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Invalid or expired session' }, { status: 401 });
     }
 
+    console.log('[Credits Purchase] ===== CREATING ORDER =====');
+    console.log('[Credits Purchase] User ID:', authUser.id);
+    console.log('[Credits Purchase] User email:', authUser.email);
+
     // Validate package type
     if (packageType !== 'starter') {
       return NextResponse.json({ error: 'Invalid package type' }, { status: 400 });
@@ -35,6 +39,9 @@ export async function POST(request: Request) {
     const returnUrl = `${baseUrl}/api/credits/callback`; // Callback route captures payment
     const cancelUrl = `${baseUrl}/pricing?purchase=cancelled`;
 
+    console.log('[Credits Purchase] Base URL:', baseUrl);
+    console.log('[Credits Purchase] Return URL:', returnUrl);
+
     // Create PayPal order for $3 starter pack
     const order = await createOrder(
       authUser.id,
@@ -43,6 +50,9 @@ export async function POST(request: Request) {
       returnUrl,
       cancelUrl
     );
+
+    console.log('[Credits Purchase] Order created:', order.id);
+    console.log('[Credits Purchase] Full order response:', JSON.stringify(order, null, 2));
 
     // Find approval URL
     const approvalUrl = order.links.find((link) => link.rel === 'approve')?.href;
