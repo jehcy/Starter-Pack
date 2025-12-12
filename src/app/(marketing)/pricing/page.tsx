@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -9,13 +9,14 @@ import { CTA } from '@/components/cta';
 import { useUserProfile } from '@/hooks/useUserProfile';
 import { toast } from 'sonner';
 
-export default function PricingPage() {
+// Component that handles search params (needs to be wrapped in Suspense)
+function PurchaseNotifications() {
   const searchParams = useSearchParams();
 
-  // Show success/error toasts based on URL params
   useEffect(() => {
     const purchase = searchParams.get('purchase');
     const credits = searchParams.get('credits');
+    const reason = searchParams.get('reason');
 
     if (purchase === 'success') {
       toast.success('Purchase successful!', {
@@ -27,12 +28,22 @@ export default function PricingPage() {
         description: 'You can try again anytime.',
       });
     } else if (purchase === 'error') {
+      const errorMessage = reason === 'unexpected_amount'
+        ? 'Unexpected payment amount. Please contact support.'
+        : reason === 'credit_addition_failed'
+        ? 'Payment succeeded but credits could not be added. Please contact support.'
+        : 'Something went wrong. Please try again or contact support.';
+
       toast.error('Purchase failed', {
-        description: 'Something went wrong. Please try again or contact support.',
+        description: errorMessage,
       });
     }
   }, [searchParams]);
 
+  return null;
+}
+
+function PricingContent() {
   return (
     <>
       {/* Hero Section */}
@@ -172,6 +183,17 @@ export default function PricingPage() {
 
       {/* CTA Section */}
       <CTA />
+    </>
+  );
+}
+
+export default function PricingPage() {
+  return (
+    <>
+      <Suspense fallback={null}>
+        <PurchaseNotifications />
+      </Suspense>
+      <PricingContent />
     </>
   );
 }
