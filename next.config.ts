@@ -1,15 +1,12 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  // Enable standalone output for optimized Docker/Render deployments
-  output: 'standalone',
-
   // Image optimization settings
   images: {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: '**.example.com',
+        hostname: 'res.cloudinary.com',
       },
     ],
   },
