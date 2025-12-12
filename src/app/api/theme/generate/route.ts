@@ -168,6 +168,10 @@ export async function POST(request: Request) {
       messages,
     });
 
+    // Extract token usage from response
+    const inputTokens = response.usage?.input_tokens ?? 0;
+    const outputTokens = response.usage?.output_tokens ?? 0;
+
     // 10. Extract text content from response
     const content = response.content[0];
     if (content.type !== 'text') {
@@ -204,10 +208,8 @@ export async function POST(request: Request) {
     // 17. Extract theme details from the response text
     const themeDetails = extractThemeDetails(content.text);
 
-    // 18. Record prompt usage for free users
-    if (!isPaid) {
-      await recordPromptUsage(userId);
-    }
+    // 18. Record prompt usage for all users (with token tracking)
+    await recordPromptUsage(userId, inputTokens, outputTokens);
 
     // 19. Return success response
     const result: ThemeGenerationResponse = {

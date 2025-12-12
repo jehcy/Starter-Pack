@@ -38,7 +38,11 @@ export async function getPromptUsage(userId: string): Promise<PromptUsage | null
  * Record a prompt usage for a user
  * Creates a new record if one doesn't exist for the current month
  */
-export async function recordPromptUsage(userId: string): Promise<void> {
+export async function recordPromptUsage(
+  userId: string,
+  inputTokens: number = 0,
+  outputTokens: number = 0
+): Promise<void> {
   const now = new Date();
   const periodStart = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
   const periodEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999).getTime();
@@ -50,6 +54,8 @@ export async function recordPromptUsage(userId: string): Promise<void> {
     await adminDb.transact(
       adminDb.tx.promptUsages[usage.id].update({
         promptCount: usage.promptCount + 1,
+        inputTokens: (usage.inputTokens ?? 0) + inputTokens,
+        outputTokens: (usage.outputTokens ?? 0) + outputTokens,
         lastPromptAt: Date.now(),
         updatedAt: Date.now(),
       })
@@ -63,6 +69,8 @@ export async function recordPromptUsage(userId: string): Promise<void> {
         periodStart,
         periodEnd,
         promptCount: 1,
+        inputTokens,
+        outputTokens,
         lastPromptAt: Date.now(),
         createdAt: Date.now(),
         updatedAt: Date.now(),
@@ -135,4 +143,93 @@ export async function getUserSubscriptionStatus(userId: string | undefined): Pro
       isAdmin: false,
     };
   }
+}
+
+/**
+ * Get system-wide usage statistics for the current month
+ */
+export async function getSystemWideUsage(): Promise<{
+  totalPrompts: number;
+  totalInputTokens: number;
+  totalOutputTokens: number;
+  uniqueUsers: number;
+}> {
+  const now = new Date();
+  const periodStart = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
+
+  const { promptUsages } = await adminDb.query({
+    promptUsages: {
+      $: {
+        where: {
+          periodStart,
+        },
+      },
+    },
+  });
+
+  const allUsages = (promptUsages || []) as PromptUsage[];
+
+  return {
+    totalPrompts: allUsages.reduce((sum, u) => sum + u.promptCount, 0),
+    totalInputTokens: allUsages.reduce((sum, u) => sum + (u.inputTokens ?? 0), 0),
+    totalOutputTokens: allUsages.reduce((sum, u) => sum + (u.outputTokens ?? 0), 0),
+    uniqueUsers: new Set(allUsages.map((u) => u.userId)).size,
+  };
+}
+
+/**
+ * Get top users by prompt count for current month
+ */
+export async function getTopUsersByUsage(limit: number = 10): Promise<
+  Array<{
+    userId: string;
+    promptCount: number;
+    inputTokens: number;
+    outputTokens: number;
+  }>
+> {
+  const now = new Date();
+  const periodStart = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
+
+  const { promptUsages } = await adminDb.query({
+    promptUsages: {
+      $: {
+        where: {
+          periodStart,
+        },
+      },
+    },
+  });
+
+  const allUsages = (promptUsages || []) as PromptUsage[];
+
+  // Aggregate usage by userId to handle potential duplicates
+  const userUsageMap = new Map<string, {
+    userId: string;
+    promptCount: number;
+    inputTokens: number;
+    outputTokens: number;
+  }>();
+
+  allUsages.forEach((usage) => {
+    const existing = userUsageMap.get(usage.userId);
+    if (existing) {
+      // Aggregate if duplicate userId found
+      existing.promptCount += usage.promptCount;
+      existing.inputTokens += usage.inputTokens ?? 0;
+      existing.outputTokens += usage.outputTokens ?? 0;
+    } else {
+      userUsageMap.set(usage.userId, {
+        userId: usage.userId,
+        promptCount: usage.promptCount,
+        inputTokens: usage.inputTokens ?? 0,
+        outputTokens: usage.outputTokens ?? 0,
+      });
+    }
+  });
+
+  // Convert to array, sort by promptCount descending, and take top N
+  return Array.from(userUsageMap.values())
+    .sort((a, b) => b.promptCount - a.promptCount)
+    .slice(0, limit);
 }

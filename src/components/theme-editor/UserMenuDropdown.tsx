@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { useRouter } from 'next/navigation';
-import { Home, LogOut, Shield } from 'lucide-react';
+import { Home, LogOut, Shield, User } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
@@ -74,6 +74,11 @@ export function UserMenuDropdown() {
         <DropdownMenuItem onClick={() => router.push('/')}>
           <Home className="mr-2 h-4 w-4" />
           Back to Home
+        </DropdownMenuItem>
+
+        <DropdownMenuItem onClick={() => router.push(`/${user.id}/account`)}>
+          <User className="mr-2 h-4 w-4" />
+          My Account
         </DropdownMenuItem>
 
         {isAdmin && (

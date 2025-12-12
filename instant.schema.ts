@@ -61,6 +61,8 @@ const _schema = i.schema({
       periodStart: i.number().indexed(),
       periodEnd: i.number(),
       promptCount: i.number(),
+      inputTokens: i.number().optional(),
+      outputTokens: i.number().optional(),
       lastPromptAt: i.number(),
       createdAt: i.number(),
       updatedAt: i.number(),

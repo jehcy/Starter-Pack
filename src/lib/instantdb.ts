@@ -74,6 +74,8 @@ export interface PromptUsage {
   periodStart: number;      // Unix timestamp for billing period start (month start)
   periodEnd: number;        // Unix timestamp for billing period end (month end)
   promptCount: number;      // Number of prompts used in this period
+  inputTokens: number | null;      // Total input tokens for this period
+  outputTokens: number | null;     // Total output tokens for this period
   lastPromptAt: number;     // Timestamp of last prompt
   createdAt: number;
   updatedAt: number;
