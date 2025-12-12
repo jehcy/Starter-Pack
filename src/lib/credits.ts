@@ -188,8 +188,22 @@ export async function useCredit(userId: string): Promise<{
 
 /**
  * Add purchased credits to user's account
+ * Includes idempotency check to prevent duplicate credit additions
  */
-export async function addPurchasedCredits(userId: string, amount: number): Promise<void> {
+export async function addPurchasedCredits(
+  userId: string,
+  amount: number,
+  paypalOrderId?: string
+): Promise<{ added: boolean; reason?: string }> {
+  // Check for duplicate transaction if paypalOrderId is provided
+  if (paypalOrderId) {
+    const existingTransaction = await checkTransactionExists(paypalOrderId);
+    if (existingTransaction) {
+      console.log(`[Credits] ⚠️ Credits already added for order ${paypalOrderId}, skipping`);
+      return { added: false, reason: 'already_processed' };
+    }
+  }
+
   let creditsRecord = await getUserCreditsRecord(userId);
   if (!creditsRecord) {
     creditsRecord = await initializeUserCredits(userId);
@@ -205,8 +219,17 @@ export async function addPurchasedCredits(userId: string, amount: number): Promi
     })
   );
 
-  // Record transaction
-  await recordCreditTransaction(userId, 'purchase', amount, `Purchased ${amount} credits`);
+  // Record transaction with PayPal order ID
+  await recordCreditTransaction(
+    userId,
+    'purchase',
+    amount,
+    `Purchased ${amount} credits`,
+    paypalOrderId
+  );
+
+  console.log(`[Credits] ✅ Added ${amount} credits to user ${userId} (Order: ${paypalOrderId || 'N/A'})`);
+  return { added: true };
 }
 
 /**
@@ -269,13 +292,31 @@ export async function canGenerate(userId: string): Promise<{
 }
 
 /**
+ * Check if a transaction already exists for a PayPal order
+ */
+async function checkTransactionExists(paypalOrderId: string): Promise<boolean> {
+  const { creditTransactions } = await adminDb.query({
+    creditTransactions: {
+      $: {
+        where: {
+          paypalOrderId,
+        },
+      },
+    },
+  });
+
+  return creditTransactions && creditTransactions.length > 0;
+}
+
+/**
  * Record a credit transaction
  */
 async function recordCreditTransaction(
   userId: string,
   type: 'free' | 'purchase' | 'usage',
   amount: number,
-  description: string
+  description: string,
+  paypalOrderId?: string
 ): Promise<void> {
   const transactionId = generateId();
   await adminDb.transact(
@@ -284,6 +325,7 @@ async function recordCreditTransaction(
       type,
       amount,
       description,
+      paypalOrderId: paypalOrderId || null,
       createdAt: Date.now(),
     })
   );

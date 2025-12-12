@@ -224,12 +224,21 @@ async function handleOrderCaptureCompleted(resource: any) {
   console.log('[Webhook] Capture amount:', captureAmount);
   console.log('[Webhook] Final amount:', amount);
 
+  // Extract order ID for idempotency
+  const orderId = resource.id;
+  console.log('[Webhook] Order ID:', orderId);
+
   // Check if this is a starter pack purchase ($3)
   if (amount === '3.00') {
-    console.log(`[Webhook] ✅ Adding 3 credits to user ${userId}`);
+    console.log(`[Webhook] ✅ Adding 3 credits to user ${userId} for order ${orderId}`);
     try {
-      await addPurchasedCredits(userId, 3);
-      console.log('[Webhook] ✅ Credits added successfully!');
+      const result = await addPurchasedCredits(userId, 3, orderId);
+
+      if (result.added) {
+        console.log('[Webhook] ✅ Credits added successfully!');
+      } else {
+        console.log(`[Webhook] ℹ️ Credits not added: ${result.reason} (likely callback handled it)`);
+      }
     } catch (error) {
       console.error('[Webhook] ❌ Failed to add credits:', error);
     }

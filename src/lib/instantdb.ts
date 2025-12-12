@@ -108,6 +108,7 @@ export interface CreditTransaction {
   type: 'free' | 'purchase' | 'usage';
   amount: number;                // Positive for additions, negative for usage
   description: string;
+  paypalOrderId?: string | null; // PayPal order ID for deduplication
   createdAt: number;
 }
 
