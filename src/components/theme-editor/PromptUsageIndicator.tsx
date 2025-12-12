@@ -2,19 +2,20 @@
 
 import { Sparkles, Infinity, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
-import { usePromptUsage } from '@/hooks/usePromptUsage';
+import { useCredits } from '@/hooks/useCredits';
 import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export function PromptUsageIndicator() {
   const {
-    promptsUsed,
-    promptsRemaining,
-    maxPrompts,
+    creditsUsed,
+    creditsRemaining,
+    maxCredits,
     isUnlimited,
-    canUsePrompt,
     isLoading,
-  } = usePromptUsage();
+  } = useCredits();
+
+  const canUsePrompt = isUnlimited || creditsRemaining > 0;
 
   if (isLoading) {
     return (
@@ -35,29 +36,47 @@ export function PromptUsageIndicator() {
     );
   }
 
-  const usagePercent = (promptsUsed / maxPrompts) * 100;
+  const usagePercent = (creditsUsed / maxCredits) * 100;
 
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between text-sm">
         <div className="flex items-center gap-2">
-          <Sparkles className="w-4 h-4 text-primary" />
-          <span>AI Prompts</span>
+          <Sparkles className={`w-4 h-4 ${!canUsePrompt ? 'text-destructive' : 'text-primary'}`} />
+          <span className={!canUsePrompt ? 'font-medium' : ''}>AI Credits</span>
         </div>
-        <span className={canUsePrompt ? 'text-foreground' : 'text-destructive font-medium'}>
-          {promptsUsed} / {maxPrompts} used
+        <span className={canUsePrompt ? 'text-foreground' : 'text-destructive font-bold'}>
+          {creditsUsed} / {maxCredits} used
         </span>
       </div>
-      <Progress value={usagePercent} className="h-2" />
+      <Progress
+        value={usagePercent}
+        className={`h-2 ${!canUsePrompt ? 'bg-destructive/20' : ''}`}
+      />
       {!canUsePrompt && (
-        <div className="flex items-center gap-2 p-2 rounded-lg bg-destructive/10 border border-destructive/20">
-          <AlertCircle className="w-4 h-4 text-destructive flex-shrink-0" />
-          <p className="text-xs text-destructive">
-            Free limit reached.{' '}
-            <Link href="/pricing" className="underline font-medium hover:text-destructive/80">
-              Upgrade to Pro
-            </Link>{' '}
-            for unlimited.
+        <div className="flex items-center gap-2 p-3 rounded-lg bg-destructive/10 border-2 border-destructive/30 shadow-sm">
+          <AlertCircle className="w-5 h-5 text-destructive flex-shrink-0" />
+          <div className="flex-1">
+            <p className="text-xs font-semibold text-destructive mb-1">
+              No credits remaining
+            </p>
+            <p className="text-xs text-destructive/80">
+              <Link href="/pricing" className="underline font-medium hover:text-destructive">
+                Get more credits
+              </Link>{' '}
+              or upgrade to Pro for unlimited
+            </p>
+          </div>
+        </div>
+      )}
+      {canUsePrompt && creditsRemaining <= 1 && creditsRemaining > 0 && (
+        <div className="flex items-center gap-2 p-2 rounded-lg bg-orange-500/10 border border-orange-500/20">
+          <AlertCircle className="w-4 h-4 text-orange-500 flex-shrink-0" />
+          <p className="text-xs text-orange-600 dark:text-orange-500">
+            Low on credits.{' '}
+            <Link href="/pricing" className="underline font-medium hover:opacity-80">
+              Get more
+            </Link>
           </p>
         </div>
       )}

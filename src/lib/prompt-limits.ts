@@ -108,19 +108,47 @@ export async function getUserSubscriptionStatus(userId: string | undefined): Pro
 
     // If no profile exists, create a default free user profile
     if (!profile) {
-      console.log('[getUserSubscriptionStatus] Creating default profile for user:', userId);
+      console.warn('[getUserSubscriptionStatus] Creating default profile for user:', userId);
 
       const newProfileId = generateId();
-      await adminDb.transact(
-        adminDb.tx.userProfiles[newProfileId].update({
-          userId,
-          email: '', // Will be updated when user provides email
-          userType: 'free',
-          subscriptionStatus: 'none',
-          createdAt: Date.now(),
-          updatedAt: Date.now(),
-        })
-      );
+      try {
+        await adminDb.transact(
+          adminDb.tx.userProfiles[newProfileId].update({
+            userId,
+            email: '', // Will be updated when user provides email
+            userType: 'free',
+            subscriptionStatus: 'none',
+            createdAt: Date.now(),
+            updatedAt: Date.now(),
+          })
+        );
+      } catch (createError) {
+        // Handle duplicate key error - profile might have been created by another request
+        if (createError instanceof Error && createError.message?.includes('already exists')) {
+          console.warn('[getUserSubscriptionStatus] Profile already exists for user:', userId);
+          // Re-query to get the existing profile
+          const { userProfiles: existingProfiles } = await adminDb.query({
+            userProfiles: {
+              $: {
+                where: {
+                  userId,
+                },
+              },
+            },
+          });
+
+          const existingProfile = existingProfiles?.[0];
+          if (existingProfile) {
+            return {
+              userId,
+              isPaid: existingProfile.userType === 'paid' || existingProfile.userType === 'admin',
+              isAdmin: existingProfile.userType === 'admin',
+            };
+          }
+        }
+        // If it's another error, rethrow it
+        throw createError;
+      }
 
       return {
         userId,

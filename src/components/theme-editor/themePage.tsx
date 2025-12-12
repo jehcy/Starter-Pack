@@ -87,6 +87,9 @@ import {
   generateShadcnThemeTs,
   generateGlobalsCssFile,
   generateBrandSkill,
+  generateVueCssVars,
+  generateJavaConstants,
+  generateJavaProperties,
 } from '@/lib/theme-exports';
 import { ThemePreview } from './ThemePreview';
 import { CssPreviewModal } from './CssPreviewModal';
@@ -774,6 +777,63 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
     [requireAuth]
   );
 
+  const handleDownloadVueCss = useCallback(
+    requireAuth(async () => {
+      try {
+        const content = generateVueCssVars(theme);
+        const blob = new Blob([content], { type: 'text/css' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${slugify(theme.name || 'my-theme')}-vue.css`;
+        a.click();
+        URL.revokeObjectURL(url);
+        toast.success('Vue.js theme downloaded!');
+      } catch {
+        toast.error('Failed to generate Vue.js theme');
+      }
+    }, 'download Vue.js theme'),
+    [theme, requireAuth]
+  );
+
+  const handleDownloadJavaConstants = useCallback(
+    requireAuth(async () => {
+      try {
+        const content = generateJavaConstants(theme);
+        const blob = new Blob([content], { type: 'text/x-java-source' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'ThemeConstants.java';
+        a.click();
+        URL.revokeObjectURL(url);
+        toast.success('Java constants downloaded!');
+      } catch {
+        toast.error('Failed to generate Java constants');
+      }
+    }, 'download Java constants'),
+    [theme, requireAuth]
+  );
+
+  const handleDownloadJavaProperties = useCallback(
+    requireAuth(async () => {
+      try {
+        const content = generateJavaProperties(theme);
+        const blob = new Blob([content], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${slugify(theme.name || 'my-theme')}-theme.properties`;
+        a.click();
+        URL.revokeObjectURL(url);
+        toast.success('Java properties downloaded!');
+      } catch {
+        toast.error('Failed to generate Java properties');
+      }
+    }, 'download Java properties'),
+    [theme, requireAuth]
+  );
+
   const handleApplyStyle = useCallback(async () => {
     // Apply theme to DOM immediately for instant visual feedback
     applyThemeToDOM(theme);
@@ -1012,6 +1072,39 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
                   <span className="font-medium">brand-skill.md</span>
                   <span className="text-xs text-muted-foreground">
                     AI assistant instructions
+                  </span>
+                </div>
+              </DropdownMenuItem>
+
+              <DropdownMenuSeparator />
+              <DropdownMenuLabel>Other Frameworks</DropdownMenuLabel>
+
+              <DropdownMenuItem onClick={handleDownloadVueCss}>
+                <FileCode className="size-4 mr-2" />
+                <div className="flex flex-col">
+                  <span className="font-medium">Vue.js Theme</span>
+                  <span className="text-xs text-muted-foreground">
+                    CSS variables for Vue
+                  </span>
+                </div>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem onClick={handleDownloadJavaConstants}>
+                <Braces className="size-4 mr-2" />
+                <div className="flex flex-col">
+                  <span className="font-medium">Java Constants</span>
+                  <span className="text-xs text-muted-foreground">
+                    Static final class
+                  </span>
+                </div>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem onClick={handleDownloadJavaProperties}>
+                <FileText className="size-4 mr-2" />
+                <div className="flex flex-col">
+                  <span className="font-medium">Java Properties</span>
+                  <span className="text-xs text-muted-foreground">
+                    Spring Boot config
                   </span>
                 </div>
               </DropdownMenuItem>

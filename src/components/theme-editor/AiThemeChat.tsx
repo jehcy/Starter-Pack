@@ -14,7 +14,7 @@ import { validateAndFixContrast } from '@/lib/theme-generation';
 import Image from 'next/image';
 import { ColorPalette } from './ColorPalette';
 import { useAuth } from '@/hooks/useAuth';
-import { usePromptUsage } from '@/hooks/usePromptUsage';
+import { useCredits } from '@/hooks/useCredits';
 import { PromptUsageIndicator } from './PromptUsageIndicator';
 import Link from 'next/link';
 
@@ -25,7 +25,8 @@ interface AiThemeChatProps {
 
 export function AiThemeChat({ onApplyTheme, currentThemeName }: AiThemeChatProps) {
   const { user, isLoading: authLoading, isAuthenticated } = useAuth();
-  const { canUsePrompt, isUnlimited, recordPromptUsage } = usePromptUsage();
+  const { creditsRemaining, isUnlimited, refetch: refetchCredits } = useCredits();
+  const canUsePrompt = isUnlimited || creditsRemaining > 0;
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [urlInput, setUrlInput] = useState('');
@@ -251,10 +252,8 @@ export function AiThemeChat({ onApplyTheme, currentThemeName }: AiThemeChatProps
         throw new Error(data.error || 'Failed to generate theme');
       }
 
-      // Record prompt usage for free users
-      if (!isUnlimited) {
-        await recordPromptUsage();
-      }
+      // Refetch credits to update the UI
+      refetchCredits();
 
       if (data.theme) {
         // Validate and auto-fix contrast
@@ -426,7 +425,35 @@ export function AiThemeChat({ onApplyTheme, currentThemeName }: AiThemeChatProps
       {/* Messages */}
       <ScrollArea ref={scrollAreaRef} className="flex-1 py-4">
         <div className="space-y-4 pr-4">
-          {messages.length === 0 && (
+          {messages.length === 0 && !canUsePrompt && (
+            <div className="flex items-center justify-center py-12">
+              <div className="text-center space-y-4 max-w-md px-6">
+                <div className="w-16 h-16 mx-auto bg-primary/10 rounded-full flex items-center justify-center">
+                  <Sparkles className="w-8 h-8 text-primary" />
+                </div>
+                <div className="space-y-2">
+                  <h3 className="font-semibold text-lg">No Credits Remaining</h3>
+                  <p className="text-sm text-muted-foreground">
+                    You've used all your free AI theme generation credits.
+                    Purchase more credits or upgrade to Pro for unlimited theme generation.
+                  </p>
+                </div>
+                <div className="flex flex-col gap-2 pt-2">
+                  <Link href="/pricing">
+                    <Button className="w-full" size="lg">
+                      <Sparkles className="w-4 h-4 mr-2" />
+                      Get More Credits
+                    </Button>
+                  </Link>
+                  <p className="text-xs text-muted-foreground">
+                    Starting from just $3 for additional credits
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {messages.length === 0 && canUsePrompt && (
             <div className="text-center text-muted-foreground text-sm space-y-2 py-8">
               <Sparkles className="w-8 h-8 mx-auto mb-3 text-muted-foreground/50" />
               <p>Try prompts like:</p>
@@ -702,12 +729,16 @@ export function AiThemeChat({ onApplyTheme, currentThemeName }: AiThemeChatProps
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             onPaste={handlePaste}
-            placeholder="Describe your theme, paste a URL, or paste an image..."
-            disabled={isLoading}
+            placeholder={
+              !canUsePrompt
+                ? "No credits remaining - upgrade to continue..."
+                : "Describe your theme, paste a URL, or paste an image..."
+            }
+            disabled={isLoading || !canUsePrompt}
             rows={2}
             className="flex-1 resize-none rounded-lg border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary disabled:cursor-not-allowed disabled:opacity-50"
           />
-          <Button type="submit" size="icon" disabled={isLoading || !input.trim()}>
+          <Button type="submit" size="icon" disabled={isLoading || !input.trim() || !canUsePrompt}>
             {isLoading ? (
               <Loader2 className="w-4 h-4 animate-spin" />
             ) : (
@@ -730,7 +761,7 @@ export function AiThemeChat({ onApplyTheme, currentThemeName }: AiThemeChatProps
               variant="ghost"
               size="sm"
               onClick={() => fileInputRef.current?.click()}
-              disabled={isLoading}
+              disabled={isLoading || !canUsePrompt}
             >
               <ImageIcon className="w-4 h-4 mr-2" />
               Image
@@ -746,7 +777,7 @@ export function AiThemeChat({ onApplyTheme, currentThemeName }: AiThemeChatProps
                   toast.success('URL added - colors will be scraped from the website');
                 }
               }}
-              disabled={isLoading}
+              disabled={isLoading || !canUsePrompt}
             >
               <LinkIcon className="w-4 h-4 mr-2" />
               URL

@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { db, tx, id, ADMIN_EMAILS } from '@/lib/instantdb';
 import { useAuth, User } from '@/hooks/useAuth';
 import type { UserProfile, UserType } from '@/lib/instantdb';
@@ -20,6 +20,7 @@ interface UseUserProfileReturn {
 
 export function useUserProfile(): UseUserProfileReturn {
   const { user, isLoading: authLoading, isAuthenticated, signOut, error } = useAuth();
+  const creatingProfileRef = useRef<Set<string>>(new Set());
 
   // Query user profile from InstantDB
   const { data, isLoading: profileLoading } = db.useQuery(
@@ -31,8 +32,16 @@ export function useUserProfile(): UseUserProfileReturn {
   // Auto-create profile for new users
   useEffect(() => {
     if (user && !profileLoading && !profile) {
+      // Prevent duplicate creation attempts for the same user
+      if (creatingProfileRef.current.has(user.id)) {
+        return;
+      }
+
+      creatingProfileRef.current.add(user.id);
+
       const profileId = id();
       const isAdminEmail = ADMIN_EMAILS.includes(user.email ?? '');
+
       db.transact(
         tx.userProfiles[profileId].update({
           userId: user.id,
@@ -51,7 +60,17 @@ export function useUserProfile(): UseUserProfileReturn {
           cancelledAt: null,
           cancelAtPeriodEnd: false,
         })
-      );
+      ).catch((error) => {
+        // Handle duplicate key error gracefully
+        if (error.message?.includes('already exists')) {
+          console.warn('Profile already exists for user:', user.id);
+        } else {
+          console.error('Failed to create user profile:', error);
+        }
+      }).finally(() => {
+        // Clean up the tracking set after attempt
+        creatingProfileRef.current.delete(user.id);
+      });
     }
   }, [user, profile, profileLoading]);
 
