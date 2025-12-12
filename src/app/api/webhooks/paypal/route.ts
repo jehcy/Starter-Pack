@@ -205,33 +205,78 @@ async function handleOrderCaptureCompleted(resource: any) {
   console.log('[Webhook] ===== ORDER CAPTURE COMPLETED =====');
   console.log('[Webhook] Full resource:', JSON.stringify(resource, null, 2));
 
-  // Get custom_id (userId) from purchase_units
-  const userId = resource.purchase_units?.[0]?.custom_id;
-  console.log('[Webhook] Extracted userId:', userId);
+  // PAYMENT.CAPTURE.COMPLETED sends a capture object, not the full order
+  // We need to extract the order ID and fetch the order details
 
-  if (!userId) {
-    console.error('[Webhook] ❌ No user ID found in order capture');
+  // The capture amount is in the resource directly
+  const captureAmount = resource.amount?.value;
+  const captureId = resource.id;
+
+  console.log('[Webhook] Capture ID:', captureId);
+  console.log('[Webhook] Capture amount:', captureAmount);
+
+  // Extract order ID from supplementary_data or links
+  let orderId = resource.supplementary_data?.related_ids?.order_id;
+
+  if (!orderId) {
+    // Try to find order ID from links
+    const orderLink = resource.links?.find((link: any) =>
+      link.rel === 'up' && link.href.includes('/orders/')
+    );
+    if (orderLink) {
+      // Extract order ID from URL like https://api.sandbox.paypal.com/v2/checkout/orders/ORDER_ID
+      const match = orderLink.href.match(/\/orders\/([^\/\?]+)/);
+      if (match) {
+        orderId = match[1];
+      }
+    }
+  }
+
+  console.log('[Webhook] Order ID:', orderId);
+
+  if (!orderId) {
+    console.error('[Webhook] ❌ No order ID found in capture resource');
+    console.error('[Webhook] Resource structure:', JSON.stringify(resource, null, 2));
     return;
   }
 
-  // Extract amount - PAYMENT.CAPTURE.COMPLETED sends the full order object
-  // Try both paths: direct and in captures
-  const directAmount = resource.purchase_units?.[0]?.amount?.value;
-  const captureAmount = resource.purchase_units?.[0]?.payments?.captures?.[0]?.amount?.value;
-  const amount = captureAmount || directAmount;
+  // Fetch the full order details to get custom_id (userId)
+  try {
+    const accessToken = await getPayPalAccessToken();
+    const mode = process.env.PAYPAL_MODE || 'sandbox';
+    const baseUrl = mode === 'live'
+      ? 'https://api-m.paypal.com'
+      : 'https://api-m.sandbox.paypal.com';
 
-  console.log('[Webhook] Direct amount:', directAmount);
-  console.log('[Webhook] Capture amount:', captureAmount);
-  console.log('[Webhook] Final amount:', amount);
+    console.log('[Webhook] Fetching order details for:', orderId);
+    const orderResponse = await fetch(`${baseUrl}/v2/checkout/orders/${orderId}`, {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    });
 
-  // Extract order ID for idempotency
-  const orderId = resource.id;
-  console.log('[Webhook] Order ID:', orderId);
+    if (!orderResponse.ok) {
+      const error = await orderResponse.text();
+      console.error('[Webhook] ❌ Failed to fetch order:', error);
+      return;
+    }
 
-  // Check if this is a starter pack purchase ($3)
-  if (amount === '3.00') {
-    console.log(`[Webhook] ✅ Adding 3 credits to user ${userId} for order ${orderId}`);
-    try {
+    const orderData = await orderResponse.json();
+    console.log('[Webhook] Order data:', JSON.stringify(orderData, null, 2));
+
+    const userId = orderData.purchase_units?.[0]?.custom_id;
+    console.log('[Webhook] Extracted userId:', userId);
+
+    if (!userId) {
+      console.error('[Webhook] ❌ No user ID found in order');
+      return;
+    }
+
+    // Check if this is a starter pack purchase ($3)
+    if (captureAmount === '3.00') {
+      console.log(`[Webhook] ✅ Adding 3 credits to user ${userId} for order ${orderId}`);
+
       const result = await addPurchasedCredits(userId, 3, orderId);
 
       if (result.added) {
@@ -239,11 +284,11 @@ async function handleOrderCaptureCompleted(resource: any) {
       } else {
         console.log(`[Webhook] ℹ️ Credits not added: ${result.reason} (likely callback handled it)`);
       }
-    } catch (error) {
-      console.error('[Webhook] ❌ Failed to add credits:', error);
+    } else {
+      console.warn(`[Webhook] ⚠️ Unexpected capture amount: ${captureAmount}`);
     }
-  } else {
-    console.warn(`[Webhook] ⚠️ Unexpected order amount: ${amount}`);
+  } catch (error) {
+    console.error('[Webhook] ❌ Error processing capture:', error);
   }
 }
 
