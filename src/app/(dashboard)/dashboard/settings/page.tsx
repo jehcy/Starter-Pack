@@ -1,14 +1,55 @@
 'use client';
 
 import * as React from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/cards/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
+import { useUserProfile } from '@/hooks/useUserProfile';
+import { toast } from 'sonner';
 
 export default function SettingsPage() {
   const [isSaving, setIsSaving] = React.useState(false);
+  const [isActivating, setIsActivating] = React.useState(false);
+  const searchParams = useSearchParams();
+  const { refreshToken, isPaid } = useUserProfile();
+
+  // Handle subscription success callback from PayPal
+  React.useEffect(() => {
+    const subscription = searchParams.get('subscription');
+    const subscriptionId = searchParams.get('subscription_id');
+
+    if (subscription === 'success' && subscriptionId && refreshToken && !isPaid && !isActivating) {
+      activateSubscription(subscriptionId);
+    }
+  }, [searchParams, refreshToken, isPaid, isActivating]);
+
+  async function activateSubscription(subscriptionId: string) {
+    setIsActivating(true);
+    try {
+      const response = await fetch('/api/subscription/activate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ subscriptionId, refreshToken }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast.success('Subscription activated! You now have Pro access.');
+        // Clear URL params
+        window.history.replaceState({}, '', '/dashboard/settings');
+      } else {
+        toast.error(data.error || 'Failed to activate subscription');
+      }
+    } catch {
+      toast.error('Failed to activate subscription');
+    } finally {
+      setIsActivating(false);
+    }
+  }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
