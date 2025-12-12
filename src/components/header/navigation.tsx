@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import { ModeToggle } from '@/components/mode-toggle';
 import { Button } from '@/components/ui/button';
 import {
@@ -12,6 +12,8 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
+import { useUserProfile } from '@/hooks/useUserProfile';
+import { UserNavigation } from '@/components/header/user-navigation';
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -24,6 +26,7 @@ const navLinks = [
 export function Navigation() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { isAuthenticated, isLoading } = useUserProfile();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -58,12 +61,23 @@ export function Navigation() {
         <div className="flex items-center gap-2">
           <ModeToggle />
           <div className="hidden sm:flex items-center gap-2">
-            <Button variant="ghost" className="rounded-full" asChild>
-              <Link href="/sign-in">Sign In</Link>
-            </Button>
-            <Button className="rounded-full hover:translate-y-[-2px] transition-transform" asChild>
-              <Link href="/theme">Try it Now!</Link>
-            </Button>
+            {isAuthenticated && !isLoading ? (
+              <>
+                <Button className="rounded-full hover:translate-y-[-2px] transition-transform" asChild>
+                  <Link href="/theme">Theme Editor</Link>
+                </Button>
+                <UserNavigation />
+              </>
+            ) : (
+              <>
+                <Button variant="ghost" className="rounded-full" asChild>
+                  <Link href="/sign-in">Sign In</Link>
+                </Button>
+                <Button className="rounded-full hover:translate-y-[-2px] transition-transform" asChild>
+                  <Link href="/theme">Try it Now!</Link>
+                </Button>
+              </>
+            )}
           </div>
           {/* Mobile menu */}
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
@@ -95,12 +109,25 @@ export function Navigation() {
                   </Link>
                 ))}
                 <div className="flex flex-col gap-2 mt-4 pt-4 border-t">
-                  <Button variant="ghost" className="rounded-full justify-start" asChild>
-                    <Link href="/sign-in" onClick={() => setMobileOpen(false)}>Sign In</Link>
-                  </Button>
-                  <Button className="rounded-full justify-start" asChild>
-                    <Link href="/theme" onClick={() => setMobileOpen(false)}>Try it Now!</Link>
-                  </Button>
+                  {isAuthenticated && !isLoading ? (
+                    <>
+                      <Button className="rounded-full justify-start" asChild>
+                        <Link href="/theme" onClick={() => setMobileOpen(false)}>Theme Editor</Link>
+                      </Button>
+                      <div className="px-4 py-2">
+                        <UserNavigation />
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <Button variant="ghost" className="rounded-full justify-start" asChild>
+                        <Link href="/sign-in" onClick={() => setMobileOpen(false)}>Sign In</Link>
+                      </Button>
+                      <Button className="rounded-full justify-start" asChild>
+                        <Link href="/theme" onClick={() => setMobileOpen(false)}>Try it Now!</Link>
+                      </Button>
+                    </>
+                  )}
                 </div>
               </nav>
             </SheetContent>

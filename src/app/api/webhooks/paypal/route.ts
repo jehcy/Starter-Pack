@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { addPurchasedCredits } from '@/lib/credits';
 
 /**
  * Get PayPal Access Token for API calls
@@ -198,6 +199,35 @@ async function handlePaymentFailed(resource: any) {
 }
 
 /**
+ * Handle order capture completed (one-time payments like starter pack)
+ */
+async function handleOrderCaptureCompleted(resource: any) {
+  console.log('Order capture completed:', {
+    orderId: resource.id,
+    amount: resource.purchase_units?.[0]?.amount?.value,
+    currency: resource.purchase_units?.[0]?.amount?.currency_code,
+    status: resource.status,
+  });
+
+  // Get custom_id (userId) from purchase_units
+  const userId = resource.purchase_units?.[0]?.custom_id;
+
+  if (!userId) {
+    console.error('No user ID found in order capture');
+    return;
+  }
+
+  // Check if this is a starter pack purchase ($3)
+  const amount = resource.purchase_units?.[0]?.amount?.value;
+  if (amount === '3.00') {
+    console.log(`Adding 3 credits to user ${userId}`);
+    await addPurchasedCredits(userId, 3);
+  } else {
+    console.warn(`Unexpected order amount: ${amount}`);
+  }
+}
+
+/**
  * PayPal Webhook Handler
  * Handles webhook events from PayPal for subscriptions and payments
  */
@@ -271,6 +301,11 @@ export async function POST(req: NextRequest) {
 
       case 'BILLING.SUBSCRIPTION.PAYMENT.FAILED':
         await handlePaymentFailed(resource);
+        break;
+
+      // One-time Payment Events (Starter Pack)
+      case 'PAYMENT.CAPTURE.COMPLETED':
+        await handleOrderCaptureCompleted(resource);
         break;
 
       default:

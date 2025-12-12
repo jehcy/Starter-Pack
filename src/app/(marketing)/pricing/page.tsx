@@ -19,8 +19,7 @@ export default function PricingPage() {
           <div className="mx-auto max-w-3xl text-center">
             <h1 className="font-bold">Simple pricing for Vibe coders</h1>
             <p className="mt-6 text-muted-foreground">
-              Start free with 3 AI prompts per month. Upgrade to Pro for unlimited AI-generated
-              themes and deeper config.
+              Try the AI theme generator with 1 free credit. Upgrade for more AI-powered theme generation.
             </p>
           </div>
         </div>
@@ -29,33 +28,46 @@ export default function PricingPage() {
       {/* Pricing Cards */}
       <section className="py-16">
         <div className="container-wide">
-          <div className="mx-auto grid max-w-4xl gap-8 lg:grid-cols-2">
+          <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-3">
             <PricingCard
               name="Free"
               price="$0"
-              period="/month"
-              description="Perfect for getting your design system ready before you start coding. 3 AI theme prompts per month, unlimited theme tweaks, brand setup, and React starter pack downloads."
+              period=""
+              description="Try the AI theme generator with 1 free credit. Perfect for testing the platform."
               features={[
-                { text: 'Theme Editor', included: true },
+                { text: 'Full Theme Editor', included: true },
+                { text: '1 AI Credit (one-time)', included: true },
+                { text: 'Unlimited Downloads', included: true },
                 { text: 'Brand Setup', included: true },
-                { text: 'React Starter Pack', included: true },
-                { text: 'Save Projects (sign-in required)', included: true },
-                { text: '3 AI prompts/month', included: true },
               ]}
               buttonText="Start for free"
-              buttonVariant="default"
+              buttonVariant="outline"
               planType="free"
+            />
+            <PricingCard
+              name="Starter"
+              price="$3"
+              period="one-time"
+              description="Perfect for solo devs building 1-2 projects. Credits never expire."
+              features={[
+                { text: 'Everything in Free', included: true },
+                { text: '3 AI Credits', included: true },
+                { text: 'Credits Never Expire', included: true },
+                { text: 'Save Projects', included: true },
+              ]}
+              buttonText="Buy Credits"
+              buttonVariant="default"
+              planType="starter"
             />
             <PricingCard
               name="Pro"
               price="$7"
               period="/month"
-              description="For heavy Vibe coders who want automation and control. Unlimited AI-generated themes from prompts and brand references. MCP-powered config coming soon."
+              description="For agencies and freelancers with ongoing projects. Unlimited AI theme generation."
               features={[
-                { text: 'Everything in Free', included: true },
-                { text: 'Unlimited AI theme generation', included: true },
-                { text: 'Priority support', included: true },
-                { text: 'MCP Config', included: false, comingSoon: true },
+                { text: 'Everything in Starter', included: true },
+                { text: 'Unlimited AI Generation', included: true },
+                { text: 'Priority Support', included: true },
               ]}
               buttonText="Subscribe with PayPal"
               buttonVariant="default"
@@ -79,20 +91,22 @@ export default function PricingPage() {
                 <tr className="border-b border-border/50 bg-muted/50">
                   <th className="px-6 py-4 text-left text-sm font-semibold">Feature</th>
                   <th className="px-6 py-4 text-center text-sm font-semibold">Free</th>
+                  <th className="px-6 py-4 text-center text-sm font-semibold">Starter</th>
                   <th className="px-6 py-4 text-center text-sm font-semibold">Pro</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/50">
-                <ComparisonRow feature="Theme Editor" free="✓" pro="✓" />
-                <ComparisonRow feature="Brand Setup" free="✓" pro="✓" />
-                <ComparisonRow feature="React Starter Pack" free="✓" pro="✓" />
-                <ComparisonRow feature="Save Projects" free="Sign-in required" pro="✓" />
+                <ComparisonRow feature="Theme Editor" free="✓" starter="✓" pro="✓" />
+                <ComparisonRow feature="Brand Setup" free="✓" starter="✓" pro="✓" />
+                <ComparisonRow feature="Unlimited Downloads" free="✓" starter="✓" pro="✓" />
+                <ComparisonRow feature="Save Projects" free="—" starter="✓" pro="✓" />
                 <ComparisonRow
                   feature="AI Theme Generation"
-                  free="3 prompts/month"
+                  free="1 credit"
+                  starter="3 credits"
                   pro="Unlimited"
                 />
-                <ComparisonRow feature="MCP Config" free="—" pro="Coming soon" />
+                <ComparisonRow feature="Priority Support" free="—" starter="—" pro="✓" />
               </tbody>
             </table>
           </div>
@@ -155,7 +169,7 @@ interface PricingCardProps {
   buttonVariant: 'default' | 'outline';
   highlighted?: boolean;
   badge?: string;
-  planType: 'free' | 'pro';
+  planType: 'free' | 'starter' | 'pro';
 }
 
 function PricingCard({
@@ -180,37 +194,59 @@ function PricingCard({
       return;
     }
 
-    // Pro plan
+    // Starter or Pro plan - require auth
     if (!isAuthenticated) {
       router.push('/sign-in?redirect=/pricing');
       return;
     }
 
-    if (isPaid) {
-      toast.info('You already have an active subscription');
-      return;
-    }
-
     setIsLoading(true);
     try {
-      const response = await fetch('/api/subscription/create', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: user?.id, refreshToken }),
-      });
+      if (planType === 'starter') {
+        // One-time purchase
+        const response = await fetch('/api/credits/purchase', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ refreshToken, package: 'starter' }),
+        });
 
-      const data = await response.json();
+        const data = await response.json();
 
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to create subscription');
-      }
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to create purchase');
+        }
 
-      // Redirect to PayPal approval page
-      if (data.approvalUrl) {
-        window.location.href = data.approvalUrl;
+        // Redirect to PayPal approval page
+        if (data.approvalUrl) {
+          window.location.href = data.approvalUrl;
+        }
+      } else {
+        // Pro subscription
+        if (isPaid) {
+          toast.info('You already have an active subscription');
+          setIsLoading(false);
+          return;
+        }
+
+        const response = await fetch('/api/subscription/create', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId: user?.id, refreshToken }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to create subscription');
+        }
+
+        // Redirect to PayPal approval page
+        if (data.approvalUrl) {
+          window.location.href = data.approvalUrl;
+        }
       }
     } catch (error) {
-      toast.error('Failed to start subscription', {
+      toast.error('Failed to start purchase', {
         description: error instanceof Error ? error.message : 'Please try again',
       });
       setIsLoading(false);
@@ -302,14 +338,16 @@ function PricingCard({
 interface ComparisonRowProps {
   feature: string;
   free: string;
+  starter: string;
   pro: string;
 }
 
-function ComparisonRow({ feature, free, pro }: ComparisonRowProps) {
+function ComparisonRow({ feature, free, starter, pro }: ComparisonRowProps) {
   return (
     <tr>
       <td className="px-6 py-4 text-sm">{feature}</td>
       <td className="px-6 py-4 text-center text-sm text-muted-foreground">{free}</td>
+      <td className="px-6 py-4 text-center text-sm text-muted-foreground">{starter}</td>
       <td className="px-6 py-4 text-center text-sm text-muted-foreground">{pro}</td>
     </tr>
   );

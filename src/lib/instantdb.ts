@@ -59,6 +59,7 @@ export interface UserProfile {
   updatedAt: number;
 
   // Subscription fields
+  subscriptionTier: 'free' | 'starter' | 'pro' | null;
   paypalSubscriptionId: string | null;
   subscriptionStatus: SubscriptionStatus | null;
   subscribedAt: number | null;
@@ -87,6 +88,25 @@ export interface SubscriptionEvent {
   eventType: 'created' | 'activated' | 'cancelled' | 'renewed' | 'payment_failed' | 'expired';
   paypalSubscriptionId: string;
   metadata: string;  // JSON string with event details
+  createdAt: number;
+}
+
+export interface UserCredits {
+  id: string;
+  userId: string;
+  freeCreditsUsed: boolean;      // Track if user used their 1 free credit
+  purchasedCredits: number;      // One-time purchased credits (never expire)
+  // Pro users: tracked via PromptUsage (already exists) for abuse guard
+  createdAt: number;
+  updatedAt: number;
+}
+
+export interface CreditTransaction {
+  id: string;
+  userId: string;
+  type: 'free' | 'purchase' | 'usage';
+  amount: number;                // Positive for additions, negative for usage
+  description: string;
   createdAt: number;
 }
 

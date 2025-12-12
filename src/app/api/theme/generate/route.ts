@@ -10,7 +10,8 @@ import {
   extractThemeDetails,
 } from '@/lib/theme-generation';
 import { scrapeWebsiteDesign, formatScrapedDesignForPrompt } from '@/lib/website-scraper';
-import { getUserSubscriptionStatus, getPromptUsage, recordPromptUsage } from '@/lib/prompt-limits';
+import { getUserSubscriptionStatus, recordPromptUsage } from '@/lib/prompt-limits';
+import { canGenerate, useCredit } from '@/lib/credits';
 
 // Initialize InstantDB admin client for server-side auth verification
 const adminDb = init({
@@ -49,26 +50,23 @@ export async function POST(request: Request) {
       console.log('[Theme Gen] Auth verified for user:', verifiedUserId);
     }
 
-    // 3. Check prompt limits for free users using verified userId
-    const { userId, isPaid } = await getUserSubscriptionStatus(verifiedUserId);
+    // 3. Check if user can generate (credits or unlimited)
+    const generationCheck = await canGenerate(verifiedUserId);
 
-    if (!isPaid) {
-      const usage = await getPromptUsage(userId);
-      const promptsUsed = usage?.promptCount ?? 0;
-
-      if (promptsUsed >= 3) {
-        return NextResponse.json(
-          {
-            error: 'Free prompt limit reached',
-            message: 'You have used all 3 free prompts this month. Upgrade to Pro for unlimited AI theme generation.',
-            upgradeUrl: '/pricing',
-            promptsUsed: 3,
-            promptsLimit: 3,
-          },
-          { status: 403 }
-        );
-      }
+    if (!generationCheck.allowed) {
+      return NextResponse.json(
+        {
+          error: 'No credits remaining',
+          message: generationCheck.reason || 'Upgrade to continue generating themes.',
+          upgradeUrl: '/pricing',
+          creditsRemaining: 0,
+        },
+        { status: 403 }
+      );
     }
+
+    // Get user subscription status for later use
+    const { userId } = await getUserSubscriptionStatus(verifiedUserId);
 
     // 4. Validate API key exists
     const apiKey = process.env.ANTHROPIC_API_KEY;
@@ -208,7 +206,8 @@ export async function POST(request: Request) {
     // 17. Extract theme details from the response text
     const themeDetails = extractThemeDetails(content.text);
 
-    // 18. Record prompt usage for all users (with token tracking)
+    // 18. Deduct credit (for non-Pro users) and record usage
+    await useCredit(verifiedUserId);
     await recordPromptUsage(userId, inputTokens, outputTokens);
 
     // 19. Return success response

@@ -137,6 +137,59 @@ export async function cancelSubscription(
 }
 
 /**
+ * Create a one-time PayPal order (for starter pack purchase)
+ */
+export async function createOrder(
+  userId: string,
+  amount: string,
+  description: string,
+  returnUrl: string,
+  cancelUrl: string
+): Promise<{
+  id: string;
+  status: string;
+  links: Array<{ href: string; rel: string; method: string }>;
+}> {
+  const accessToken = await getAccessToken();
+
+  const response = await fetch(`${baseUrl}/v2/checkout/orders`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      intent: 'CAPTURE',
+      purchase_units: [
+        {
+          custom_id: userId, // Store user ID for webhook processing
+          description,
+          amount: {
+            currency_code: 'USD',
+            value: amount,
+          },
+        },
+      ],
+      application_context: {
+        brand_name: 'VibeCN',
+        locale: 'en-US',
+        shipping_preference: 'NO_SHIPPING',
+        user_action: 'PAY_NOW',
+        return_url: returnUrl,
+        cancel_url: cancelUrl,
+      },
+    }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(`Failed to create order: ${JSON.stringify(error)}`);
+  }
+
+  return response.json();
+}
+
+/**
  * Verify PayPal webhook signature
  * This ensures the webhook request actually came from PayPal
  */
