@@ -1,5 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { NextResponse } from 'next/server';
+import { init } from '@instantdb/admin';
 import type { ThemeGenerationRequest, ThemeGenerationResponse, ImageMediaType } from '@/types/chat';
 import {
   THEME_GENERATION_SYSTEM_PROMPT,
@@ -11,52 +12,45 @@ import {
 import { scrapeWebsiteDesign, formatScrapedDesignForPrompt } from '@/lib/website-scraper';
 import { getUserSubscriptionStatus, getPromptUsage, recordPromptUsage } from '@/lib/prompt-limits';
 
+// Initialize InstantDB admin client for server-side auth verification
+const adminDb = init({
+  appId: process.env.NEXT_PUBLIC_INSTANTDB_APP_ID!,
+  adminToken: process.env.INSTANTDB_ADMIN_TOKEN!,
+});
+
 export async function POST(request: Request) {
   try {
-    // 1. Check authentication - InstantDB stores auth token in cookies
-    const appId = process.env.NEXT_PUBLIC_INSTANTDB_APP_ID;
+    // 1. Parse request body
+    const body = (await request.json()) as ThemeGenerationRequest;
 
-    if (!appId) {
-      return NextResponse.json(
-        { error: 'InstantDB app ID not configured' },
-        { status: 500 }
-      );
-    }
-
-    // Check for authentication via cookies
-    const cookies = request.headers.get('cookie') || '';
-
-    // InstantDB auth cookies - be specific to avoid false positives
-    // Look for actual auth-related cookies, not just any cookie with "instant" in it
-    const cookieNames = cookies.split(';').map(c => c.trim().split('=')[0]);
-    const hasInstantDBAuth = cookieNames.some(name =>
-      name.startsWith('__idb_') || // InstantDB session cookies
-      name === 'instant_user_id' || // User ID cookie
-      name === 'instant_user_email' || // User email cookie
-      name.startsWith('instantdb-') // Alternative cookie pattern
-    );
-
-    // Debug logging in development
-    if (process.env.NODE_ENV === 'development') {
-      console.log('[Theme Gen] Auth check:', hasInstantDBAuth ? 'PASSED' : 'FAILED');
-      console.log('[Theme Gen] Available cookies:', cookieNames.join(', '));
-      if (!hasInstantDBAuth) {
-        console.log('[Theme Gen] Expected cookies: __idb_*, instant_user_id, instant_user_email, or instantdb-*');
-      }
-    }
-
-    if (!hasInstantDBAuth) {
+    // 2. Verify authentication via refresh token
+    if (!body.refreshToken) {
       return NextResponse.json(
         { error: 'Authentication required. Please sign in to use the AI theme generator.' },
         { status: 401 }
       );
     }
 
-    // 2. Parse request body (do this before getUserSubscriptionStatus to avoid double-parsing)
-    const body = (await request.json()) as ThemeGenerationRequest;
+    // Verify the refresh token server-side to get authenticated user
+    const authUser = await adminDb.auth.verifyToken(body.refreshToken);
 
-    // 3. Check prompt limits for free users
-    const { userId, isPaid } = await getUserSubscriptionStatus(body.userId);
+    if (!authUser) {
+      return NextResponse.json(
+        { error: 'Invalid or expired session. Please sign in again.' },
+        { status: 401 }
+      );
+    }
+
+    // authUser.id is the VERIFIED user ID from server-side token verification
+    const verifiedUserId = authUser.id;
+
+    // Debug logging in development
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[Theme Gen] Auth verified for user:', verifiedUserId);
+    }
+
+    // 3. Check prompt limits for free users using verified userId
+    const { userId, isPaid } = await getUserSubscriptionStatus(verifiedUserId);
 
     if (!isPaid) {
       const usage = await getPromptUsage(userId);

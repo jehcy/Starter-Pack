@@ -25,6 +25,7 @@ import { db } from '@/lib/instantdb';
 export interface User {
   id: string;
   email: string | null;
+  refresh_token?: string;
 }
 
 interface UseAuthReturn {
@@ -39,7 +40,7 @@ export function useAuth(): UseAuthReturn {
   const { isLoading, user, error } = db.useAuth();
 
   return {
-    user: user ? { id: user.id, email: user.email ?? null } : null,
+    user: user ? { id: user.id, email: user.email ?? null, refresh_token: user.refresh_token } : null,
     isLoading,
     isAuthenticated: !!user,
     error,

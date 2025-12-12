@@ -235,7 +235,7 @@ export function AiThemeChat({ onApplyTheme, currentThemeName }: AiThemeChatProps
           url: urlToSend.trim() || undefined,
           currentTheme: lastAppliedTheme || undefined,
           recentMessages: recentMessages.length > 0 ? recentMessages : undefined,
-          userId: user?.id, // Send user ID for subscription status check
+          refreshToken: user?.refresh_token, // Send refresh token for server-side auth verification
         }),
       });
 
