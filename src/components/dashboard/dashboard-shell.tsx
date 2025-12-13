@@ -42,39 +42,12 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
         <nav className="flex-1 p-4 space-y-1">
           <NavSection title="Main">
             <NavItem href="/dashboard" icon={<HomeIcon />} label="Overview" />
-            <NavItem href="/dashboard/themes" icon={<PaletteIcon />} label="My Themes" badge="Coming Soon" />
-          </NavSection>
-          <NavSection title="Settings">
             <NavItem href="/dashboard/settings" icon={<SettingsIcon />} label="Settings" />
           </NavSection>
+          
         </nav>
 
-        {/* User Section - Fixed at Bottom */}
-        <div className="mt-auto p-4 border-t border-border/40">
-          {/* User Info */}
-          <div className="flex items-center gap-3 rounded-xl p-2 hover:bg-muted transition-colors cursor-pointer">
-            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary/80 to-primary flex items-center justify-center text-primary-foreground font-semibold">
-              {userInitials}
-            </div>
-            <div className="flex-1 truncate">
-              <p className="text-sm font-medium truncate">{displayName}</p>
-              <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
-            </div>
-            <svg
-              className="h-4 w-4 text-muted-foreground"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M8 9l4-4 4 4m0 6l-4 4-4-4"
-              />
-            </svg>
-          </div>
-        </div>
+        
       </aside>
 
       {/* Main content */}

@@ -6,7 +6,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { useUserProfile } from '@/hooks/useUserProfile';
 import { ModeToggle } from '@/components/mode-toggle';
 import { Button } from '@/components/ui/button';
-import { Users, Settings, LayoutDashboard } from 'lucide-react';
+import { Users, Settings, LayoutDashboard, Palette } from 'lucide-react';
 import { Logo } from '@/components/ui/logo';
 
 interface AdminShellProps {
@@ -81,6 +81,12 @@ export function AdminShell({ children }: AdminShellProps) {
             <h1 className="text-lg font-semibold">Admin Panel</h1>
           </div>
           <ModeToggle />
+          <Button variant="ghost" size="sm" asChild>
+            <Link href="/theme">
+              <Palette className="h-4 w-4 mr-2" />
+              Theme Editor
+            </Link>
+          </Button>
           <Button variant="ghost" size="sm" onClick={handleSignOut}>
             Sign Out
           </Button>
