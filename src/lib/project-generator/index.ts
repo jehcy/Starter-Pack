@@ -87,6 +87,7 @@ function generatePackageJson(projectName: string): string {
       'tailwind-merge': '^3.4.0',
     },
     devDependencies: {
+      '@tailwindcss/typography': '^0.5.16',
       '@types/node': '^20',
       '@types/react': '^19',
       '@types/react-dom': '^19',
@@ -136,12 +137,14 @@ export default nextConfig;
 }
 
 function generatePostcssConfig(): string {
-  return `module.exports = {
+  return `const config = {
   plugins: {
     tailwindcss: {},
     autoprefixer: {},
   },
 };
+
+export default config;
 `;
 }
 
@@ -152,7 +155,7 @@ function generateComponentsJson(): string {
     rsc: true,
     tsx: true,
     tailwind: {
-      config: '',
+      config: 'tailwind.config.js',
       css: 'src/app/globals.css',
       baseColor: 'neutral',
       cssVariables: true,
@@ -167,6 +170,169 @@ function generateComponentsJson(): string {
       hooks: '@/hooks',
     },
   }, null, 2);
+}
+
+function generateTailwindConfig(theme: BrandTheme): string {
+  return `/** @type {import('tailwindcss').Config} */
+module.exports = {
+  darkMode: ['class'],
+  content: [
+    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+  ],
+  theme: {
+    extend: {
+      colors: {
+        background: 'var(--background)',
+        foreground: 'var(--foreground)',
+        card: {
+          DEFAULT: 'var(--card)',
+          foreground: 'var(--card-foreground)',
+        },
+        popover: {
+          DEFAULT: 'var(--popover)',
+          foreground: 'var(--popover-foreground)',
+        },
+        primary: {
+          DEFAULT: 'var(--primary)',
+          foreground: 'var(--primary-foreground)',
+        },
+        secondary: {
+          DEFAULT: 'var(--secondary)',
+          foreground: 'var(--secondary-foreground)',
+        },
+        muted: {
+          DEFAULT: 'var(--muted)',
+          foreground: 'var(--muted-foreground)',
+        },
+        accent: {
+          DEFAULT: 'var(--accent)',
+          foreground: 'var(--accent-foreground)',
+        },
+        destructive: {
+          DEFAULT: 'var(--destructive)',
+          foreground: 'var(--destructive-foreground)',
+        },
+        border: 'var(--border)',
+        input: 'var(--input)',
+        ring: 'var(--ring)',
+        chart: {
+          1: 'var(--chart-1)',
+          2: 'var(--chart-2)',
+          3: 'var(--chart-3)',
+          4: 'var(--chart-4)',
+          5: 'var(--chart-5)',
+        },
+        // 60-30-10 Semantic Colors
+        'bg-primary': 'var(--bg-primary)',
+        'bg-secondary': 'var(--bg-secondary)',
+        'bg-accent': 'var(--bg-accent)',
+        'card-primary': 'var(--card-primary)',
+        'card-secondary': 'var(--card-secondary)',
+        'card-accent': 'var(--card-accent)',
+        'text-primary': 'var(--text-primary)',
+        'text-secondary': 'var(--text-secondary)',
+        'text-accent': 'var(--text-accent)',
+        'btn-fill': {
+          primary: 'var(--btn-fill-primary)',
+          'primary-foreground': 'var(--btn-fill-primary-foreground)',
+          secondary: 'var(--btn-fill-secondary)',
+          'secondary-foreground': 'var(--btn-fill-secondary-foreground)',
+          accent: 'var(--btn-fill-accent)',
+          'accent-foreground': 'var(--btn-fill-accent-foreground)',
+        },
+        'btn-outline': {
+          primary: 'var(--btn-outline-primary)',
+          'primary-foreground': 'var(--btn-outline-primary-foreground)',
+          secondary: 'var(--btn-outline-secondary)',
+          'secondary-foreground': 'var(--btn-outline-secondary-foreground)',
+          accent: 'var(--btn-outline-accent)',
+          'accent-foreground': 'var(--btn-outline-accent-foreground)',
+        },
+        'btn-text': {
+          primary: 'var(--btn-text-primary)',
+          secondary: 'var(--btn-text-secondary)',
+          accent: 'var(--btn-text-accent)',
+        },
+      },
+      borderRadius: {
+        none: '0',
+        card: 'var(--radius-card)',
+        button: 'var(--radius-button)',
+        input: 'var(--radius-input)',
+        global: 'var(--radius-global)',
+        full: 'var(--radius-full)',
+      },
+      fontFamily: {
+        sans: ['var(--font-sans)'],
+        mono: ['var(--font-mono)'],
+        heading: ['var(--font-heading)'],
+      },
+      fontSize: {
+        h1: 'var(--text-h1)',
+        h2: 'var(--text-h2)',
+        h3: 'var(--text-h3)',
+        h4: 'var(--text-h4)',
+        p: 'var(--text-p)',
+        blockquote: 'var(--text-blockquote)',
+        label: 'var(--text-label)',
+        code: 'var(--text-code)',
+        table: 'var(--text-table)',
+        list: 'var(--text-list)',
+      },
+      spacing: {
+        xs: 'var(--spacing-xs)',
+        sm: 'var(--spacing-sm)',
+        md: 'var(--spacing-md)',
+        lg: 'var(--spacing-lg)',
+        xl: 'var(--spacing-xl)',
+        '2xl': 'var(--spacing-2xl)',
+      },
+      maxWidth: {
+        xs: 'var(--width-xs)',
+        sm: 'var(--width-sm)',
+        md: 'var(--width-md)',
+        lg: 'var(--width-lg)',
+        xl: 'var(--width-xl)',
+        '2xl': 'var(--width-2xl)',
+        '3xl': 'var(--width-3xl)',
+        '4xl': 'var(--width-4xl)',
+        '5xl': 'var(--width-5xl)',
+        '6xl': 'var(--width-6xl)',
+        '7xl': 'var(--width-7xl)',
+        full: 'var(--width-full)',
+        none: 'var(--width-none)',
+      },
+      lineHeight: {
+        DEFAULT: 'var(--line-height)',
+        h1: 'var(--line-height-h1)',
+        h2: 'var(--line-height-h2)',
+        h3: 'var(--line-height-h3)',
+      },
+      letterSpacing: {
+        tighter: 'var(--tracking-tighter)',
+        tight: 'var(--tracking-tight)',
+        normal: 'var(--tracking-normal)',
+        wide: 'var(--tracking-wide)',
+        wider: 'var(--tracking-wider)',
+        widest: 'var(--tracking-widest)',
+      },
+      boxShadow: {
+        '2xs': 'var(--shadow-2xs)',
+        xs: 'var(--shadow-xs)',
+        sm: 'var(--shadow-sm)',
+        DEFAULT: 'var(--shadow)',
+        md: 'var(--shadow-md)',
+        lg: 'var(--shadow-lg)',
+        xl: 'var(--shadow-xl)',
+        '2xl': 'var(--shadow-2xl)',
+      },
+    },
+  },
+  plugins: [require('@tailwindcss/typography')],
+};
+`;
 }
 
 function generateGitignore(): string {
@@ -314,7 +480,7 @@ ${dark}
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border;
   }
   body {
     @apply bg-background text-foreground font-sans antialiased;
@@ -1106,6 +1272,7 @@ export async function generateStarterProject(theme: BrandTheme): Promise<Blob> {
   zip.file('tsconfig.json', generateTsConfig());
   zip.file('next.config.ts', generateNextConfig());
   zip.file('postcss.config.mjs', generatePostcssConfig());
+  zip.file('tailwind.config.js', generateTailwindConfig(theme));
   zip.file('components.json', generateComponentsJson());
   zip.file('.gitignore', generateGitignore());
   zip.file('README.md', generateReadme(theme.name || 'My Theme'));

@@ -56,7 +56,9 @@ export function useCredits(): UseCreditsReturn {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to fetch credit status');
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+        console.error('Credit status API error:', response.status, errorData);
+        throw new Error(errorData.error || 'Failed to fetch credit status');
       }
 
       const data = await response.json();

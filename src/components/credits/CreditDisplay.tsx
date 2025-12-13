@@ -51,6 +51,9 @@ export function CreditDisplay({ onClick }: CreditDisplayProps = {}) {
       if (response.ok) {
         const data = await response.json();
         setCredits(data);
+      } else {
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+        console.error('Credit status API error:', response.status, errorData);
       }
     } catch (error) {
       console.error('Failed to fetch credits:', error);
