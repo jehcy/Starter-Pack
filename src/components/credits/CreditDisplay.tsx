@@ -22,7 +22,11 @@ interface CreditStatus {
   abuseWarning?: string;
 }
 
-export function CreditDisplay() {
+interface CreditDisplayProps {
+  onClick?: () => void;
+}
+
+export function CreditDisplay({ onClick }: CreditDisplayProps = {}) {
   const { refreshToken, isAuthenticated } = useUserProfile();
   const [credits, setCredits] = useState<CreditStatus | null>(null);
   const [loading, setLoading] = useState(true);
@@ -124,7 +128,7 @@ export function CreditDisplay() {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button variant="outline" size="sm" className="gap-2">
+          <Button variant="outline" size="sm" className="gap-2 cursor-pointer" onClick={onClick}>
             <Sparkles className="h-4 w-4" />
             <span className={getColorClass()}>
               {credits.isUnlimited ? (

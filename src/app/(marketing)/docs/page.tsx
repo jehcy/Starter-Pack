@@ -4,7 +4,7 @@ import { TokenTable } from '@/components/docs/token-table';
 import { CodeBlock } from '@/components/docs/code-block';
 import { TipBox } from '@/components/docs/tip-box';
 import { Button } from '@/components/ui/button';
-import { Palette, MousePointer, Download, FileJson, Eye } from 'lucide-react';
+import { Palette, MousePointer, Download, FileJson, Eye, Sparkles, Link as LinkIcon, ImageIcon } from 'lucide-react';
 
 export const metadata = {
   title: 'Theme Editor Documentation | SaaS Starter',
@@ -20,9 +20,12 @@ export default function DocsPage() {
           <div className="space-y-2">
             <p className="font-semibold uppercase tracking-wider text-primary">Theme Editor</p>
             <h1 className="font-bold tracking-tight">
-              Customize your design system
-              <span className="block mt-2 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-                without writing CSS
+              Customize your design system{' '}
+              <span className="relative inline-block">
+                <span className="absolute -inset-1 bg-gradient-to-r from-primary via-orange-500 to-primary bg-[length:200%_100%] animate-[shimmer_3s_linear_infinite] blur-2xl opacity-30" />
+                <span className="relative bg-gradient-to-r from-primary via-orange-400 to-primary bg-[length:200%_100%] animate-[shimmer_3s_linear_infinite] bg-clip-text text-transparent font-black">
+                  without writing CSS
+                </span>
               </span>
             </h1>
             <p className="text-muted-foreground max-w-3xl leading-relaxed">
@@ -520,6 +523,460 @@ export default function DocsPage() {
 
           <TipBox type="warning">
             After clicking "Apply to Project", you must refresh your browser to see the changes take effect.
+          </TipBox>
+        </div>
+      </DocSection>
+
+      {/* AI Theme Generator */}
+      <DocSection
+        id="ai-theme"
+        title="AI Theme Generator"
+        description="Generate custom themes using AI-powered natural language prompts"
+      >
+        <div className="space-y-6">
+          <div>
+            <p className="text-muted-foreground text-sm mb-4">
+              The AI Theme Generator uses advanced language models to create complete design systems from simple descriptions.
+              Describe your vision in plain English, paste a website URL, or upload an inspiration image to get started.
+            </p>
+            <TipBox type="info">
+              Sign in to your account to use the AI Theme Generator. Each prompt generates a complete theme with colors, fonts, spacing, and more.
+            </TipBox>
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-foreground mb-3">Three Ways to Generate Themes</h3>
+            <div className="grid gap-4 sm:grid-cols-3">
+              <ActionCard
+                icon={<Sparkles className="h-5 w-5" />}
+                title="Text Prompts"
+                description="Describe your theme in plain English like 'Cyberpunk neon theme' or 'Professional law firm'"
+              />
+              <ActionCard
+                icon={<LinkIcon className="h-5 w-5" />}
+                title="Website URL"
+                description="Paste any website URL to extract colors and styles from that site"
+              />
+              <ActionCard
+                icon={<ImageIcon className="h-5 w-5" />}
+                title="Image Upload"
+                description="Upload or paste images to extract color palettes and design inspiration"
+              />
+            </div>
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-foreground mb-3">Using Text Prompts</h3>
+            <p className="text-muted-foreground text-sm mb-4">
+              Simply describe your desired theme in natural language. The AI understands context and can generate themes based on:
+            </p>
+            <ul className="space-y-2 text-sm text-muted-foreground ml-6 mb-4">
+              <li className="flex items-start gap-2">
+                <span className="text-primary mt-0.5">•</span>
+                <span><strong>Style & Mood:</strong> &quot;Cyberpunk neon theme&quot;, &quot;Soft pastel minimalist&quot;, &quot;Warm coffee shop vibes&quot;</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-primary mt-0.5">•</span>
+                <span><strong>Industry:</strong> &quot;Professional law firm&quot;, &quot;Modern tech startup&quot;, &quot;Creative agency&quot;</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-primary mt-0.5">•</span>
+                <span><strong>Colors:</strong> &quot;Navy blue and gold luxury theme&quot;, &quot;Forest green nature theme&quot;</span>
+              </li>
+            </ul>
+            <CodeBlock
+              language="bash"
+              code={`Example prompts:
+"Cyberpunk neon theme with pink and cyan accents"
+"Professional law firm with navy blue and gold"
+"Soft pastel minimalist with rounded corners"
+"Warm coffee shop vibes with brown tones"`}
+            />
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-foreground mb-3">Website URL Scraping</h3>
+            <p className="text-muted-foreground text-sm mb-4">
+              Paste any website URL to extract its colors and design styles. The AI analyzes the site and generates a matching theme.
+            </p>
+            <CodeBlock
+              language="bash"
+              code={`Example:
+"https://stripe.com create a theme like this"
+"https://apple.com make it similar to this website"`}
+            />
+            <p className="text-muted-foreground text-xs mt-3">
+              The AI shows progressive loading status: &quot;Scraping website...&quot; → &quot;Extracting colors and styles...&quot; → &quot;Analyzing design...&quot; → &quot;Generating theme...&quot;
+            </p>
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-foreground mb-3">Image Upload</h3>
+            <p className="text-muted-foreground text-sm mb-4">
+              Upload inspiration images or paste them directly from your clipboard. The AI analyzes the image to extract color palettes and design inspiration.
+            </p>
+            <TokenTable
+              headers={['Feature', 'Details']}
+              rows={[
+                { cells: ['Supported formats', 'PNG, JPEG, GIF, WebP'] },
+                { cells: ['Max file size', '5MB'] },
+                { cells: ['Upload methods', 'File picker button or paste from clipboard (Ctrl/Cmd+V)'] },
+              ]}
+            />
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-foreground mb-3">Generated Theme Preview</h3>
+            <p className="text-muted-foreground text-sm mb-4">
+              Each AI-generated theme includes:
+            </p>
+            <ul className="space-y-2 text-sm text-muted-foreground ml-6">
+              <li className="flex items-start gap-2">
+                <span className="text-primary mt-0.5">✓</span>
+                <span>Complete color palette for both light and dark modes</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-primary mt-0.5">✓</span>
+                <span>Font selections for body text and headings</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-primary mt-0.5">✓</span>
+                <span>Typography sizes (H1, H2, H3, body text)</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-primary mt-0.5">✓</span>
+                <span>Border radius, spacing scale, and button styles</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-primary mt-0.5">✓</span>
+                <span>&quot;Apply Theme&quot; button to instantly apply the generated theme</span>
+              </li>
+            </ul>
+          </div>
+
+          <TipBox type="tip">
+            You can refine themes with follow-up prompts. The AI remembers your conversation context, so try requests like &quot;make it more vibrant&quot; or &quot;use a different font for headings&quot;.
+          </TipBox>
+        </div>
+      </DocSection>
+
+      {/* Downloadable Files */}
+      <DocSection
+        id="downloads"
+        title="Downloadable Files"
+        description="Export your theme in multiple formats for different platforms and use cases"
+      >
+        <div className="space-y-6">
+          <div>
+            <p className="text-muted-foreground text-sm mb-4">
+              The Theme Editor provides 9 different export formats to integrate your theme into various projects and platforms.
+              All downloads require authentication.
+            </p>
+            <TipBox type="info">
+              The Starter Pack is recommended for new projects as it includes everything configured and ready to use.
+            </TipBox>
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-foreground mb-3">Available Export Formats</h3>
+            <TokenTable
+              headers={['Export', 'Format', 'Description', 'Best For']}
+              rows={[
+                {
+                  cells: [
+                    'Starter Pack',
+                    <code key="1" className="text-xs">ZIP</code>,
+                    'Complete Next.js project with theme',
+                    'Starting new projects',
+                  ],
+                },
+                {
+                  cells: [
+                    'Tailwind Config',
+                    <code key="1" className="text-xs">ZIP</code>,
+                    'tailwind.config.js + directives',
+                    'Existing Tailwind projects',
+                  ],
+                },
+                {
+                  cells: [
+                    'tokens.json',
+                    <code key="1" className="text-xs">JSON</code>,
+                    'Design tokens (standard spec)',
+                    'Design tools, frameworks',
+                  ],
+                },
+                {
+                  cells: [
+                    'theme.ts',
+                    <code key="1" className="text-xs">TypeScript</code>,
+                    'shadcn/ui theme configuration',
+                    'Programmatic access',
+                  ],
+                },
+                {
+                  cells: [
+                    'globals.css',
+                    <code key="1" className="text-xs">CSS</code>,
+                    'CSS variables only',
+                    'Any CSS project',
+                  ],
+                },
+                {
+                  cells: [
+                    'brand-skill.md',
+                    <code key="1" className="text-xs">Markdown</code>,
+                    'AI-friendly brand guidelines',
+                    'Claude/AI assistants',
+                  ],
+                },
+                {
+                  cells: [
+                    'Vue.js Theme',
+                    <code key="1" className="text-xs">CSS</code>,
+                    'CSS vars with --vibecn- prefix',
+                    'Vue.js projects',
+                  ],
+                },
+                {
+                  cells: [
+                    'Java Constants',
+                    <code key="1" className="text-xs">.java</code>,
+                    'ThemeConstants.java class',
+                    'Java/Spring projects',
+                  ],
+                },
+                {
+                  cells: [
+                    'Java Properties',
+                    <code key="1" className="text-xs">.properties</code>,
+                    'Spring Boot properties file',
+                    'Spring Boot projects',
+                  ],
+                },
+              ]}
+            />
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-foreground mb-3">1. Starter Pack (ZIP)</h3>
+            <p className="text-muted-foreground text-sm mb-4">
+              A complete Next.js project with your theme pre-configured. Includes all necessary files, dependencies, and folder structure.
+            </p>
+            <div className="space-y-2 text-sm text-muted-foreground ml-6">
+              <p className="flex items-start gap-2">
+                <span className="text-primary mt-0.5">✓</span>
+                <span>Full Next.js 16 setup with App Router</span>
+              </p>
+              <p className="flex items-start gap-2">
+                <span className="text-primary mt-0.5">✓</span>
+                <span>Theme applied to globals.css</span>
+              </p>
+              <p className="flex items-start gap-2">
+                <span className="text-primary mt-0.5">✓</span>
+                <span>shadcn/ui components configured</span>
+              </p>
+              <p className="flex items-start gap-2">
+                <span className="text-primary mt-0.5">✓</span>
+                <span>Ready to run with npm install && npm run dev</span>
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-foreground mb-3">2. Tailwind Config (ZIP)</h3>
+            <p className="text-muted-foreground text-sm mb-4">
+              Tailwind CSS v3 configuration file and directives for existing projects.
+            </p>
+            <CodeBlock
+              language="tsx"
+              filename="tailwind.config.js"
+              code={`/** @type {import('tailwindcss').Config} */
+module.exports = {
+  darkMode: ['class'],
+  content: ['./src/**/*.{js,ts,jsx,tsx,mdx}'],
+  theme: {
+    extend: {
+      colors: {
+        background: 'var(--background)',
+        foreground: 'var(--foreground)',
+        primary: {
+          DEFAULT: 'var(--primary)',
+          foreground: 'var(--primary-foreground)',
+        },
+        // ... more color tokens
+      },
+    },
+  },
+  plugins: [require('tailwindcss-animate')],
+};`}
+            />
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-foreground mb-3">3. tokens.json</h3>
+            <p className="text-muted-foreground text-sm mb-4">
+              Design tokens in the standard JSON format, compatible with design tools and token pipelines.
+            </p>
+            <CodeBlock
+              language="json"
+              filename="tokens.json"
+              code={`{
+  "$schema": "https://design-tokens.json-schema.org/",
+  "name": "VibeCN Theme",
+  "colors": {
+    "light": {
+      "background": { "value": "0 0% 100%", "type": "color" },
+      "foreground": { "value": "222.2 84% 4.9%", "type": "color" },
+      "primary": { "value": "221.2 83.2% 53.3%", "type": "color" }
+    }
+  },
+  "spacing": {
+    "xs": { "value": "0.5rem", "type": "dimension" },
+    "sm": { "value": "0.75rem", "type": "dimension" }
+  }
+}`}
+            />
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-foreground mb-3">4. theme.ts</h3>
+            <p className="text-muted-foreground text-sm mb-4">
+              TypeScript file exporting your theme as a typed JavaScript object for programmatic access.
+            </p>
+            <CodeBlock
+              language="typescript"
+              filename="theme.ts"
+              code={`export const theme = {
+  name: 'VibeCN Theme',
+  colors: {
+    light: {
+      background: '0 0% 100%',
+      foreground: '222.2 84% 4.9%',
+      primary: '221.2 83.2% 53.3%',
+      // ... more colors
+    },
+    dark: { /* dark mode colors */ }
+  },
+  spacing: {
+    xs: '0.5rem',
+    sm: '0.75rem',
+    // ... more spacing
+  }
+} as const;`}
+            />
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-foreground mb-3">5. globals.css</h3>
+            <p className="text-muted-foreground text-sm mb-4">
+              Standalone CSS file with all theme variables. Copy directly into your project&apos;s CSS.
+            </p>
+            <CodeBlock
+              language="css"
+              filename="globals.css"
+              code={`:root {
+  --background: 0 0% 100%;
+  --foreground: 222.2 84% 4.9%;
+  --primary: 221.2 83.2% 53.3%;
+  --primary-foreground: 210 40% 98%;
+  /* ... more variables */
+}
+
+.dark {
+  --background: 222.2 84% 4.9%;
+  --foreground: 210 40% 98%;
+  /* ... dark mode overrides */
+}`}
+            />
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-foreground mb-3">6. brand-skill.md</h3>
+            <p className="text-muted-foreground text-sm mb-4">
+              AI-friendly brand guidelines for Claude and other AI assistants. Helps AI understand your design system when building features.
+            </p>
+            <CodeBlock
+              language="bash"
+              code={`Usage:
+1. Download brand-skill.md
+2. Add to your project as a skill or in docs/
+3. Reference in AI conversations for consistent styling`}
+            />
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-foreground mb-3">7. Vue.js Theme</h3>
+            <p className="text-muted-foreground text-sm mb-4">
+              CSS variables prefixed with <code className="px-1 py-0.5 rounded bg-muted text-xs">--vibecn-</code> for Vue.js projects to avoid conflicts.
+            </p>
+            <CodeBlock
+              language="css"
+              filename="theme-vars.css"
+              code={`:root {
+  --vibecn-background: 0 0% 100%;
+  --vibecn-foreground: 222.2 84% 4.9%;
+  --vibecn-primary: 221.2 83.2% 53.3%;
+  /* ... more variables */
+}
+
+.dark {
+  --vibecn-background: 222.2 84% 4.9%;
+  /* ... dark mode overrides */
+}`}
+            />
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-foreground mb-3">8. Java Constants</h3>
+            <p className="text-muted-foreground text-sm mb-4">
+              Java class with theme constants for Java/Spring projects.
+            </p>
+            <CodeBlock
+              language="typescript"
+              filename="ThemeConstants.java"
+              code={`public final class ThemeConstants {
+    private ThemeConstants() {
+        // Prevent instantiation
+    }
+
+    // Colors - Light Mode
+    public static final String BACKGROUND = "0 0% 100%";
+    public static final String FOREGROUND = "222.2 84% 4.9%";
+    public static final String PRIMARY = "221.2 83.2% 53.3%";
+
+    // Spacing
+    public static final String SPACING_XS = "0.5rem";
+    public static final String SPACING_SM = "0.75rem";
+}`}
+            />
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-foreground mb-3">9. Java Properties</h3>
+            <p className="text-muted-foreground text-sm mb-4">
+              Spring Boot compatible properties file for configuration-based theme access.
+            </p>
+            <CodeBlock
+              language="bash"
+              filename="theme.properties"
+              code={`# Colors - Light Mode
+theme.colors.light.background=0 0% 100%
+theme.colors.light.foreground=222.2 84% 4.9%
+theme.colors.light.primary=221.2 83.2% 53.3%
+
+# Spacing
+theme.spacing.xs=0.5rem
+theme.spacing.sm=0.75rem
+
+# Usage in Spring Boot:
+# @Value("\${theme.colors.light.primary}")
+# private String primaryColor;`}
+            />
+          </div>
+
+          <TipBox type="tip">
+            All export formats are generated from your current theme. Make sure to apply your theme changes before downloading.
           </TipBox>
         </div>
       </DocSection>

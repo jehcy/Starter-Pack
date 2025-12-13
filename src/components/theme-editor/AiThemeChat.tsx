@@ -556,7 +556,7 @@ export function AiThemeChat({ onApplyTheme, currentThemeName }: AiThemeChatProps
                       <div className="flex gap-2">
                         <span className="font-semibold text-primary min-w-[70px]">Radius:</span>
                         <span className="text-muted-foreground flex-1">
-                          {message.theme.radius.lg} ({message.theme.radius.sm} - {message.theme.radius['2xl']})
+                          {message.theme.radius.button} ({message.theme.radius.global} - {message.theme.radius.card})
                         </span>
                       </div>
                       <div className="flex gap-2">

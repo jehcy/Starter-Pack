@@ -31,6 +31,10 @@ Then, provide the JSON object containing a "theme" property:
       "light": { /* 22 color properties in hex format */ },
       "dark": { /* 22 color properties in hex format */ }
     },
+    "semanticColors": {
+      "light": { /* 27 semantic color properties for 60-30-10 design system */ },
+      "dark": { /* 27 semantic color properties for 60-30-10 design system */ }
+    },
     "fonts": { /* 3 font properties */ },
     "typographySizes": { /* 10 typography size properties */ },
     "typographyStyles": { /* 5 typography style properties */ },
@@ -68,6 +72,53 @@ All colors must be in hex format (#RRGGBB):
 22. chart3 - Chart data color 3
 23. chart4 - Chart data color 4
 24. chart5 - Chart data color 5
+
+## Semantic Color Properties (27 total, for both light and dark modes)
+
+These colors follow the 60-30-10 design system principle for granular control over different UI elements.
+All colors must be in hex format (#RRGGBB):
+
+### Backgrounds (60% - Main page areas)
+1. bgPrimary - Main page background (usually matches 'background')
+2. bgSecondary - Alternating sections, subtle contrast
+3. bgAccent - Highlighted/featured sections
+
+### Cards (30% - Containers)
+4. cardPrimary - Main card background (usually matches 'card')
+5. cardSecondary - Secondary/nested cards
+6. cardAccent - Featured/highlighted cards
+
+### Text Colors
+7. textPrimary - Headings, important text (usually matches 'foreground')
+8. textSecondary - Body text, descriptions
+9. textAccent - Captions, hints, subtle labels
+
+### Button Fill Colors (10% - CTAs, interactive elements)
+10. buttonFillPrimary - Primary action button background
+11. buttonFillPrimaryForeground - Text on primary buttons
+12. buttonFillSecondary - Secondary action button background
+13. buttonFillSecondaryForeground - Text on secondary buttons
+14. buttonFillAccent - Accent/special action button background
+15. buttonFillAccentForeground - Text on accent buttons
+
+### Button Outline Colors
+16. buttonOutlinePrimary - Primary outline button border
+17. buttonOutlinePrimaryForeground - Primary outline button text
+18. buttonOutlineSecondary - Secondary outline button border
+19. buttonOutlineSecondaryForeground - Secondary outline button text
+20. buttonOutlineAccent - Accent outline button border
+21. buttonOutlineAccentForeground - Accent outline button text
+
+### Button Text Colors (text-only buttons)
+22. buttonTextPrimary - Primary text button color
+23. buttonTextSecondary - Secondary text button color
+24. buttonTextAccent - Accent text button color
+
+**Note:** When generating semantic colors, maintain visual hierarchy:
+- Primary colors should be bold and prominent
+- Secondary colors should be more subdued
+- Accent colors should be eye-catching but used sparingly
+- Ensure button colors have sufficient contrast with their foregrounds (WCAG AA)
 
 ## Font Properties
 
@@ -319,6 +370,60 @@ Choose hover effect based on mood:
         "chart5": "#00ff85"
       }
     },
+    "semanticColors": {
+      "light": {
+        "bgPrimary": "#ffffff",
+        "bgSecondary": "#f8fafc",
+        "bgAccent": "#f1f5f9",
+        "cardPrimary": "#ffffff",
+        "cardSecondary": "#f8fafc",
+        "cardAccent": "#e2e8f0",
+        "textPrimary": "#0a0a0a",
+        "textSecondary": "#525252",
+        "textAccent": "#737373",
+        "buttonFillPrimary": "#ff00c8",
+        "buttonFillPrimaryForeground": "#ffffff",
+        "buttonFillSecondary": "#737373",
+        "buttonFillSecondaryForeground": "#ffffff",
+        "buttonFillAccent": "#00ffff",
+        "buttonFillAccentForeground": "#0a0a0a",
+        "buttonOutlinePrimary": "#ff00c8",
+        "buttonOutlinePrimaryForeground": "#ff00c8",
+        "buttonOutlineSecondary": "#737373",
+        "buttonOutlineSecondaryForeground": "#737373",
+        "buttonOutlineAccent": "#00ffff",
+        "buttonOutlineAccentForeground": "#00ffff",
+        "buttonTextPrimary": "#ff00c8",
+        "buttonTextSecondary": "#737373",
+        "buttonTextAccent": "#00ffff"
+      },
+      "dark": {
+        "bgPrimary": "#0a0a0a",
+        "bgSecondary": "#1a1a1a",
+        "bgAccent": "#2a2a2a",
+        "cardPrimary": "#1a1a1a",
+        "cardSecondary": "#2a2a2a",
+        "cardAccent": "#3a3a3a",
+        "textPrimary": "#ffffff",
+        "textSecondary": "#d4d4d4",
+        "textAccent": "#a3a3a3",
+        "buttonFillPrimary": "#ff00c8",
+        "buttonFillPrimaryForeground": "#ffffff",
+        "buttonFillSecondary": "#a3a3a3",
+        "buttonFillSecondaryForeground": "#0a0a0a",
+        "buttonFillAccent": "#00ffff",
+        "buttonFillAccentForeground": "#0a0a0a",
+        "buttonOutlinePrimary": "#ff00c8",
+        "buttonOutlinePrimaryForeground": "#ff00c8",
+        "buttonOutlineSecondary": "#a3a3a3",
+        "buttonOutlineSecondaryForeground": "#a3a3a3",
+        "buttonOutlineAccent": "#00ffff",
+        "buttonOutlineAccentForeground": "#00ffff",
+        "buttonTextPrimary": "#ff00c8",
+        "buttonTextSecondary": "#a3a3a3",
+        "buttonTextAccent": "#00ffff"
+      }
+    },
     "spacing": {
       "xs": "0.2rem",
       "sm": "0.4rem",
@@ -427,6 +532,10 @@ export function mergeWithDefaults(partial: Partial<BrandTheme>): BrandTheme {
     colors: {
       light: { ...defaults.colors.light, ...partial.colors?.light },
       dark: { ...defaults.colors.dark, ...partial.colors?.dark },
+    },
+    semanticColors: {
+      light: { ...defaults.semanticColors.light, ...partial.semanticColors?.light },
+      dark: { ...defaults.semanticColors.dark, ...partial.semanticColors?.dark },
     },
     spacing: { ...defaults.spacing, ...partial.spacing },
     radius: { ...defaults.radius, ...partial.radius },

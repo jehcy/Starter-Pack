@@ -6,6 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { AuthGuard } from '@/components/auth/auth-guard';
 import { ModeToggle } from '@/components/mode-toggle';
 import { Button } from '@/components/ui/button';
+import { Logo } from '@/components/ui/logo';
 
 interface DashboardShellProps {
   children: React.ReactNode;
@@ -34,54 +35,23 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
       <aside className="hidden md:flex w-64 flex-col border-r border-border/40 bg-card">
         {/* Logo */}
         <div className="flex h-16 items-center border-b border-border/40 px-6">
-          <Link href="/dashboard" className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold">
-              S
-            </div>
-            <span className="text-xl font-bold">SaaS</span>
-          </Link>
+          <Logo href="/dashboard" size="md" showText />
         </div>
 
         {/* Navigation */}
         <nav className="flex-1 p-4 space-y-1">
           <NavSection title="Main">
             <NavItem href="/dashboard" icon={<HomeIcon />} label="Overview" />
-            <NavItem href="/dashboard/projects" icon={<FolderIcon />} label="Projects" />
-            <NavItem href="/dashboard/analytics" icon={<ChartIcon />} label="Analytics" />
+            <NavItem href="/dashboard/themes" icon={<PaletteIcon />} label="My Themes" badge="Coming Soon" />
           </NavSection>
           <NavSection title="Settings">
-            <NavItem href={`/${user?.id}/account`} icon={<UserIcon />} label="Account" />
             <NavItem href="/dashboard/settings" icon={<SettingsIcon />} label="Settings" />
-            <NavItem href="/dashboard/billing" icon={<CreditCardIcon />} label="Billing" />
-            <NavItem href="/dashboard/team" icon={<UsersIcon />} label="Team" />
           </NavSection>
         </nav>
 
-        {/* Upgrade Card */}
-        <div className="p-4">
-          <div className="rounded-xl bg-primary/10 p-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary mb-3">
-              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M13 10V3L4 14h7v7l9-11h-7z"
-                />
-              </svg>
-            </div>
-            <h4 className="font-semibold text-sm">Upgrade to Pro</h4>
-            <p className="text-xs text-muted-foreground mt-1">
-              Get access to all features and unlimited projects.
-            </p>
-            <Button size="sm" className="w-full mt-3 rounded-lg">
-              Upgrade Now
-            </Button>
-          </div>
-        </div>
-
-        {/* User Section */}
-        <div className="p-4 border-t border-border/40">
+        {/* User Section - Fixed at Bottom */}
+        <div className="mt-auto p-4 border-t border-border/40">
+          {/* User Info */}
           <div className="flex items-center gap-3 rounded-xl p-2 hover:bg-muted transition-colors cursor-pointer">
             <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary/80 to-primary flex items-center justify-center text-primary-foreground font-semibold">
               {userInitials}
@@ -123,49 +93,52 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
             </svg>
           </button>
 
-          {/* Search */}
-          <div className="flex-1 max-w-md">
-            <div className="relative">
-              <svg
-                className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
-              </svg>
-              <input
-                type="text"
-                placeholder="Search..."
-                className="w-full h-10 rounded-xl border border-border/50 bg-muted/50 pl-10 pr-4 text-sm placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-              />
-            </div>
-          </div>
+          {/* Navigation Menu */}
+          <nav className="hidden md:flex items-center gap-6">
+            <Link
+              href="/"
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+            >
+              Home
+            </Link>
+            <Link
+              href="/features"
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+            >
+              Features
+            </Link>
+            <Link
+              href="/pricing"
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+            >
+              Pricing
+            </Link>
+            <Link
+              href="/docs"
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+            >
+              Docs
+            </Link>
+          </nav>
+
+          {/* Spacer */}
+          <div className="flex-1" />
 
           {/* Right side */}
           <div className="flex items-center gap-2">
-            {/* Notifications */}
-            <button className="relative p-2 hover:bg-muted rounded-lg">
-              <svg
-                className="h-5 w-5 text-muted-foreground"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-                />
-              </svg>
-              <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-primary" />
-            </button>
+            <Link href="/theme">
+              <Button className="gap-2">
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
+                  />
+                </svg>
+                Theme Editor
+              </Button>
+            </Link>
 
             <ModeToggle />
 
@@ -241,27 +214,14 @@ function HomeIcon() {
   );
 }
 
-function FolderIcon() {
+function PaletteIcon() {
   return (
     <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeWidth={2}
-        d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-      />
-    </svg>
-  );
-}
-
-function ChartIcon() {
-  return (
-    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+        d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
       />
     </svg>
   );
@@ -281,45 +241,6 @@ function SettingsIcon() {
         strokeLinejoin="round"
         strokeWidth={2}
         d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-      />
-    </svg>
-  );
-}
-
-function CreditCardIcon() {
-  return (
-    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
-      />
-    </svg>
-  );
-}
-
-function UsersIcon() {
-  return (
-    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
-      />
-    </svg>
-  );
-}
-
-function UserIcon() {
-  return (
-    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
       />
     </svg>
   );

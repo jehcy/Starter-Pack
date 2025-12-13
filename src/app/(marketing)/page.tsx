@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/cards/card';
 import { useState, useEffect } from 'react';
 import { CTA } from '@/components/cta';
-import { PricingCardV2 } from '@/components/cards/pricing-card-v2';
+import { Pricing } from '@/components/pricing';
 import { Zap, Palette, Shield, Code2, ArrowRight, Check } from 'lucide-react';
 
 export default function LandingPage() {
@@ -30,8 +30,22 @@ export default function LandingPage() {
 
       {/* Hero Section */}
       <section className="relative min-h-[85vh] flex items-center overflow-hidden py-24">
-        {/* Subtle grid pattern */}
-        <div className="absolute inset-0 bg-grid-pattern opacity-[0.02]" />
+        {/* Animated Background */}
+        <div className="absolute inset-0 -z-10">
+          {/* Base gradient */}
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-background" />
+
+          {/* Animated orbs */}
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-3xl animate-pulse"
+               style={{ animationDuration: '4s' }} />
+          <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-chart-1/20 rounded-full blur-3xl animate-pulse"
+               style={{ animationDuration: '5s', animationDelay: '1s' }} />
+          <div className="absolute top-1/3 right-1/3 w-64 h-64 bg-chart-2/15 rounded-full blur-3xl animate-pulse"
+               style={{ animationDuration: '6s', animationDelay: '2s' }} />
+
+          {/* Grid pattern overlay */}
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(251,146,60,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(251,146,60,0.03)_1px,transparent_1px)] bg-[size:64px_64px]" />
+        </div>
 
         <div className="container-wide relative z-10">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
@@ -49,7 +63,13 @@ export default function LandingPage() {
               {/* Main Headline */}
               <div className={`space-y-3 transition-all duration-700 delay-100 ${mounted ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'}`}>
                 <h1 className="font-bold">
-                  Build Fast with <span className="text-primary">Fewer Tokens</span>
+                  Build Fast with{' '}
+                  <span className="relative inline-block">
+                    <span className="absolute -inset-1 bg-gradient-to-r from-primary via-orange-500 to-primary bg-[length:200%_100%] animate-[shimmer_3s_linear_infinite] blur-2xl opacity-30" />
+                    <span className="relative bg-gradient-to-r from-primary via-orange-400 to-primary bg-[length:200%_100%] animate-[shimmer_3s_linear_infinite] bg-clip-text text-transparent font-black">
+                      Fewer Tokens
+                    </span>
+                  </span>
                 </h1>
               </div>
 
@@ -214,44 +234,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Pricing Preview */}
-      <section className="py-32 bg-muted/30">
-        <div className="container-wide">
-          <div className="text-center mb-20">
-            <div className="inline-block rounded-full border border-border bg-background px-4 py-2 mb-6">
-              <span className="font-mono text-sm font-semibold uppercase tracking-wider text-primary">Pricing</span>
-            </div>
-            <h2 className="font-bold mb-6">Simple, Transparent Pricing</h2>
-            <p className="text-xl text-muted-foreground">
-              Start free, scale as you grow. No hidden fees, no surprises.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <Card className="hover:translate-y-[-4px] transition-all">
-              <PricingCardV2
-                tier="Free"
-                price="$0"
-                period="/month"
-                description="Perfect for getting your design system ready before you start coding. Unlimited theme tweaks, brand setup, and React starter pack downloads."
-                buttonText="Start for Free"
-                buttonHref="/sign-up"
-              />
-            </Card>
-            <Card className="border-primary border-2 hover:translate-y-[-4px] transition-all md:scale-105">
-              <PricingCardV2
-                tier="Pro"
-                price="$7"
-                period="/month"
-                description="For heavy Vibe coders who want automation and control. AI-generated themes from prompts and brand references. MCP-powered config coming soon."
-                buttonText="Pro plan coming soon"
-                buttonDisabled
-                comingSoon
-              />
-            </Card>
-          </div>
-        </div>
-      </section>
+      {/* Pricing */}
+      <Pricing />
 
       {/* Final CTA */}
       <CTA />
@@ -265,13 +249,16 @@ export default function LandingPage() {
 
 function HeroVisual() {
   const [activeCard, setActiveCard] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
+    if (isPaused) return;
+
     const interval = setInterval(() => {
       setActiveCard((prev) => (prev + 1) % 3);
     }, 3500);
     return () => clearInterval(interval);
-  }, []);
+  }, [isPaused]);
 
   const screenshots = [
     { src: '/assets/img/s1.jpeg', alt: 'Settings Interface' },
@@ -280,7 +267,11 @@ function HeroVisual() {
   ];
 
   return (
-    <div className="relative w-full max-w-[500px] min-h-[400px] md:min-h-[500px]">
+    <div
+      className="relative w-full max-w-[500px] min-h-[400px] md:min-h-[500px]"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
       {screenshots.map((screenshot, index) => (
         <div
           key={screenshot.src}

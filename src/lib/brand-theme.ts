@@ -31,6 +31,39 @@ export interface ColorTokens {
   chart5: string;
 }
 
+export interface SemanticColorTokens {
+  // Backgrounds (60%)
+  bgPrimary: string;
+  bgSecondary: string;
+  bgAccent: string;
+  // Cards (30%)
+  cardPrimary: string;
+  cardSecondary: string;
+  cardAccent: string;
+  // Text
+  textPrimary: string;
+  textSecondary: string;
+  textAccent: string;
+  // Button Fill
+  buttonFillPrimary: string;
+  buttonFillPrimaryForeground: string;
+  buttonFillSecondary: string;
+  buttonFillSecondaryForeground: string;
+  buttonFillAccent: string;
+  buttonFillAccentForeground: string;
+  // Button Outline
+  buttonOutlinePrimary: string;
+  buttonOutlinePrimaryForeground: string;
+  buttonOutlineSecondary: string;
+  buttonOutlineSecondaryForeground: string;
+  buttonOutlineAccent: string;
+  buttonOutlineAccentForeground: string;
+  // Button Text
+  buttonTextPrimary: string;
+  buttonTextSecondary: string;
+  buttonTextAccent: string;
+}
+
 export interface ResponsiveSpacingValue {
   desktop: string; // lg+ (1024px and up)
   tablet: string; // md (768px - 1023px)
@@ -54,13 +87,10 @@ export interface SpacingTokens {
 }
 
 export interface RadiusTokens {
-  none: string;
-  sm: string;
-  md: string;
-  lg: string;
-  xl: string;
-  '2xl': string;
-  full: string;
+  global: string;   // Master control - base radius for all elements
+  card: string;     // Cards, dialogs, containers
+  button: string;   // Buttons
+  input: string;    // Inputs, selects, textareas
 }
 
 export interface FontTokens {
@@ -143,6 +173,10 @@ export interface BrandTheme {
     light: ColorTokens;
     dark: ColorTokens;
   };
+  semanticColors: {
+    light: SemanticColorTokens;
+    dark: SemanticColorTokens;
+  };
   spacing: SpacingTokens;
   radius: RadiusTokens;
   fonts: FontTokens;
@@ -206,6 +240,72 @@ export const DEFAULT_DARK_COLORS: ColorTokens = {
   chart5: '#ec4899',
 };
 
+export const DEFAULT_SEMANTIC_LIGHT_COLORS: SemanticColorTokens = {
+  // Backgrounds (60%)
+  bgPrimary: '#ffffff',
+  bgSecondary: '#f8fafc',
+  bgAccent: '#f1f5f9',
+  // Cards (30%)
+  cardPrimary: '#ffffff',
+  cardSecondary: '#f8fafc',
+  cardAccent: '#e2e8f0',
+  // Text
+  textPrimary: '#0f172a',
+  textSecondary: '#475569',
+  textAccent: '#64748b',
+  // Button Fill
+  buttonFillPrimary: '#2563eb',
+  buttonFillPrimaryForeground: '#ffffff',
+  buttonFillSecondary: '#64748b',
+  buttonFillSecondaryForeground: '#ffffff',
+  buttonFillAccent: '#f59e0b',
+  buttonFillAccentForeground: '#000000',
+  // Button Outline
+  buttonOutlinePrimary: '#2563eb',
+  buttonOutlinePrimaryForeground: '#2563eb',
+  buttonOutlineSecondary: '#64748b',
+  buttonOutlineSecondaryForeground: '#64748b',
+  buttonOutlineAccent: '#f59e0b',
+  buttonOutlineAccentForeground: '#f59e0b',
+  // Button Text
+  buttonTextPrimary: '#2563eb',
+  buttonTextSecondary: '#64748b',
+  buttonTextAccent: '#f59e0b',
+};
+
+export const DEFAULT_SEMANTIC_DARK_COLORS: SemanticColorTokens = {
+  // Backgrounds (60%)
+  bgPrimary: '#0f172a',
+  bgSecondary: '#1e293b',
+  bgAccent: '#334155',
+  // Cards (30%)
+  cardPrimary: '#1e293b',
+  cardSecondary: '#334155',
+  cardAccent: '#475569',
+  // Text
+  textPrimary: '#f8fafc',
+  textSecondary: '#cbd5e1',
+  textAccent: '#94a3b8',
+  // Button Fill
+  buttonFillPrimary: '#3b82f6',
+  buttonFillPrimaryForeground: '#ffffff',
+  buttonFillSecondary: '#94a3b8',
+  buttonFillSecondaryForeground: '#0f172a',
+  buttonFillAccent: '#fbbf24',
+  buttonFillAccentForeground: '#000000',
+  // Button Outline
+  buttonOutlinePrimary: '#3b82f6',
+  buttonOutlinePrimaryForeground: '#3b82f6',
+  buttonOutlineSecondary: '#94a3b8',
+  buttonOutlineSecondaryForeground: '#94a3b8',
+  buttonOutlineAccent: '#fbbf24',
+  buttonOutlineAccentForeground: '#fbbf24',
+  // Button Text
+  buttonTextPrimary: '#3b82f6',
+  buttonTextSecondary: '#94a3b8',
+  buttonTextAccent: '#fbbf24',
+};
+
 export const DEFAULT_SPACING: SpacingTokens = {
   xs: '0.25rem',
   sm: '0.5rem',
@@ -222,13 +322,10 @@ export const DEFAULT_SPACING: SpacingTokens = {
 };
 
 export const DEFAULT_RADIUS: RadiusTokens = {
-  none: '0',
-  sm: '0.25rem',
-  md: '0.375rem',
-  lg: '0.5rem',
-  xl: '0.75rem',
-  '2xl': '1rem',
-  full: '9999px',
+  global: '0.5rem',
+  card: '0.75rem',
+  button: '0.5rem',
+  input: '0.5rem',
 };
 
 export const DEFAULT_FONTS: FontTokens = {
@@ -274,6 +371,10 @@ export function getDefaultTheme(): BrandTheme {
     colors: {
       light: { ...DEFAULT_LIGHT_COLORS },
       dark: { ...DEFAULT_DARK_COLORS },
+    },
+    semanticColors: {
+      light: { ...DEFAULT_SEMANTIC_LIGHT_COLORS },
+      dark: { ...DEFAULT_SEMANTIC_DARK_COLORS },
     },
     spacing: { ...DEFAULT_SPACING },
     radius: { ...DEFAULT_RADIUS },
@@ -385,7 +486,7 @@ export function generateCssVariables(theme: BrandTheme): string {
 
   return `:root {
 ${lightVars}
-  --radius: ${theme.radius.lg};
+  --radius: ${theme.radius.global};
 ${radiusVars}
 }
 
@@ -422,6 +523,42 @@ const COLOR_TO_CSS_VAR: Record<keyof ColorTokens, string> = {
   chart3: 'chart-3',
   chart4: 'chart-4',
   chart5: 'chart-5',
+};
+
+/**
+ * Semantic color key to CSS variable name mapping
+ */
+const SEMANTIC_COLOR_TO_CSS_VAR: Record<keyof SemanticColorTokens, string> = {
+  // Backgrounds
+  bgPrimary: 'bg-primary',
+  bgSecondary: 'bg-secondary',
+  bgAccent: 'bg-accent',
+  // Cards
+  cardPrimary: 'card-primary',
+  cardSecondary: 'card-secondary',
+  cardAccent: 'card-accent',
+  // Text
+  textPrimary: 'text-primary',
+  textSecondary: 'text-secondary',
+  textAccent: 'text-accent',
+  // Button Fill
+  buttonFillPrimary: 'btn-fill-primary',
+  buttonFillPrimaryForeground: 'btn-fill-primary-foreground',
+  buttonFillSecondary: 'btn-fill-secondary',
+  buttonFillSecondaryForeground: 'btn-fill-secondary-foreground',
+  buttonFillAccent: 'btn-fill-accent',
+  buttonFillAccentForeground: 'btn-fill-accent-foreground',
+  // Button Outline
+  buttonOutlinePrimary: 'btn-outline-primary',
+  buttonOutlinePrimaryForeground: 'btn-outline-primary-foreground',
+  buttonOutlineSecondary: 'btn-outline-secondary',
+  buttonOutlineSecondaryForeground: 'btn-outline-secondary-foreground',
+  buttonOutlineAccent: 'btn-outline-accent',
+  buttonOutlineAccentForeground: 'btn-outline-accent-foreground',
+  // Button Text
+  buttonTextPrimary: 'btn-text-primary',
+  buttonTextSecondary: 'btn-text-secondary',
+  buttonTextAccent: 'btn-text-accent',
 };
 
 /**
@@ -483,6 +620,22 @@ export function generateGlobalsCss(theme: BrandTheme): { root: string; dark: str
     })
     .join('\n');
 
+  // Generate semantic color variables (light)
+  const semanticLightVars = Object.entries(theme.semanticColors.light)
+    .map(([key, value]) => {
+      const cssVar = SEMANTIC_COLOR_TO_CSS_VAR[key as keyof SemanticColorTokens];
+      return `  --${cssVar}: ${value};`;
+    })
+    .join('\n');
+
+  // Generate semantic color variables (dark)
+  const semanticDarkVars = Object.entries(theme.semanticColors.dark)
+    .map(([key, value]) => {
+      const cssVar = SEMANTIC_COLOR_TO_CSS_VAR[key as keyof SemanticColorTokens];
+      return `  --${cssVar}: ${value};`;
+    })
+    .join('\n');
+
   // Generate spacing variables
   const spacingVars = Object.entries(theme.spacing)
     .map(([key, value]) => {
@@ -536,11 +689,14 @@ export function generateGlobalsCss(theme: BrandTheme): { root: string; dark: str
   /* Brand Light Mode Colors - from brand.md */
 ${lightVars}
 
+  /* Semantic Colors - 60-30-10 Design System (Light Mode) */
+${semanticLightVars}
+
   /* Brand Spacing */
 ${spacingVars}
 
   /* Brand Radius */
-  --radius: ${theme.radius.lg};
+  --radius: ${theme.radius.global};
 ${radiusVars}
 
   /* Brand Fonts */
@@ -562,6 +718,9 @@ ${hoverEffectVars.light}
   const darkBlock = `.dark {
   /* Brand Dark Mode Colors - from brand.md */
 ${darkVars}
+
+  /* Semantic Colors - 60-30-10 Design System (Dark Mode) */
+${semanticDarkVars}
 
   /* Dark Mode Button Hover */
 ${hoverEffectVars.dark}
@@ -607,6 +766,10 @@ export function loadThemeFromStorage(): BrandTheme | null {
       colors: {
         light: { ...defaultTheme.colors.light, ...parsed.colors?.light },
         dark: { ...defaultTheme.colors.dark, ...parsed.colors?.dark },
+      },
+      semanticColors: {
+        light: { ...defaultTheme.semanticColors.light, ...parsed.semanticColors?.light },
+        dark: { ...defaultTheme.semanticColors.dark, ...parsed.semanticColors?.dark },
       },
       spacing: { ...defaultTheme.spacing, ...parsed.spacing },
       radius: { ...defaultTheme.radius, ...parsed.radius },
@@ -655,6 +818,13 @@ export function applyThemeToDOM(theme: BrandTheme): void {
     root.style.setProperty(`--${cssVar}`, value);
   });
 
+  // Apply semantic color variables
+  const semanticColors = isDark ? theme.semanticColors.dark : theme.semanticColors.light;
+  Object.entries(semanticColors).forEach(([key, value]) => {
+    const cssVar = SEMANTIC_COLOR_TO_CSS_VAR[key as keyof SemanticColorTokens];
+    root.style.setProperty(`--${cssVar}`, value);
+  });
+
   // Apply spacing variables
   Object.entries(theme.spacing).forEach(([key, value]) => {
     // Convert camelCase to kebab-case for CSS variables
@@ -665,7 +835,6 @@ export function applyThemeToDOM(theme: BrandTheme): void {
   });
 
   // Apply radius variables
-  root.style.setProperty('--radius', theme.radius.lg);
   Object.entries(theme.radius).forEach(([key, value]) => {
     root.style.setProperty(`--radius-${key}`, value);
   });
@@ -687,11 +856,11 @@ export function applyThemeToDOM(theme: BrandTheme): void {
   root.style.setProperty('--line-height-h3', theme.typographyStyles.lineHeightH3);
   root.style.setProperty('--letter-spacing', `${theme.typographyStyles.letterSpacing}em`);
 
-  // Apply button variables
-  root.style.setProperty('--button-radius', theme.buttons.borderRadius);
+  // Apply button variables (use radius values from radius tokens)
+  root.style.setProperty('--button-radius', theme.radius.button);
   root.style.setProperty('--button-font-weight', theme.buttons.fontWeight);
   root.style.setProperty('--button-font-size', theme.buttons.fontSize);
   root.style.setProperty('--button-hover-effect', theme.buttons.hoverEffect);
-  root.style.setProperty('--input-button-radius', theme.buttons.inputBorderRadius);
+  root.style.setProperty('--input-button-radius', theme.radius.input);
   root.style.setProperty('--input-button-font-weight', theme.buttons.inputFontWeight);
 }

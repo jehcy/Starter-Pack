@@ -60,6 +60,7 @@ import {
 import {
   type BrandTheme,
   type ColorTokens,
+  type SemanticColorTokens,
   type ResponsiveSpacingValue,
   type TypographySizeTokens,
   type TypographyStyleTokens,
@@ -69,6 +70,8 @@ import {
   isValidHex,
   DEFAULT_LIGHT_COLORS,
   DEFAULT_DARK_COLORS,
+  DEFAULT_SEMANTIC_LIGHT_COLORS,
+  DEFAULT_SEMANTIC_DARK_COLORS,
   DEFAULT_SPACING,
   DEFAULT_RADIUS,
   DEFAULT_FONTS,
@@ -369,6 +372,8 @@ type ThemeAction =
   | { type: 'SET_NAME'; payload: string }
   | { type: 'SET_LIGHT_COLOR'; key: keyof ColorTokens; value: string }
   | { type: 'SET_DARK_COLOR'; key: keyof ColorTokens; value: string }
+  | { type: 'SET_SEMANTIC_LIGHT_COLOR'; key: keyof SemanticColorTokens; value: string }
+  | { type: 'SET_SEMANTIC_DARK_COLOR'; key: keyof SemanticColorTokens; value: string }
   | { type: 'SET_SPACING'; key: string; value: string | ResponsiveSpacingValue }
   | { type: 'SET_RADIUS'; key: string; value: string }
   | { type: 'SET_FONT'; key: string; value: string }
@@ -387,6 +392,7 @@ type ThemeAction =
   | { type: 'REMOVE_VIDEO'; payload: string }
   | { type: 'RESET' }
   | { type: 'RESET_COLORS' }
+  | { type: 'RESET_SEMANTIC_COLORS' }
   | { type: 'RESET_SPACING' }
   | { type: 'RESET_RADIUS' }
   | { type: 'RESET_FONTS' }
@@ -415,6 +421,22 @@ function themeReducer(state: BrandTheme, action: ThemeAction): BrandTheme {
         colors: {
           ...state.colors,
           dark: { ...state.colors.dark, [action.key]: action.value },
+        },
+      };
+    case 'SET_SEMANTIC_LIGHT_COLOR':
+      return {
+        ...state,
+        semanticColors: {
+          ...state.semanticColors,
+          light: { ...state.semanticColors.light, [action.key]: action.value },
+        },
+      };
+    case 'SET_SEMANTIC_DARK_COLOR':
+      return {
+        ...state,
+        semanticColors: {
+          ...state.semanticColors,
+          dark: { ...state.semanticColors.dark, [action.key]: action.value },
         },
       };
     case 'SET_SPACING':
@@ -455,6 +477,14 @@ function themeReducer(state: BrandTheme, action: ThemeAction): BrandTheme {
         colors: {
           light: { ...DEFAULT_LIGHT_COLORS },
           dark: { ...DEFAULT_DARK_COLORS },
+        },
+      };
+    case 'RESET_SEMANTIC_COLORS':
+      return {
+        ...state,
+        semanticColors: {
+          light: { ...DEFAULT_SEMANTIC_LIGHT_COLORS },
+          dark: { ...DEFAULT_SEMANTIC_DARK_COLORS },
         },
       };
     case 'RESET_SPACING':
@@ -880,6 +910,11 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
     toast.info('Colors reset to defaults');
   }, []);
 
+  const handleResetSemanticColors = useCallback(() => {
+    dispatch({ type: 'RESET_SEMANTIC_COLORS' });
+    toast.info('Semantic colors reset to defaults');
+  }, []);
+
   const handleResetSpacing = useCallback(() => {
     dispatch({ type: 'RESET_SPACING' });
     toast.info('Spacing reset to defaults');
@@ -945,6 +980,41 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
     {
       title: 'Chart Colors',
       colors: ['chart1', 'chart2', 'chart3', 'chart4', 'chart5'] as const,
+    },
+
+    // Separator for 60-30-10 Design System
+    { title: '60-30-10 Design System', separator: true },
+
+    // Semantic color groups
+    {
+      title: 'Backgrounds (60%)',
+      colors: ['bgPrimary', 'bgSecondary', 'bgAccent'] as const,
+      semantic: true,
+    },
+    {
+      title: 'Cards (30%)',
+      colors: ['cardPrimary', 'cardSecondary', 'cardAccent'] as const,
+      semantic: true,
+    },
+    {
+      title: 'Text Colors',
+      colors: ['textPrimary', 'textSecondary', 'textAccent'] as const,
+      semantic: true,
+    },
+    {
+      title: 'Button Fill',
+      colors: ['buttonFillPrimary', 'buttonFillPrimaryForeground', 'buttonFillSecondary', 'buttonFillSecondaryForeground', 'buttonFillAccent', 'buttonFillAccentForeground'] as const,
+      semantic: true,
+    },
+    {
+      title: 'Button Outline',
+      colors: ['buttonOutlinePrimary', 'buttonOutlinePrimaryForeground', 'buttonOutlineSecondary', 'buttonOutlineSecondaryForeground', 'buttonOutlineAccent', 'buttonOutlineAccentForeground'] as const,
+      semantic: true,
+    },
+    {
+      title: 'Button Text',
+      colors: ['buttonTextPrimary', 'buttonTextSecondary', 'buttonTextAccent'] as const,
+      semantic: true,
     },
   ];
 
@@ -1132,7 +1202,7 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
               <X className="size-4" />
             </Button>
           )}
-          <CreditDisplay />
+          <CreditDisplay onClick={() => setActiveSection('ai')} />
           <UserMenuDropdown />
         </div>
       </header>
@@ -1153,8 +1223,10 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
                 key={item.id}
                 data-tour={tourAttribute}
                 onClick={() => setActiveSection(item.id)}
+                aria-label={`Switch to ${item.label} section`}
+                aria-current={activeSection === item.id ? 'page' : undefined}
                 className={cn(
-                  'w-full flex flex-col items-center gap-1 py-2 px-1 rounded-md transition-colors mx-1',
+                  'w-full flex flex-col items-center gap-1 py-2 px-1 rounded-md transition-colors mx-1 cursor-pointer',
                   activeSection === item.id
                     ? 'bg-primary text-primary-foreground'
                     : 'text-muted-foreground hover:bg-muted hover:text-foreground'
@@ -1216,16 +1288,32 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
                 <div className="space-y-6">
 
               {colorGroups.map((group) => {
+                // Handle separator groups
+                if ('separator' in group && group.separator) {
+                  return (
+                    <div key={group.title} className="pt-4">
+                      <div className="flex items-center gap-2 mb-4">
+                        <Separator className="flex-1" />
+                        <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">{group.title}</h3>
+                        <Separator className="flex-1" />
+                      </div>
+                    </div>
+                  );
+                }
+
+                // For semantic color groups, use theme.semanticColors
+                const isSemanticGroup = 'semantic' in group && group.semantic;
+
                 // Find if this group has a contrast pair
                 const contrastPair = CONTRAST_PAIRS.find(
-                  (pair) => group.colors.includes(pair.bg as never) && group.colors.includes(pair.fg as never)
+                  (pair) => group.colors && group.colors.includes(pair.bg as never) && group.colors.includes(pair.fg as never)
                 );
 
                 return (
                   <div key={group.title}>
                     <h3 className="text-sm font-medium mb-3">{group.title}</h3>
                     <div className="space-y-2">
-                      {group.colors.map((colorKey, index) => {
+                      {group.colors && group.colors.map((colorKey, index) => {
                         // Check if this is a foreground color in a pair
                         const isForegroundInPair = contrastPair && colorKey === contrastPair.fg;
                         const backgroundKey = contrastPair?.bg;
@@ -1237,29 +1325,49 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
                                 <ColorInput
                                   label={formatLabel(colorKey)}
                                   value={
-                                    previewMode === 'light'
-                                      ? theme.colors.light[colorKey as keyof ColorTokens]
-                                      : theme.colors.dark[colorKey as keyof ColorTokens]
+                                    isSemanticGroup
+                                      ? (previewMode === 'light'
+                                          ? theme.semanticColors.light[colorKey as keyof SemanticColorTokens]
+                                          : theme.semanticColors.dark[colorKey as keyof SemanticColorTokens])
+                                      : (previewMode === 'light'
+                                          ? theme.colors.light[colorKey as keyof ColorTokens]
+                                          : theme.colors.dark[colorKey as keyof ColorTokens])
                                   }
                                   onChange={(value) => {
-                                    if (previewMode === 'light') {
-                                      dispatch({
-                                        type: 'SET_LIGHT_COLOR',
-                                        key: colorKey as keyof ColorTokens,
-                                        value,
-                                      });
+                                    if (isSemanticGroup) {
+                                      if (previewMode === 'light') {
+                                        dispatch({
+                                          type: 'SET_SEMANTIC_LIGHT_COLOR',
+                                          key: colorKey as keyof SemanticColorTokens,
+                                          value,
+                                        });
+                                      } else {
+                                        dispatch({
+                                          type: 'SET_SEMANTIC_DARK_COLOR',
+                                          key: colorKey as keyof SemanticColorTokens,
+                                          value,
+                                        });
+                                      }
                                     } else {
-                                      dispatch({
-                                        type: 'SET_DARK_COLOR',
-                                        key: colorKey as keyof ColorTokens,
-                                        value,
-                                      });
+                                      if (previewMode === 'light') {
+                                        dispatch({
+                                          type: 'SET_LIGHT_COLOR',
+                                          key: colorKey as keyof ColorTokens,
+                                          value,
+                                        });
+                                      } else {
+                                        dispatch({
+                                          type: 'SET_DARK_COLOR',
+                                          key: colorKey as keyof ColorTokens,
+                                          value,
+                                        });
+                                      }
                                     }
                                   }}
                                 />
                               </div>
                               {/* Show contrast badge for foreground colors in pairs */}
-                              {isForegroundInPair && backgroundKey && (
+                              {isForegroundInPair && backgroundKey && !isSemanticGroup && (
                                 <ContrastBadge
                                   bgColor={
                                     previewMode === 'light'
@@ -1499,7 +1607,7 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
                 <div className="space-y-4">
               <div className="flex items-center justify-between gap-2">
                 <p className="text-sm text-muted-foreground">
-                  Border radius values for rounded corners.
+                  Border radius controls for cards, buttons, and inputs.
                 </p>
                 <Button
                   variant="outline"
@@ -1511,88 +1619,192 @@ export function ThemePage({ initialTheme }: ThemePageProps) {
                   Reset
                 </Button>
               </div>
-              {Object.entries(theme.radius).map(([key, value]) => {
-                // Handle "full" specially (9999px)
-                const isFull = value === '9999px' || key === 'full';
-                const numericValue = isFull ? 3 : remToNumber(value);
 
-                // Get description for each radius
-                const getDescription = (k: string) => {
-                  const descriptions: Record<string, string> = {
-                    none: 'Sharp corners',
-                    sm: 'Subtle rounding',
-                    md: 'Medium rounding',
-                    lg: 'Default rounding',
-                    xl: 'Large rounding',
-                    '2xl': 'Extra large',
-                    full: 'Fully rounded',
-                  };
-                  return descriptions[k] || '';
-                };
-
-                return (
-                  <div key={key}>
-                    <div className="flex items-center justify-between mb-2">
-                      <div>
-                        <Label className="text-sm font-medium">{key.toUpperCase()}</Label>
-                        <p className="text-xs text-muted-foreground">{getDescription(key)}</p>
-                      </div>
-                      <span className="text-xs font-mono text-muted-foreground">
-                        {value}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="flex gap-2 flex-shrink-0">
-                        <div
-                          className="size-10 bg-primary"
-                          style={{ borderRadius: value }}
-                        />
-                        <div
-                          className="size-10 bg-secondary"
-                          style={{ borderRadius: value }}
-                        />
-                      </div>
-                      <Slider
-                        value={[numericValue]}
-                        onValueChange={([num]) => {
-                          // If at max and key is 'full', keep 9999px
-                          if (key === 'full') {
-                            dispatch({ type: 'SET_RADIUS', key, value: '9999px' });
-                          } else {
-                            dispatch({ type: 'SET_RADIUS', key, value: numberToRem(num) });
-                          }
-                        }}
-                        min={0}
-                        max={3}
-                        step={0.125}
-                        className="flex-1"
-                        disabled={key === 'full'}
-                      />
-                    </div>
-                    <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                      <span>0rem</span>
-                      <span>3rem</span>
-                    </div>
-                  </div>
-                );
-              })}
+              {/* Radius Presets */}
+              <div>
+                <Label className="text-sm font-medium mb-3 block">Presets</Label>
+                <div className="grid grid-cols-4 gap-2">
+                  {[
+                    { name: 'Default', global: '0.5rem', card: '0.75rem', button: '0.5rem', input: '0.5rem' },
+                    { name: 'Sharp', global: '0.125rem', card: '0.25rem', button: '0.125rem', input: '0.125rem' },
+                    { name: 'Soft', global: '0.375rem', card: '0.5rem', button: '0.375rem', input: '0.375rem' },
+                    { name: 'Rounded', global: '0.75rem', card: '1rem', button: '0.75rem', input: '0.5rem' },
+                    { name: 'Pill', global: '9999px', card: '1.5rem', button: '9999px', input: '0.5rem' },
+                    { name: 'Modern', global: '0.5rem', card: '1rem', button: '0.25rem', input: '0.25rem' },
+                    { name: 'Playful', global: '1rem', card: '1.5rem', button: '9999px', input: '0.75rem' },
+                  ].map((preset) => (
+                    <Button
+                      key={preset.name}
+                      variant="outline"
+                      size="sm"
+                      className="h-auto py-2"
+                      onClick={() => {
+                        dispatch({ type: 'SET_RADIUS', key: 'global', value: preset.global });
+                        dispatch({ type: 'SET_RADIUS', key: 'card', value: preset.card });
+                        dispatch({ type: 'SET_RADIUS', key: 'button', value: preset.button });
+                        dispatch({ type: 'SET_RADIUS', key: 'input', value: preset.input });
+                      }}
+                    >
+                      {preset.name}
+                    </Button>
+                  ))}
+                </div>
+              </div>
 
               <Separator className="my-4" />
 
-              {/* Visual Preview Grid */}
+              {/* Global Radius */}
               <div>
-                <Label className="text-sm font-medium mb-3 block">Visual Comparison</Label>
-                <div className="grid grid-cols-4 gap-3 p-4 rounded-lg border border-border bg-muted/30">
-                  {Object.entries(theme.radius).slice(0, 7).map(([key, value]) => (
-                    <div key={key} className="flex flex-col items-center gap-2">
-                      <div
-                        className="w-12 h-12 bg-gradient-to-br from-primary to-primary/60"
-                        style={{ borderRadius: value }}
-                      />
-                      <span className="text-xs font-medium">{key}</span>
-                      <span className="text-xs text-muted-foreground font-mono">{value}</span>
-                    </div>
-                  ))}
+                <div className="flex items-center justify-between mb-2">
+                  <div>
+                    <Label className="text-sm font-medium flex items-center gap-1.5">
+                      <span className="text-base">🌐</span>
+                      GLOBAL
+                    </Label>
+                    <p className="text-xs text-muted-foreground">Base radius for all elements</p>
+                  </div>
+                  <span className="text-xs font-mono text-muted-foreground">
+                    {theme.radius.global}
+                  </span>
+                </div>
+                <Slider
+                  value={[theme.radius.global === '9999px' ? 3 : remToNumber(theme.radius.global)]}
+                  onValueChange={([num]) => {
+                    const value = num >= 3 ? '9999px' : numberToRem(num);
+                    dispatch({ type: 'SET_RADIUS', key: 'global', value });
+                  }}
+                  min={0}
+                  max={3}
+                  step={0.125}
+                  className="w-full"
+                />
+                <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                  <span>none</span>
+                  <span>full</span>
+                </div>
+              </div>
+
+              <Separator className="my-4" />
+
+              {/* Card Radius */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <div>
+                    <Label className="text-sm font-medium flex items-center gap-1.5">
+                      <span className="text-base">🃏</span>
+                      CARD
+                    </Label>
+                    <p className="text-xs text-muted-foreground">Cards, dialogs, containers</p>
+                  </div>
+                  <span className="text-xs font-mono text-muted-foreground">
+                    {theme.radius.card}
+                  </span>
+                </div>
+                <Slider
+                  value={[theme.radius.card === '9999px' ? 3 : remToNumber(theme.radius.card)]}
+                  onValueChange={([num]) => {
+                    const value = num >= 3 ? '9999px' : numberToRem(num);
+                    dispatch({ type: 'SET_RADIUS', key: 'card', value });
+                  }}
+                  min={0}
+                  max={3}
+                  step={0.125}
+                  className="w-full"
+                />
+                <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                  <span>none</span>
+                  <span>full</span>
+                </div>
+              </div>
+
+              {/* Button Radius */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <div>
+                    <Label className="text-sm font-medium flex items-center gap-1.5">
+                      <span className="text-base">🔘</span>
+                      BUTTON
+                    </Label>
+                    <p className="text-xs text-muted-foreground">All button elements</p>
+                  </div>
+                  <span className="text-xs font-mono text-muted-foreground">
+                    {theme.radius.button}
+                  </span>
+                </div>
+                <Slider
+                  value={[theme.radius.button === '9999px' ? 3 : remToNumber(theme.radius.button)]}
+                  onValueChange={([num]) => {
+                    const value = num >= 3 ? '9999px' : numberToRem(num);
+                    dispatch({ type: 'SET_RADIUS', key: 'button', value });
+                  }}
+                  min={0}
+                  max={3}
+                  step={0.125}
+                  className="w-full"
+                />
+                <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                  <span>none</span>
+                  <span>full</span>
+                </div>
+              </div>
+
+              {/* Input Radius */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <div>
+                    <Label className="text-sm font-medium flex items-center gap-1.5">
+                      <span className="text-base">📝</span>
+                      INPUT
+                    </Label>
+                    <p className="text-xs text-muted-foreground">Inputs, selects, textareas</p>
+                  </div>
+                  <span className="text-xs font-mono text-muted-foreground">
+                    {theme.radius.input}
+                  </span>
+                </div>
+                <Slider
+                  value={[theme.radius.input === '9999px' ? 3 : remToNumber(theme.radius.input)]}
+                  onValueChange={([num]) => {
+                    const value = num >= 3 ? '9999px' : numberToRem(num);
+                    dispatch({ type: 'SET_RADIUS', key: 'input', value });
+                  }}
+                  min={0}
+                  max={3}
+                  step={0.125}
+                  className="w-full"
+                />
+                <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                  <span>none</span>
+                  <span>full</span>
+                </div>
+              </div>
+
+              <Separator className="my-4" />
+
+              {/* Preview */}
+              <div>
+                <Label className="text-sm font-medium mb-3 block">Preview</Label>
+                <div className="flex items-center gap-4 p-6 rounded-lg border border-border bg-muted/30">
+                  <div
+                    className="w-24 h-20 bg-card border border-border p-3"
+                    style={{ borderRadius: theme.radius.card }}
+                  >
+                    <div className="text-xs font-medium">Card</div>
+                  </div>
+                  <Button
+                    variant="default"
+                    size="sm"
+                    style={{ borderRadius: theme.radius.button }}
+                  >
+                    Button
+                  </Button>
+                  <input
+                    type="text"
+                    placeholder="Input"
+                    className="px-3 py-2 text-sm border border-input bg-background"
+                    style={{ borderRadius: theme.radius.input }}
+                    readOnly
+                  />
                 </div>
               </div>
                 </div>

@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Twitter, Github, MessageCircle } from 'lucide-react';
+import { Logo } from '@/components/ui/logo';
 
 export function Footer() {
   return (
@@ -8,12 +9,7 @@ export function Footer() {
         <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-4">
           {/* Brand Column - spans 2 columns on lg+ */}
           <div className="lg:col-span-1 sm:col-span-2">
-            <Link href="/" className="inline-flex items-center gap-2 group">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold transition-transform group-hover:scale-105">
-                V
-              </div>
-              <span className="text-xl font-bold">VibeCN</span>
-            </Link>
+            <Logo href="/" size="md" showText />
             <p className="mt-4 text-muted-foreground leading-relaxed">
               A Next.js starter template engineered for AI-assisted development. Ship faster with optimized architecture and token-efficient patterns.
             </p>

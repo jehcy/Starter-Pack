@@ -952,9 +952,21 @@ If the user provides new design inspiration or a screenshot:
 ## Design System Reference
 
 ### Colors (from globals.css)
+
+**Base Color Tokens:**
 - Use semantic color tokens: \`background\`, \`foreground\`, \`primary\`, \`secondary\`, \`accent\`, \`muted\`, \`destructive\`
 - All colors support dark mode via \`.dark\` class
 - Use Tailwind classes: \`bg-primary\`, \`text-foreground\`, \`border-border\`, etc.
+
+**60-30-10 Semantic Color System:**
+- **Backgrounds (60%):** \`bg-bg-primary\`, \`bg-bg-secondary\`, \`bg-bg-accent\`
+- **Cards (30%):** \`bg-card-primary\`, \`bg-card-secondary\`, \`bg-card-accent\`
+- **Text:** \`text-text-primary\`, \`text-text-secondary\`, \`text-text-accent\`
+- **Button Fill:** \`bg-btn-fill-primary\`, \`bg-btn-fill-secondary\`, \`bg-btn-fill-accent\` (with \`-foreground\` variants)
+- **Button Outline:** \`border-btn-outline-primary\`, \`text-btn-outline-primary-foreground\`, etc.
+- **Button Text:** \`text-btn-text-primary\`, \`text-btn-text-secondary\`, \`text-btn-text-accent\`
+
+Use semantic colors for granular control over different UI elements while maintaining design consistency.
 
 ### Typography
 - Font: \`--font-sans\`, \`--font-mono\`, \`--font-heading\`

@@ -40,8 +40,11 @@ export default function LandingPageV2() {
               {/* Main Headline - Using brand h1 size */}
               <h1 className="font-bold tracking-tight">
                 <span className="block text-foreground">Build Fast with</span>
-                <span className="block bg-gradient-to-r from-primary via-chart-1 to-chart-2 bg-clip-text text-transparent">
-                  Fewer Tokens
+                <span className="block relative inline-block">
+                  <span className="absolute -inset-1 bg-gradient-to-r from-primary via-orange-500 to-primary bg-[length:200%_100%] animate-[shimmer_3s_linear_infinite] blur-2xl opacity-30" />
+                  <span className="relative bg-gradient-to-r from-primary via-orange-400 to-primary bg-[length:200%_100%] animate-[shimmer_3s_linear_infinite] bg-clip-text text-transparent font-black">
+                    Fewer Tokens
+                  </span>
                 </span>
               </h1>
 

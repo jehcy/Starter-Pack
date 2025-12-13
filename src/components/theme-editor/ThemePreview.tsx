@@ -28,6 +28,7 @@ import {
   X,
   ArrowRight,
 } from 'lucide-react';
+import { Logo } from '@/components/ui/logo';
 
 import type { BrandTheme, ColorTokens } from '@/lib/brand-theme';
 
@@ -60,10 +61,10 @@ export function ThemePreview({ theme, mode, onModeChange, breakpoint = 'desktop'
       const cssKey = `--preview-${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
       vars[cssKey] = value;
     });
-    vars['--preview-radius'] = theme.radius.lg;
-    vars['--preview-radius-sm'] = theme.radius.sm;
-    vars['--preview-radius-md'] = theme.radius.md;
-    vars['--preview-radius-xl'] = theme.radius.xl;
+    vars['--preview-radius'] = theme.radius.global;
+    vars['--preview-radius-sm'] = theme.radius.card;
+    vars['--preview-radius-md'] = theme.radius.button;
+    vars['--preview-radius-xl'] = theme.radius.input;
     return vars;
   }, [colors, theme.radius]);
 
@@ -138,7 +139,7 @@ export function ThemePreview({ theme, mode, onModeChange, breakpoint = 'desktop'
                   padding: '0.5rem',
                   backgroundColor: 'transparent',
                   color: colors.foreground,
-                  borderRadius: theme.radius.md,
+                  borderRadius: theme.radius.input,
                 }}
                 aria-label="Toggle menu"
               >
@@ -158,19 +159,10 @@ export function ThemePreview({ theme, mode, onModeChange, breakpoint = 'desktop'
             )}
 
             <div className="flex items-center gap-2">
-              <div
-                className="flex items-center justify-center font-bold"
-                style={{
-                  width: breakpoint === 'mobile' ? '28px' : '32px',
-                  height: breakpoint === 'mobile' ? '28px' : '32px',
-                  fontSize: breakpoint === 'mobile' ? '0.75rem' : '0.875rem',
-                  backgroundColor: colors.primary,
-                  color: colors.primaryForeground,
-                  borderRadius: theme.radius.md,
-                }}
-              >
-                V
-              </div>
+              <Logo
+                size={breakpoint === 'mobile' ? 'sm' : 'md'}
+                color={colors.primary}
+              />
               {breakpoint !== 'mobile' && (
                 <span className="font-semibold" style={{ color: colors.foreground, fontFamily: theme.fonts.heading }}>
                   VibeCN
@@ -209,7 +201,7 @@ export function ThemePreview({ theme, mode, onModeChange, breakpoint = 'desktop'
                 padding: breakpoint === 'mobile' ? '0.375rem' : '0.5rem',
                 backgroundColor: 'transparent',
                 color: colors.foreground,
-                borderRadius: theme.radius.md,
+                borderRadius: theme.radius.input,
               }}
               title={`Switch to ${mode === 'light' ? 'dark' : 'light'} mode`}
             >
@@ -548,7 +540,7 @@ function HomePage({ theme, colors, breakpoint }: PageProps) {
             className="relative overflow-hidden px-6 py-20 sm:px-12 sm:py-28"
             style={{
               backgroundColor: colors.primary,
-              borderRadius: theme.radius.xl,
+              borderRadius: theme.radius.card,
             }}
           >
             <div 
@@ -821,7 +813,7 @@ function FeaturesPage({ theme, colors , breakpoint }: PageProps) {
                 className="aspect-square p-8"
                 style={{
                   background: `linear-gradient(to bottom right, ${colors.primary}20, ${colors.primary}10, transparent)`,
-                  borderRadius: theme.radius.xl,
+                  borderRadius: theme.radius.card,
                 }}
               >
                 <div 
@@ -829,7 +821,7 @@ function FeaturesPage({ theme, colors , breakpoint }: PageProps) {
                   style={{
                     border: `1px solid ${colors.border}`,
                     backgroundColor: `${colors.card}80`,
-                    borderRadius: theme.radius.lg,
+                    borderRadius: theme.radius.button,
                   }}
                 />
               </div>
@@ -1065,10 +1057,10 @@ function DashboardPage({ theme, colors , breakpoint }: PageProps) {
             gridTemplateColumns: breakpoint === 'mobile' ? '1fr' : breakpoint === 'tablet' ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)',
           }}
         >
-          <DashboardStatCard colors={colors} radius={theme.radius.xl} cardPadding={theme.spacing.p[breakpoint]} title="Total Revenue" value="$45,231.89" change="+20.1%" icon={DollarSign} />
-          <DashboardStatCard colors={colors} radius={theme.radius.xl} cardPadding={theme.spacing.p[breakpoint]} title="Subscriptions" value="+2,350" change="+180.1%" icon={Users} />
-          <DashboardStatCard colors={colors} radius={theme.radius.xl} cardPadding={theme.spacing.p[breakpoint]} title="Active Users" value="+12,234" change="+19%" icon={Activity} />
-          <DashboardStatCard colors={colors} radius={theme.radius.xl} cardPadding={theme.spacing.p[breakpoint]} title="Growth" value="+573" change="+201" icon={TrendingUp} />
+          <DashboardStatCard colors={colors} radius={theme.radius.card} cardPadding={theme.spacing.p[breakpoint]} title="Total Revenue" value="$45,231.89" change="+20.1%" icon={DollarSign} />
+          <DashboardStatCard colors={colors} radius={theme.radius.card} cardPadding={theme.spacing.p[breakpoint]} title="Subscriptions" value="+2,350" change="+180.1%" icon={Users} />
+          <DashboardStatCard colors={colors} radius={theme.radius.card} cardPadding={theme.spacing.p[breakpoint]} title="Active Users" value="+12,234" change="+19%" icon={Activity} />
+          <DashboardStatCard colors={colors} radius={theme.radius.card} cardPadding={theme.spacing.p[breakpoint]} title="Growth" value="+573" change="+201" icon={TrendingUp} />
         </div>
 
         {/* Main Content Grid */}
@@ -1083,7 +1075,7 @@ function DashboardPage({ theme, colors , breakpoint }: PageProps) {
             className="p-6"
             style={{
               backgroundColor: colors.card,
-              borderRadius: theme.radius.xl,
+              borderRadius: theme.radius.card,
               border: `1px solid ${colors.border}`,
             }}
           >
@@ -1111,7 +1103,7 @@ function DashboardPage({ theme, colors , breakpoint }: PageProps) {
                   style={{
                     height: `${height}%`,
                     backgroundColor: colors.primary,
-                    borderRadius: theme.radius.sm,
+                    borderRadius: theme.radius.global,
                     opacity: 0.8,
                   }}
                 />
@@ -1126,7 +1118,7 @@ function DashboardPage({ theme, colors , breakpoint }: PageProps) {
               className="p-4"
               style={{
                 backgroundColor: colors.card,
-                borderRadius: theme.radius.xl,
+                borderRadius: theme.radius.card,
                 border: `1px solid ${colors.border}`,
               }}
             >
@@ -1136,7 +1128,7 @@ function DashboardPage({ theme, colors , breakpoint }: PageProps) {
                   December 2025
                 </span>
               </div>
-              <MiniCalendar colors={colors} radius={theme.radius.md} />
+              <MiniCalendar colors={colors} radius={theme.radius.input} />
             </div>
 
             {/* Quick Actions */}
@@ -1144,7 +1136,7 @@ function DashboardPage({ theme, colors , breakpoint }: PageProps) {
               className="p-4"
               style={{
                 backgroundColor: colors.card,
-                borderRadius: theme.radius.xl,
+                borderRadius: theme.radius.card,
                 border: `1px solid ${colors.border}`,
               }}
             >
@@ -1165,7 +1157,7 @@ function DashboardPage({ theme, colors , breakpoint }: PageProps) {
           className="p-6"
           style={{
             backgroundColor: colors.card,
-            borderRadius: theme.radius.xl,
+            borderRadius: theme.radius.card,
             border: `1px solid ${colors.border}`,
           }}
         >
@@ -1189,7 +1181,7 @@ function DashboardPage({ theme, colors , breakpoint }: PageProps) {
           className="p-6"
           style={{
             backgroundColor: colors.card,
-            borderRadius: theme.radius.xl,
+            borderRadius: theme.radius.card,
             border: `1px solid ${colors.border}`,
           }}
         >
@@ -1211,7 +1203,7 @@ function DashboardPage({ theme, colors , breakpoint }: PageProps) {
                 style={{
                   backgroundColor: colors.background,
                   color: colors.foreground,
-                  borderRadius: theme.radius.md,
+                  borderRadius: theme.radius.input,
                   border: `1px solid ${colors.input}`,
                   fontSize: theme.typographySizes.p,
                 }}
@@ -1226,7 +1218,7 @@ function DashboardPage({ theme, colors , breakpoint }: PageProps) {
                 style={{
                   backgroundColor: colors.background,
                   color: colors.foreground,
-                  borderRadius: theme.radius.md,
+                  borderRadius: theme.radius.input,
                   border: `1px solid ${colors.input}`,
                   fontSize: theme.typographySizes.p,
                 }}
@@ -1240,7 +1232,7 @@ function DashboardPage({ theme, colors , breakpoint }: PageProps) {
           className="p-6"
           style={{
             backgroundColor: colors.card,
-            borderRadius: theme.radius.xl,
+            borderRadius: theme.radius.card,
             border: `1px solid ${colors.border}`,
           }}
         >
@@ -1253,11 +1245,11 @@ function DashboardPage({ theme, colors , breakpoint }: PageProps) {
               gridTemplateColumns: breakpoint === 'mobile' ? 'repeat(2, 1fr)' : breakpoint === 'tablet' ? 'repeat(3, 1fr)' : 'repeat(5, 1fr)',
             }}
           >
-            <ColorSwatch color={colors.primary} label="Primary" radius={theme.radius.md} foreground={colors.cardForeground} />
-            <ColorSwatch color={colors.secondary} label="Secondary" radius={theme.radius.md} foreground={colors.cardForeground} />
-            <ColorSwatch color={colors.accent} label="Accent" radius={theme.radius.md} foreground={colors.cardForeground} />
-            <ColorSwatch color={colors.muted} label="Muted" radius={theme.radius.md} foreground={colors.cardForeground} />
-            <ColorSwatch color={colors.destructive} label="Destructive" radius={theme.radius.md} foreground={colors.cardForeground} />
+            <ColorSwatch color={colors.primary} label="Primary" radius={theme.radius.input} foreground={colors.cardForeground} />
+            <ColorSwatch color={colors.secondary} label="Secondary" radius={theme.radius.input} foreground={colors.cardForeground} />
+            <ColorSwatch color={colors.accent} label="Accent" radius={theme.radius.input} foreground={colors.cardForeground} />
+            <ColorSwatch color={colors.muted} label="Muted" radius={theme.radius.input} foreground={colors.cardForeground} />
+            <ColorSwatch color={colors.destructive} label="Destructive" radius={theme.radius.input} foreground={colors.cardForeground} />
           </div>
           <div
             className="grid gap-4 mt-4"
@@ -1265,11 +1257,11 @@ function DashboardPage({ theme, colors , breakpoint }: PageProps) {
               gridTemplateColumns: breakpoint === 'mobile' ? 'repeat(2, 1fr)' : breakpoint === 'tablet' ? 'repeat(3, 1fr)' : 'repeat(5, 1fr)',
             }}
           >
-            <ColorSwatch color={colors.chart1} label="Chart 1" radius={theme.radius.md} foreground={colors.cardForeground} />
-            <ColorSwatch color={colors.chart2} label="Chart 2" radius={theme.radius.md} foreground={colors.cardForeground} />
-            <ColorSwatch color={colors.chart3} label="Chart 3" radius={theme.radius.md} foreground={colors.cardForeground} />
-            <ColorSwatch color={colors.chart4} label="Chart 4" radius={theme.radius.md} foreground={colors.cardForeground} />
-            <ColorSwatch color={colors.chart5} label="Chart 5" radius={theme.radius.md} foreground={colors.cardForeground} />
+            <ColorSwatch color={colors.chart1} label="Chart 1" radius={theme.radius.input} foreground={colors.cardForeground} />
+            <ColorSwatch color={colors.chart2} label="Chart 2" radius={theme.radius.input} foreground={colors.cardForeground} />
+            <ColorSwatch color={colors.chart3} label="Chart 3" radius={theme.radius.input} foreground={colors.cardForeground} />
+            <ColorSwatch color={colors.chart4} label="Chart 4" radius={theme.radius.input} foreground={colors.cardForeground} />
+            <ColorSwatch color={colors.chart5} label="Chart 5" radius={theme.radius.input} foreground={colors.cardForeground} />
           </div>
         </div>
       </div>
@@ -1428,7 +1420,7 @@ function LPPage({ theme, colors , breakpoint }: PageProps) {
                     opacity: 1 - index * 0.2,
                     backgroundColor: `${card.color}10`,
                     border: `1px solid ${colors.border}50`,
-                    borderRadius: theme.radius.xl,
+                    borderRadius: theme.radius.card,
                   }}
                 >
                   <div className="p-6">
@@ -1527,7 +1519,7 @@ function LPPage({ theme, colors , breakpoint }: PageProps) {
                 gridColumn: breakpoint === 'mobile' ? 'span 1' : 'span 2',
                 backgroundColor: `${colors.card}80`,
                 border: `1px solid ${colors.border}50`,
-                borderRadius: theme.radius.xl,
+                borderRadius: theme.radius.card,
               }}
             >
               <div
@@ -1541,7 +1533,7 @@ function LPPage({ theme, colors , breakpoint }: PageProps) {
                     className="h-14 w-14 flex items-center justify-center"
                     style={{
                       backgroundColor: `${colors.primary}15`,
-                      borderRadius: theme.radius.lg,
+                      borderRadius: theme.radius.button,
                     }}
                   >
                     <Zap className="size-7" style={{ color: colors.primary }} />
@@ -1574,7 +1566,7 @@ function LPPage({ theme, colors , breakpoint }: PageProps) {
                   style={{
                     backgroundColor: `${colors.primary}05`,
                     border: `1px solid ${colors.border}50`,
-                    borderRadius: theme.radius.lg,
+                    borderRadius: theme.radius.button,
                   }}
                 >
                   {[85, 92, 78, 96, 88, 95, 90].map((h, i) => (
@@ -1584,7 +1576,7 @@ function LPPage({ theme, colors , breakpoint }: PageProps) {
                       style={{
                         height: `${h}%`,
                         background: `linear-gradient(to top, ${colors.primary}, ${colors.chart2})`,
-                        borderRadius: theme.radius.sm,
+                        borderRadius: theme.radius.global,
                       }}
                     />
                   ))}
@@ -1599,14 +1591,14 @@ function LPPage({ theme, colors , breakpoint }: PageProps) {
                 gridRow: breakpoint === 'desktop' ? 'span 2' : 'span 1',
                 backgroundColor: `${colors.card}80`,
                 border: `1px solid ${colors.border}50`,
-                borderRadius: theme.radius.xl,
+                borderRadius: theme.radius.card,
               }}
             >
               <div
                 className="h-14 w-14 flex items-center justify-center"
                 style={{
                   backgroundColor: `${colors.chart1}15`,
-                  borderRadius: theme.radius.lg,
+                  borderRadius: theme.radius.button,
                 }}
               >
                 <Palette className="size-7" style={{ color: colors.chart1 }} />
@@ -1623,7 +1615,7 @@ function LPPage({ theme, colors , breakpoint }: PageProps) {
                     <div
                       key={i}
                       className="h-8 w-8"
-                      style={{ backgroundColor: c, borderRadius: theme.radius.md }}
+                      style={{ backgroundColor: c, borderRadius: theme.radius.input }}
                     />
                   ))}
                 </div>
@@ -1631,7 +1623,7 @@ function LPPage({ theme, colors , breakpoint }: PageProps) {
                   className="h-8 w-full"
                   style={{
                     background: `linear-gradient(to right, ${colors.primary}, ${colors.chart1}, ${colors.chart2})`,
-                    borderRadius: theme.radius.md,
+                    borderRadius: theme.radius.input,
                   }}
                 />
               </div>
@@ -1648,14 +1640,14 @@ function LPPage({ theme, colors , breakpoint }: PageProps) {
                 style={{
                   backgroundColor: `${colors.card}80`,
                   border: `1px solid ${colors.border}50`,
-                  borderRadius: theme.radius.xl,
+                  borderRadius: theme.radius.card,
                 }}
               >
                 <div
                   className="h-12 w-12 flex items-center justify-center"
                   style={{
                     backgroundColor: `${item.color}15`,
-                    borderRadius: theme.radius.lg,
+                    borderRadius: theme.radius.button,
                   }}
                 >
                   <item.icon className="size-6" style={{ color: item.color }} />
@@ -1686,7 +1678,7 @@ function LPPage({ theme, colors , breakpoint }: PageProps) {
             className="relative overflow-hidden px-8 py-20"
             style={{
               backgroundColor: colors.primary,
-              borderRadius: theme.radius.xl,
+              borderRadius: theme.radius.card,
             }}
           >
             <div
@@ -1864,7 +1856,7 @@ function PreviewFooter({ theme, colors , breakpoint }: PageProps) {
                 style={{
                   backgroundColor: colors.primary,
                   color: colors.primaryForeground,
-                  borderRadius: theme.radius.md,
+                  borderRadius: theme.radius.input,
                 }}
               >
                 V
@@ -1877,13 +1869,13 @@ function PreviewFooter({ theme, colors , breakpoint }: PageProps) {
               Token-optimized UI components designed for AI efficiency. Build production-ready interfaces faster.
             </p>
             <div className="flex items-center gap-3">
-              <a href="#" className="p-2 transition-colors hover:opacity-80" style={{ backgroundColor: colors.muted, borderRadius: theme.radius.md, color: colors.mutedForeground }}>
+              <a href="#" className="p-2 transition-colors hover:opacity-80" style={{ backgroundColor: colors.muted, borderRadius: theme.radius.input, color: colors.mutedForeground }}>
                 <Twitter className="size-4" />
               </a>
-              <a href="#" className="p-2 transition-colors hover:opacity-80" style={{ backgroundColor: colors.muted, borderRadius: theme.radius.md, color: colors.mutedForeground }}>
+              <a href="#" className="p-2 transition-colors hover:opacity-80" style={{ backgroundColor: colors.muted, borderRadius: theme.radius.input, color: colors.mutedForeground }}>
                 <Github className="size-4" />
               </a>
-              <a href="#" className="p-2 transition-colors hover:opacity-80" style={{ backgroundColor: colors.muted, borderRadius: theme.radius.md, color: colors.mutedForeground }}>
+              <a href="#" className="p-2 transition-colors hover:opacity-80" style={{ backgroundColor: colors.muted, borderRadius: theme.radius.input, color: colors.mutedForeground }}>
                 <Linkedin className="size-4" />
               </a>
             </div>
@@ -1971,7 +1963,7 @@ function FeatureCard({ theme, colors, breakpoint, icon: Icon, title, description
       style={{
         backgroundColor: `${colors.card}80`,
         border: `1px solid ${colors.border}`,
-        borderRadius: theme.radius.xl,
+        borderRadius: theme.radius.card,
         padding: theme.spacing.p[breakpoint],
       }}
     >
@@ -1980,7 +1972,7 @@ function FeatureCard({ theme, colors, breakpoint, icon: Icon, title, description
         style={{
           backgroundColor: `${colors.primary}15`,
           color: colors.primary,
-          borderRadius: theme.radius.lg,
+          borderRadius: theme.radius.button,
         }}
       >
         <Icon className="size-6" />
@@ -2011,7 +2003,7 @@ function LargeFeatureCard({ theme, colors, breakpoint, icon: Icon, title, descri
       style={{
         backgroundColor: `${colors.card}80`,
         border: `1px solid ${colors.border}`,
-        borderRadius: theme.radius.xl,
+        borderRadius: theme.radius.card,
         padding: theme.spacing.p[breakpoint],
       }}
     >
@@ -2020,7 +2012,7 @@ function LargeFeatureCard({ theme, colors, breakpoint, icon: Icon, title, descri
         style={{
           backgroundColor: `${colors.primary}15`,
           color: colors.primary,
-          borderRadius: theme.radius.lg,
+          borderRadius: theme.radius.button,
         }}
       >
         <Icon className="size-8" />
@@ -2113,7 +2105,7 @@ function PricingCard({ theme, colors, breakpoint, name, price, period, descripti
       style={{
         backgroundColor: colors.card,
         border: highlighted ? `2px solid ${colors.primary}` : `1px solid ${colors.border}`,
-        borderRadius: theme.radius.xl,
+        borderRadius: theme.radius.card,
         transform: highlighted ? 'scale(1.05)' : 'none',
         boxShadow: highlighted ? '0 25px 50px -12px rgba(0, 0, 0, 0.25)' : 'none',
         padding: theme.spacing.p[breakpoint],
@@ -2178,7 +2170,7 @@ function FaqItem({ theme, colors, question, answer }: FaqItemProps) {
       style={{
         backgroundColor: colors.card,
         border: `1px solid ${colors.border}`,
-        borderRadius: theme.radius.xl,
+        borderRadius: theme.radius.card,
       }}
     >
       <h3 className="font-semibold" style={{ color: colors.foreground, fontSize: theme.typographySizes.h4 }}>{question}</h3>

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Logo } from '@/components/ui/logo';
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -12,12 +13,7 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
         <div className="absolute inset-0 bg-gradient-to-br from-primary to-primary/80" />
         <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=%2230%22 height=%2230%22 viewBox=%220 0 30 30%22 fill=%22none%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cpath d=%22M1.22676 0C1.91374 0 2.45351 0.539773 2.45351 1.22676C2.45351 1.91374 1.91374 2.45351 1.22676 2.45351C0.539773 2.45351 0 1.91374 0 1.22676C0 0.539773 0.539773 0 1.22676 0Z%22 fill=%22rgba(255,255,255,0.07)%22/%3E%3C/svg%3E')] opacity-40" />
         <div className="relative z-10 flex flex-col justify-between p-12 text-primary-foreground">
-          <Link href="/" className="inline-flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-foreground/20 font-bold">
-              S
-            </div>
-            <span className="text-2xl font-bold">SaaS Starter</span>
-          </Link>
+          <Logo href="/" size="lg" showText className="text-primary-foreground" />
           
           <div className="space-y-6">
             <blockquote className="text-2xl font-medium leading-relaxed">
@@ -45,12 +41,7 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
       <div className="flex flex-1 flex-col">
         {/* Header */}
         <header className="flex h-16 items-center justify-between px-6 lg:px-12">
-          <Link href="/" className="inline-flex items-center gap-2 lg:invisible">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold">
-              S
-            </div>
-            <span className="text-xl font-bold">SaaS</span>
-          </Link>
+          <Logo href="/" size="md" showText className="lg:invisible" />
           <p className="text-muted-foreground">
             Need help?{' '}
             <a href="mailto:support@example.com" className="text-primary hover:underline">

@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/sheet';
 import { useUserProfile } from '@/hooks/useUserProfile';
 import { UserNavigation } from '@/components/header/user-navigation';
+import { Logo } from '@/components/ui/logo';
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -44,12 +45,7 @@ export function Navigation() {
     >
       <div className="container-wide mx-auto flex h-16 items-center justify-between">
         <div className="flex items-center gap-8">
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold transition-transform group-hover:scale-105">
-              V
-            </div>
-            <span className="text-xl font-bold">VibeCN</span>
-          </Link>
+          <Logo href="/" size="md" showText />
           <nav className="hidden md:flex items-center gap-6">
             {navLinks.map((link) => (
               <NavLink key={link.href} href={link.href}>
@@ -89,12 +85,9 @@ export function Navigation() {
             <SheetContent>
               <SheetHeader>
                 <SheetTitle>
-                  <Link href="/" className="flex items-center gap-2" onClick={() => setMobileOpen(false)}>
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold">
-                      V
-                    </div>
-                    <span className="text-xl font-bold">VibeCN</span>
-                  </Link>
+                  <div onClick={() => setMobileOpen(false)}>
+                    <Logo href="/" size="md" showText />
+                  </div>
                 </SheetTitle>
               </SheetHeader>
               <nav className="flex flex-col gap-4 mt-8">

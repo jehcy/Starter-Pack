@@ -177,6 +177,37 @@ module.exports = {
           4: 'var(--chart-4)',
           5: 'var(--chart-5)',
         },
+        // 60-30-10 Semantic Colors
+        'bg-primary': 'var(--bg-primary)',
+        'bg-secondary': 'var(--bg-secondary)',
+        'bg-accent': 'var(--bg-accent)',
+        'card-primary': 'var(--card-primary)',
+        'card-secondary': 'var(--card-secondary)',
+        'card-accent': 'var(--card-accent)',
+        'text-primary': 'var(--text-primary)',
+        'text-secondary': 'var(--text-secondary)',
+        'text-accent': 'var(--text-accent)',
+        'btn-fill': {
+          primary: 'var(--btn-fill-primary)',
+          'primary-foreground': 'var(--btn-fill-primary-foreground)',
+          secondary: 'var(--btn-fill-secondary)',
+          'secondary-foreground': 'var(--btn-fill-secondary-foreground)',
+          accent: 'var(--btn-fill-accent)',
+          'accent-foreground': 'var(--btn-fill-accent-foreground)',
+        },
+        'btn-outline': {
+          primary: 'var(--btn-outline-primary)',
+          'primary-foreground': 'var(--btn-outline-primary-foreground)',
+          secondary: 'var(--btn-outline-secondary)',
+          'secondary-foreground': 'var(--btn-outline-secondary-foreground)',
+          accent: 'var(--btn-outline-accent)',
+          'accent-foreground': 'var(--btn-outline-accent-foreground)',
+        },
+        'btn-text': {
+          primary: 'var(--btn-text-primary)',
+          secondary: 'var(--btn-text-secondary)',
+          accent: 'var(--btn-text-accent)',
+        },
       },
       fontFamily: {
         sans: ['var(--font-sans)'],
@@ -317,6 +348,32 @@ export const theme = {
       chart4: '${theme.colors.light.chart4}',
       chart5: '${theme.colors.light.chart5}',
     },
+    semanticLight: {
+      bgPrimary: '${theme.semanticColors.light.bgPrimary}',
+      bgSecondary: '${theme.semanticColors.light.bgSecondary}',
+      bgAccent: '${theme.semanticColors.light.bgAccent}',
+      cardPrimary: '${theme.semanticColors.light.cardPrimary}',
+      cardSecondary: '${theme.semanticColors.light.cardSecondary}',
+      cardAccent: '${theme.semanticColors.light.cardAccent}',
+      textPrimary: '${theme.semanticColors.light.textPrimary}',
+      textSecondary: '${theme.semanticColors.light.textSecondary}',
+      textAccent: '${theme.semanticColors.light.textAccent}',
+      buttonFillPrimary: '${theme.semanticColors.light.buttonFillPrimary}',
+      buttonFillPrimaryForeground: '${theme.semanticColors.light.buttonFillPrimaryForeground}',
+      buttonFillSecondary: '${theme.semanticColors.light.buttonFillSecondary}',
+      buttonFillSecondaryForeground: '${theme.semanticColors.light.buttonFillSecondaryForeground}',
+      buttonFillAccent: '${theme.semanticColors.light.buttonFillAccent}',
+      buttonFillAccentForeground: '${theme.semanticColors.light.buttonFillAccentForeground}',
+      buttonOutlinePrimary: '${theme.semanticColors.light.buttonOutlinePrimary}',
+      buttonOutlinePrimaryForeground: '${theme.semanticColors.light.buttonOutlinePrimaryForeground}',
+      buttonOutlineSecondary: '${theme.semanticColors.light.buttonOutlineSecondary}',
+      buttonOutlineSecondaryForeground: '${theme.semanticColors.light.buttonOutlineSecondaryForeground}',
+      buttonOutlineAccent: '${theme.semanticColors.light.buttonOutlineAccent}',
+      buttonOutlineAccentForeground: '${theme.semanticColors.light.buttonOutlineAccentForeground}',
+      buttonTextPrimary: '${theme.semanticColors.light.buttonTextPrimary}',
+      buttonTextSecondary: '${theme.semanticColors.light.buttonTextSecondary}',
+      buttonTextAccent: '${theme.semanticColors.light.buttonTextAccent}',
+    },
     dark: {
       background: '${theme.colors.dark.background}',
       foreground: '${theme.colors.dark.foreground}',
@@ -342,6 +399,32 @@ export const theme = {
       chart3: '${theme.colors.dark.chart3}',
       chart4: '${theme.colors.dark.chart4}',
       chart5: '${theme.colors.dark.chart5}',
+    },
+    semanticDark: {
+      bgPrimary: '${theme.semanticColors.dark.bgPrimary}',
+      bgSecondary: '${theme.semanticColors.dark.bgSecondary}',
+      bgAccent: '${theme.semanticColors.dark.bgAccent}',
+      cardPrimary: '${theme.semanticColors.dark.cardPrimary}',
+      cardSecondary: '${theme.semanticColors.dark.cardSecondary}',
+      cardAccent: '${theme.semanticColors.dark.cardAccent}',
+      textPrimary: '${theme.semanticColors.dark.textPrimary}',
+      textSecondary: '${theme.semanticColors.dark.textSecondary}',
+      textAccent: '${theme.semanticColors.dark.textAccent}',
+      buttonFillPrimary: '${theme.semanticColors.dark.buttonFillPrimary}',
+      buttonFillPrimaryForeground: '${theme.semanticColors.dark.buttonFillPrimaryForeground}',
+      buttonFillSecondary: '${theme.semanticColors.dark.buttonFillSecondary}',
+      buttonFillSecondaryForeground: '${theme.semanticColors.dark.buttonFillSecondaryForeground}',
+      buttonFillAccent: '${theme.semanticColors.dark.buttonFillAccent}',
+      buttonFillAccentForeground: '${theme.semanticColors.dark.buttonFillAccentForeground}',
+      buttonOutlinePrimary: '${theme.semanticColors.dark.buttonOutlinePrimary}',
+      buttonOutlinePrimaryForeground: '${theme.semanticColors.dark.buttonOutlinePrimaryForeground}',
+      buttonOutlineSecondary: '${theme.semanticColors.dark.buttonOutlineSecondary}',
+      buttonOutlineSecondaryForeground: '${theme.semanticColors.dark.buttonOutlineSecondaryForeground}',
+      buttonOutlineAccent: '${theme.semanticColors.dark.buttonOutlineAccent}',
+      buttonOutlineAccentForeground: '${theme.semanticColors.dark.buttonOutlineAccentForeground}',
+      buttonTextPrimary: '${theme.semanticColors.dark.buttonTextPrimary}',
+      buttonTextSecondary: '${theme.semanticColors.dark.buttonTextSecondary}',
+      buttonTextAccent: '${theme.semanticColors.dark.buttonTextAccent}',
     },
   },
 
@@ -382,13 +465,10 @@ export const theme = {
   },
 
   radius: {
-    none: '${theme.radius.none}',
-    sm: '${theme.radius.sm}',
-    md: '${theme.radius.md}',
-    lg: '${theme.radius.lg}',
-    xl: '${theme.radius.xl}',
-    '2xl': '${theme.radius['2xl']}',
-    full: '${theme.radius.full}',
+    global: '${theme.radius.global}',
+    card: '${theme.radius.card}',
+    button: '${theme.radius.button}',
+    input: '${theme.radius.input}',
   },
 
   fonts: {
@@ -490,6 +570,32 @@ export function generateVueCssVars(theme: BrandTheme): string {
   --vibecn-chart-4: ${theme.colors.light.chart4};
   --vibecn-chart-5: ${theme.colors.light.chart5};
 
+  /* ===== Semantic Colors (Light) ===== */
+  --vibecn-bg-primary: ${theme.semanticColors.light.bgPrimary};
+  --vibecn-bg-secondary: ${theme.semanticColors.light.bgSecondary};
+  --vibecn-bg-accent: ${theme.semanticColors.light.bgAccent};
+  --vibecn-card-primary: ${theme.semanticColors.light.cardPrimary};
+  --vibecn-card-secondary: ${theme.semanticColors.light.cardSecondary};
+  --vibecn-card-accent: ${theme.semanticColors.light.cardAccent};
+  --vibecn-text-primary: ${theme.semanticColors.light.textPrimary};
+  --vibecn-text-secondary: ${theme.semanticColors.light.textSecondary};
+  --vibecn-text-accent: ${theme.semanticColors.light.textAccent};
+  --vibecn-btn-fill-primary: ${theme.semanticColors.light.buttonFillPrimary};
+  --vibecn-btn-fill-primary-foreground: ${theme.semanticColors.light.buttonFillPrimaryForeground};
+  --vibecn-btn-fill-secondary: ${theme.semanticColors.light.buttonFillSecondary};
+  --vibecn-btn-fill-secondary-foreground: ${theme.semanticColors.light.buttonFillSecondaryForeground};
+  --vibecn-btn-fill-accent: ${theme.semanticColors.light.buttonFillAccent};
+  --vibecn-btn-fill-accent-foreground: ${theme.semanticColors.light.buttonFillAccentForeground};
+  --vibecn-btn-outline-primary: ${theme.semanticColors.light.buttonOutlinePrimary};
+  --vibecn-btn-outline-primary-foreground: ${theme.semanticColors.light.buttonOutlinePrimaryForeground};
+  --vibecn-btn-outline-secondary: ${theme.semanticColors.light.buttonOutlineSecondary};
+  --vibecn-btn-outline-secondary-foreground: ${theme.semanticColors.light.buttonOutlineSecondaryForeground};
+  --vibecn-btn-outline-accent: ${theme.semanticColors.light.buttonOutlineAccent};
+  --vibecn-btn-outline-accent-foreground: ${theme.semanticColors.light.buttonOutlineAccentForeground};
+  --vibecn-btn-text-primary: ${theme.semanticColors.light.buttonTextPrimary};
+  --vibecn-btn-text-secondary: ${theme.semanticColors.light.buttonTextSecondary};
+  --vibecn-btn-text-accent: ${theme.semanticColors.light.buttonTextAccent};
+
   /* ===== Spacing ===== */
   --vibecn-spacing-xs: ${theme.spacing.xs};
   --vibecn-spacing-sm: ${theme.spacing.sm};
@@ -506,13 +612,10 @@ export function generateVueCssVars(theme: BrandTheme): string {
   --vibecn-spacing-p: ${theme.spacing.p.desktop};
 
   /* ===== Border Radius ===== */
-  --vibecn-radius-none: ${theme.radius.none};
-  --vibecn-radius-sm: ${theme.radius.sm};
-  --vibecn-radius-md: ${theme.radius.md};
-  --vibecn-radius-lg: ${theme.radius.lg};
-  --vibecn-radius-xl: ${theme.radius.xl};
-  --vibecn-radius-2xl: ${theme.radius['2xl']};
-  --vibecn-radius-full: ${theme.radius.full};
+  --vibecn-radius-global: ${theme.radius.global};
+  --vibecn-radius-card: ${theme.radius.card};
+  --vibecn-radius-button: ${theme.radius.button};
+  --vibecn-radius-input: ${theme.radius.input};
 
   /* ===== Typography Sizes ===== */
   --vibecn-text-h1: ${theme.typographySizes.h1};
@@ -573,6 +676,32 @@ export function generateVueCssVars(theme: BrandTheme): string {
   --vibecn-chart-3: ${theme.colors.dark.chart3};
   --vibecn-chart-4: ${theme.colors.dark.chart4};
   --vibecn-chart-5: ${theme.colors.dark.chart5};
+
+  /* ===== Semantic Colors (Dark) ===== */
+  --vibecn-bg-primary: ${theme.semanticColors.dark.bgPrimary};
+  --vibecn-bg-secondary: ${theme.semanticColors.dark.bgSecondary};
+  --vibecn-bg-accent: ${theme.semanticColors.dark.bgAccent};
+  --vibecn-card-primary: ${theme.semanticColors.dark.cardPrimary};
+  --vibecn-card-secondary: ${theme.semanticColors.dark.cardSecondary};
+  --vibecn-card-accent: ${theme.semanticColors.dark.cardAccent};
+  --vibecn-text-primary: ${theme.semanticColors.dark.textPrimary};
+  --vibecn-text-secondary: ${theme.semanticColors.dark.textSecondary};
+  --vibecn-text-accent: ${theme.semanticColors.dark.textAccent};
+  --vibecn-btn-fill-primary: ${theme.semanticColors.dark.buttonFillPrimary};
+  --vibecn-btn-fill-primary-foreground: ${theme.semanticColors.dark.buttonFillPrimaryForeground};
+  --vibecn-btn-fill-secondary: ${theme.semanticColors.dark.buttonFillSecondary};
+  --vibecn-btn-fill-secondary-foreground: ${theme.semanticColors.dark.buttonFillSecondaryForeground};
+  --vibecn-btn-fill-accent: ${theme.semanticColors.dark.buttonFillAccent};
+  --vibecn-btn-fill-accent-foreground: ${theme.semanticColors.dark.buttonFillAccentForeground};
+  --vibecn-btn-outline-primary: ${theme.semanticColors.dark.buttonOutlinePrimary};
+  --vibecn-btn-outline-primary-foreground: ${theme.semanticColors.dark.buttonOutlinePrimaryForeground};
+  --vibecn-btn-outline-secondary: ${theme.semanticColors.dark.buttonOutlineSecondary};
+  --vibecn-btn-outline-secondary-foreground: ${theme.semanticColors.dark.buttonOutlineSecondaryForeground};
+  --vibecn-btn-outline-accent: ${theme.semanticColors.dark.buttonOutlineAccent};
+  --vibecn-btn-outline-accent-foreground: ${theme.semanticColors.dark.buttonOutlineAccentForeground};
+  --vibecn-btn-text-primary: ${theme.semanticColors.dark.buttonTextPrimary};
+  --vibecn-btn-text-secondary: ${theme.semanticColors.dark.buttonTextSecondary};
+  --vibecn-btn-text-accent: ${theme.semanticColors.dark.buttonTextAccent};
 }
 
 /* ===== Responsive Spacing - Tablet ===== */
@@ -648,6 +777,35 @@ public final class ThemeConstants {
     public static final String CHART_5 = "${theme.colors.light.chart5}";
 
     // ========================================
+    // Semantic Colors - Light Mode
+    // ========================================
+
+    public static final String BG_PRIMARY = "${theme.semanticColors.light.bgPrimary}";
+    public static final String BG_SECONDARY = "${theme.semanticColors.light.bgSecondary}";
+    public static final String BG_ACCENT = "${theme.semanticColors.light.bgAccent}";
+    public static final String CARD_PRIMARY = "${theme.semanticColors.light.cardPrimary}";
+    public static final String CARD_SECONDARY = "${theme.semanticColors.light.cardSecondary}";
+    public static final String CARD_ACCENT = "${theme.semanticColors.light.cardAccent}";
+    public static final String TEXT_PRIMARY = "${theme.semanticColors.light.textPrimary}";
+    public static final String TEXT_SECONDARY = "${theme.semanticColors.light.textSecondary}";
+    public static final String TEXT_ACCENT = "${theme.semanticColors.light.textAccent}";
+    public static final String BUTTON_FILL_PRIMARY = "${theme.semanticColors.light.buttonFillPrimary}";
+    public static final String BUTTON_FILL_PRIMARY_FOREGROUND = "${theme.semanticColors.light.buttonFillPrimaryForeground}";
+    public static final String BUTTON_FILL_SECONDARY = "${theme.semanticColors.light.buttonFillSecondary}";
+    public static final String BUTTON_FILL_SECONDARY_FOREGROUND = "${theme.semanticColors.light.buttonFillSecondaryForeground}";
+    public static final String BUTTON_FILL_ACCENT = "${theme.semanticColors.light.buttonFillAccent}";
+    public static final String BUTTON_FILL_ACCENT_FOREGROUND = "${theme.semanticColors.light.buttonFillAccentForeground}";
+    public static final String BUTTON_OUTLINE_PRIMARY = "${theme.semanticColors.light.buttonOutlinePrimary}";
+    public static final String BUTTON_OUTLINE_PRIMARY_FOREGROUND = "${theme.semanticColors.light.buttonOutlinePrimaryForeground}";
+    public static final String BUTTON_OUTLINE_SECONDARY = "${theme.semanticColors.light.buttonOutlineSecondary}";
+    public static final String BUTTON_OUTLINE_SECONDARY_FOREGROUND = "${theme.semanticColors.light.buttonOutlineSecondaryForeground}";
+    public static final String BUTTON_OUTLINE_ACCENT = "${theme.semanticColors.light.buttonOutlineAccent}";
+    public static final String BUTTON_OUTLINE_ACCENT_FOREGROUND = "${theme.semanticColors.light.buttonOutlineAccentForeground}";
+    public static final String BUTTON_TEXT_PRIMARY = "${theme.semanticColors.light.buttonTextPrimary}";
+    public static final String BUTTON_TEXT_SECONDARY = "${theme.semanticColors.light.buttonTextSecondary}";
+    public static final String BUTTON_TEXT_ACCENT = "${theme.semanticColors.light.buttonTextAccent}";
+
+    // ========================================
     // Colors - Dark Mode
     // ========================================
 
@@ -675,6 +833,35 @@ public final class ThemeConstants {
     public static final String DARK_CHART_3 = "${theme.colors.dark.chart3}";
     public static final String DARK_CHART_4 = "${theme.colors.dark.chart4}";
     public static final String DARK_CHART_5 = "${theme.colors.dark.chart5}";
+
+    // ========================================
+    // Semantic Colors - Dark Mode
+    // ========================================
+
+    public static final String DARK_BG_PRIMARY = "${theme.semanticColors.dark.bgPrimary}";
+    public static final String DARK_BG_SECONDARY = "${theme.semanticColors.dark.bgSecondary}";
+    public static final String DARK_BG_ACCENT = "${theme.semanticColors.dark.bgAccent}";
+    public static final String DARK_CARD_PRIMARY = "${theme.semanticColors.dark.cardPrimary}";
+    public static final String DARK_CARD_SECONDARY = "${theme.semanticColors.dark.cardSecondary}";
+    public static final String DARK_CARD_ACCENT = "${theme.semanticColors.dark.cardAccent}";
+    public static final String DARK_TEXT_PRIMARY = "${theme.semanticColors.dark.textPrimary}";
+    public static final String DARK_TEXT_SECONDARY = "${theme.semanticColors.dark.textSecondary}";
+    public static final String DARK_TEXT_ACCENT = "${theme.semanticColors.dark.textAccent}";
+    public static final String DARK_BUTTON_FILL_PRIMARY = "${theme.semanticColors.dark.buttonFillPrimary}";
+    public static final String DARK_BUTTON_FILL_PRIMARY_FOREGROUND = "${theme.semanticColors.dark.buttonFillPrimaryForeground}";
+    public static final String DARK_BUTTON_FILL_SECONDARY = "${theme.semanticColors.dark.buttonFillSecondary}";
+    public static final String DARK_BUTTON_FILL_SECONDARY_FOREGROUND = "${theme.semanticColors.dark.buttonFillSecondaryForeground}";
+    public static final String DARK_BUTTON_FILL_ACCENT = "${theme.semanticColors.dark.buttonFillAccent}";
+    public static final String DARK_BUTTON_FILL_ACCENT_FOREGROUND = "${theme.semanticColors.dark.buttonFillAccentForeground}";
+    public static final String DARK_BUTTON_OUTLINE_PRIMARY = "${theme.semanticColors.dark.buttonOutlinePrimary}";
+    public static final String DARK_BUTTON_OUTLINE_PRIMARY_FOREGROUND = "${theme.semanticColors.dark.buttonOutlinePrimaryForeground}";
+    public static final String DARK_BUTTON_OUTLINE_SECONDARY = "${theme.semanticColors.dark.buttonOutlineSecondary}";
+    public static final String DARK_BUTTON_OUTLINE_SECONDARY_FOREGROUND = "${theme.semanticColors.dark.buttonOutlineSecondaryForeground}";
+    public static final String DARK_BUTTON_OUTLINE_ACCENT = "${theme.semanticColors.dark.buttonOutlineAccent}";
+    public static final String DARK_BUTTON_OUTLINE_ACCENT_FOREGROUND = "${theme.semanticColors.dark.buttonOutlineAccentForeground}";
+    public static final String DARK_BUTTON_TEXT_PRIMARY = "${theme.semanticColors.dark.buttonTextPrimary}";
+    public static final String DARK_BUTTON_TEXT_SECONDARY = "${theme.semanticColors.dark.buttonTextSecondary}";
+    public static final String DARK_BUTTON_TEXT_ACCENT = "${theme.semanticColors.dark.buttonTextAccent}";
 
     // ========================================
     // Spacing
@@ -712,13 +899,10 @@ public final class ThemeConstants {
     // Border Radius
     // ========================================
 
-    public static final String RADIUS_NONE = "${theme.radius.none}";
-    public static final String RADIUS_SM = "${theme.radius.sm}";
-    public static final String RADIUS_MD = "${theme.radius.md}";
-    public static final String RADIUS_LG = "${theme.radius.lg}";
-    public static final String RADIUS_XL = "${theme.radius.xl}";
-    public static final String RADIUS_2XL = "${theme.radius['2xl']}";
-    public static final String RADIUS_FULL = "${theme.radius.full}";
+    public static final String RADIUS_GLOBAL = "${theme.radius.global}";
+    public static final String RADIUS_CARD = "${theme.radius.card}";
+    public static final String RADIUS_BUTTON = "${theme.radius.button}";
+    public static final String RADIUS_INPUT = "${theme.radius.input}";
 
     // ========================================
     // Typography Sizes
@@ -838,6 +1022,86 @@ theme.colors.dark.chart-4=${theme.colors.dark.chart4}
 theme.colors.dark.chart-5=${theme.colors.dark.chart5}
 
 # ========================================
+# Semantic Colors - Light Mode (60-30-10 Design System)
+# ========================================
+
+# Backgrounds (60%)
+theme.semantic.bg.primary=${theme.semanticColors.light.bgPrimary}
+theme.semantic.bg.secondary=${theme.semanticColors.light.bgSecondary}
+theme.semantic.bg.accent=${theme.semanticColors.light.bgAccent}
+
+# Cards (30%)
+theme.semantic.card.primary=${theme.semanticColors.light.cardPrimary}
+theme.semantic.card.secondary=${theme.semanticColors.light.cardSecondary}
+theme.semantic.card.accent=${theme.semanticColors.light.cardAccent}
+
+# Text
+theme.semantic.text.primary=${theme.semanticColors.light.textPrimary}
+theme.semantic.text.secondary=${theme.semanticColors.light.textSecondary}
+theme.semantic.text.accent=${theme.semanticColors.light.textAccent}
+
+# Button Fill
+theme.semantic.button-fill.primary=${theme.semanticColors.light.buttonFillPrimary}
+theme.semantic.button-fill.primary-foreground=${theme.semanticColors.light.buttonFillPrimaryForeground}
+theme.semantic.button-fill.secondary=${theme.semanticColors.light.buttonFillSecondary}
+theme.semantic.button-fill.secondary-foreground=${theme.semanticColors.light.buttonFillSecondaryForeground}
+theme.semantic.button-fill.accent=${theme.semanticColors.light.buttonFillAccent}
+theme.semantic.button-fill.accent-foreground=${theme.semanticColors.light.buttonFillAccentForeground}
+
+# Button Outline
+theme.semantic.button-outline.primary=${theme.semanticColors.light.buttonOutlinePrimary}
+theme.semantic.button-outline.primary-foreground=${theme.semanticColors.light.buttonOutlinePrimaryForeground}
+theme.semantic.button-outline.secondary=${theme.semanticColors.light.buttonOutlineSecondary}
+theme.semantic.button-outline.secondary-foreground=${theme.semanticColors.light.buttonOutlineSecondaryForeground}
+theme.semantic.button-outline.accent=${theme.semanticColors.light.buttonOutlineAccent}
+theme.semantic.button-outline.accent-foreground=${theme.semanticColors.light.buttonOutlineAccentForeground}
+
+# Button Text
+theme.semantic.button-text.primary=${theme.semanticColors.light.buttonTextPrimary}
+theme.semantic.button-text.secondary=${theme.semanticColors.light.buttonTextSecondary}
+theme.semantic.button-text.accent=${theme.semanticColors.light.buttonTextAccent}
+
+# ========================================
+# Semantic Colors - Dark Mode (60-30-10 Design System)
+# ========================================
+
+# Backgrounds (60%)
+theme.semantic.dark.bg.primary=${theme.semanticColors.dark.bgPrimary}
+theme.semantic.dark.bg.secondary=${theme.semanticColors.dark.bgSecondary}
+theme.semantic.dark.bg.accent=${theme.semanticColors.dark.bgAccent}
+
+# Cards (30%)
+theme.semantic.dark.card.primary=${theme.semanticColors.dark.cardPrimary}
+theme.semantic.dark.card.secondary=${theme.semanticColors.dark.cardSecondary}
+theme.semantic.dark.card.accent=${theme.semanticColors.dark.cardAccent}
+
+# Text
+theme.semantic.dark.text.primary=${theme.semanticColors.dark.textPrimary}
+theme.semantic.dark.text.secondary=${theme.semanticColors.dark.textSecondary}
+theme.semantic.dark.text.accent=${theme.semanticColors.dark.textAccent}
+
+# Button Fill
+theme.semantic.dark.button-fill.primary=${theme.semanticColors.dark.buttonFillPrimary}
+theme.semantic.dark.button-fill.primary-foreground=${theme.semanticColors.dark.buttonFillPrimaryForeground}
+theme.semantic.dark.button-fill.secondary=${theme.semanticColors.dark.buttonFillSecondary}
+theme.semantic.dark.button-fill.secondary-foreground=${theme.semanticColors.dark.buttonFillSecondaryForeground}
+theme.semantic.dark.button-fill.accent=${theme.semanticColors.dark.buttonFillAccent}
+theme.semantic.dark.button-fill.accent-foreground=${theme.semanticColors.dark.buttonFillAccentForeground}
+
+# Button Outline
+theme.semantic.dark.button-outline.primary=${theme.semanticColors.dark.buttonOutlinePrimary}
+theme.semantic.dark.button-outline.primary-foreground=${theme.semanticColors.dark.buttonOutlinePrimaryForeground}
+theme.semantic.dark.button-outline.secondary=${theme.semanticColors.dark.buttonOutlineSecondary}
+theme.semantic.dark.button-outline.secondary-foreground=${theme.semanticColors.dark.buttonOutlineSecondaryForeground}
+theme.semantic.dark.button-outline.accent=${theme.semanticColors.dark.buttonOutlineAccent}
+theme.semantic.dark.button-outline.accent-foreground=${theme.semanticColors.dark.buttonOutlineAccentForeground}
+
+# Button Text
+theme.semantic.dark.button-text.primary=${theme.semanticColors.dark.buttonTextPrimary}
+theme.semantic.dark.button-text.secondary=${theme.semanticColors.dark.buttonTextSecondary}
+theme.semantic.dark.button-text.accent=${theme.semanticColors.dark.buttonTextAccent}
+
+# ========================================
 # Spacing
 # ========================================
 
@@ -873,13 +1137,10 @@ theme.spacing.p.mobile=${theme.spacing.p.mobile}
 # Border Radius
 # ========================================
 
-theme.radius.none=${theme.radius.none}
-theme.radius.sm=${theme.radius.sm}
-theme.radius.md=${theme.radius.md}
-theme.radius.lg=${theme.radius.lg}
-theme.radius.xl=${theme.radius.xl}
-theme.radius.2xl=${theme.radius['2xl']}
-theme.radius.full=${theme.radius.full}
+theme.radius.global=${theme.radius.global}
+theme.radius.card=${theme.radius.card}
+theme.radius.button=${theme.radius.button}
+theme.radius.input=${theme.radius.input}
 
 # ========================================
 # Typography Sizes

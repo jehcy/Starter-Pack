@@ -1,12 +1,11 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
+import { useEffect, useState, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { Check, Minus, Sparkles, Zap, Shield } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/cards/card';
 import { CTA } from '@/components/cta';
-import { useUserProfile } from '@/hooks/useUserProfile';
+import { Pricing } from '@/components/pricing';
 import { toast } from 'sonner';
 
 // Component that handles search params (needs to be wrapped in Suspense)
@@ -43,74 +42,118 @@ function PurchaseNotifications() {
   return null;
 }
 
+function PricingHero() {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  return (
+    <section className="relative overflow-hidden pt-24 pb-12 sm:pt-32 sm:pb-20">
+      {/* Animated Background */}
+      <div className="absolute inset-0 -z-10">
+        {/* Base gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-background" />
+
+        {/* Animated orbs */}
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-3xl animate-pulse"
+             style={{ animationDuration: '4s' }} />
+        <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-chart-1/20 rounded-full blur-3xl animate-pulse"
+             style={{ animationDuration: '5s', animationDelay: '1s' }} />
+        <div className="absolute top-1/3 right-1/3 w-64 h-64 bg-chart-2/15 rounded-full blur-3xl animate-pulse"
+             style={{ animationDuration: '6s', animationDelay: '2s' }} />
+
+        {/* Grid pattern overlay */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(251,146,60,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(251,146,60,0.03)_1px,transparent_1px)] bg-[size:64px_64px]" />
+
+        {/* Noise texture */}
+        <div className="absolute inset-0 opacity-[0.015]"
+             style={{
+               backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' /%3E%3C/svg%3E")`
+             }}
+        />
+      </div>
+
+      <div className="container-wide">
+        <div className="mx-auto max-w-5xl">
+          {/* Main content */}
+          <div className={`text-center transition-all duration-1000 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+            {/* Premium badge */}
+            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-primary/30 bg-primary/10 backdrop-blur-sm mb-8">
+              <Sparkles className="h-4 w-4 text-primary" />
+              <span className="text-sm font-semibold text-primary tracking-wide">Simple, Transparent Pricing</span>
+            </div>
+
+            {/* Main headline with gradient */}
+            <h1 className="font-bold mb-6">
+              <span className="block">
+                Pay Once,
+              </span>
+              <span className="block relative inline-block">
+                <span className="absolute -inset-1 bg-gradient-to-r from-primary via-orange-500 to-primary bg-[length:200%_100%] animate-[shimmer_3s_linear_infinite] blur-2xl opacity-30" />
+                <span className="relative bg-gradient-to-r from-primary via-orange-400 to-primary bg-[length:200%_100%] animate-[shimmer_3s_linear_infinite] bg-clip-text text-transparent font-black">
+                  Build Forever
+                </span>
+              </span>
+            </h1>
+
+            {/* Subheadline */}
+            <p className="text-xl sm:text-2xl text-muted-foreground max-w-3xl mx-auto mb-12 leading-relaxed">
+              No subscriptions. No recurring fees. Buy credits once and they never expire.
+              Start free with 1 AI credit—upgrade only when you need more.
+            </p>
+
+            {/* Trust indicators */}
+            <div className={`flex flex-wrap items-center justify-center gap-8 mb-8 transition-all duration-1000 delay-300 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+              <div className="flex items-center gap-3 px-6 py-3 rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm hover:border-primary/30 transition-all hover:scale-105">
+                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10">
+                  <Zap className="h-5 w-5 text-primary" />
+                </div>
+                <div className="text-left">
+                  <div className="text-sm font-semibold">Instant Access</div>
+                  <div className="text-xs text-muted-foreground">No credit card needed</div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 px-6 py-3 rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm hover:border-primary/30 transition-all hover:scale-105">
+                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-chart-1/10">
+                  <Shield className="h-5 w-5 text-chart-1" />
+                </div>
+                <div className="text-left">
+                  <div className="text-sm font-semibold">30-Day Guarantee</div>
+                  <div className="text-xs text-muted-foreground">Full money back</div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 px-6 py-3 rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm hover:border-primary/30 transition-all hover:scale-105">
+                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-chart-2/10">
+                  <Sparkles className="h-5 w-5 text-chart-2" />
+                </div>
+                <div className="text-left">
+                  <div className="text-sm font-semibold">Credits Never Expire</div>
+                  <div className="text-xs text-muted-foreground">Use them anytime</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom fade */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent pointer-events-none" />
+    </section>
+  );
+}
+
 function PricingContent() {
   return (
     <>
       {/* Hero Section */}
-      <section className="relative overflow-hidden py-24 sm:py-32">
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/20 via-background to-background" />
-        <div className="container-wide">
-          <div className="mx-auto max-w-3xl text-center">
-            <h1 className="font-bold">Simple pricing for Vibe coders</h1>
-            <p className="mt-6 text-muted-foreground">
-              Try the AI theme generator with 1 free credit. Upgrade for more AI-powered theme generation.
-            </p>
-          </div>
-        </div>
-      </section>
+      <PricingHero />
 
       {/* Pricing Cards */}
-      <section className="py-16">
-        <div className="container-wide">
-          <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-3">
-            <PricingCard
-              name="Free"
-              price="$0"
-              period=""
-              description="Try the AI theme generator with 1 free credit. Perfect for testing the platform."
-              features={[
-                { text: 'Full Theme Editor', included: true },
-                { text: '1 AI Credit (one-time)', included: true },
-                { text: 'Unlimited Downloads', included: true },
-                { text: 'Brand Setup', included: true },
-              ]}
-              buttonText="Start for free"
-              buttonVariant="outline"
-              planType="free"
-            />
-            <PricingCard
-              name="Starter"
-              price="$3"
-              period="one-time"
-              description="Perfect for solo devs building 1-2 projects. Credits never expire."
-              features={[
-                { text: 'Everything in Free', included: true },
-                { text: '3 AI Credits', included: true },
-                { text: 'Credits Never Expire', included: true },
-                { text: 'Save Projects', included: true },
-              ]}
-              buttonText="Buy Credits"
-              buttonVariant="default"
-              planType="starter"
-            />
-            <PricingCard
-              name="Pro"
-              price="$7"
-              period="/month"
-              description="For agencies and freelancers with ongoing projects. Unlimited AI theme generation."
-              features={[
-                { text: 'Everything in Starter', included: true },
-                { text: 'Unlimited AI Generation', included: true },
-                { text: 'Priority Support', included: true },
-              ]}
-              buttonText="Subscribe with PayPal"
-              buttonVariant="default"
-              highlighted
-              planType="pro"
-            />
-          </div>
-        </div>
-      </section>
+      <Pricing />
 
       {/* Comparison Table */}
       <section className="border-y border-border/40 bg-muted/30 py-24">
@@ -126,7 +169,7 @@ function PricingContent() {
                   <th className="px-6 py-4 text-left text-sm font-semibold">Feature</th>
                   <th className="px-6 py-4 text-center text-sm font-semibold">Free</th>
                   <th className="px-6 py-4 text-center text-sm font-semibold">Starter</th>
-                  <th className="px-6 py-4 text-center text-sm font-semibold">Pro</th>
+                  <th className="px-6 py-4 text-center text-sm font-semibold bg-primary/10 text-primary">Pro</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/50">
@@ -157,6 +200,10 @@ function PricingContent() {
             </p>
           </div>
           <div className="mx-auto max-w-3xl space-y-4">
+            <FaqItem
+              question="Do I need a credit card to start?"
+              answer="No credit card required. Sign up for free and get 1 AI credit to try the theme generator. Only pay when you need more credits."
+            />
             <FaqItem
               question="Is this really free?"
               answer="Yes. The core VibeCN starter is MIT licensed. Clone it, modify it, ship it. Pro and Enterprise tiers offer additional components and support."
@@ -198,187 +245,6 @@ export default function PricingPage() {
   );
 }
 
-interface PricingFeature {
-  text: string;
-  included: boolean;
-  comingSoon?: boolean;
-}
-
-interface PricingCardProps {
-  name: string;
-  price: string;
-  period: string;
-  description: string;
-  features: PricingFeature[];
-  buttonText: string;
-  buttonVariant: 'default' | 'outline';
-  highlighted?: boolean;
-  badge?: string;
-  planType: 'free' | 'starter' | 'pro';
-}
-
-function PricingCard({
-  name,
-  price,
-  period,
-  description,
-  features,
-  buttonText,
-  buttonVariant,
-  highlighted,
-  badge,
-  planType,
-}: PricingCardProps) {
-  const [isLoading, setIsLoading] = useState(false);
-  const { user, isPaid, isAuthenticated, refreshToken } = useUserProfile();
-  const router = useRouter();
-
-  const handleClick = async () => {
-    if (planType === 'free') {
-      router.push('/sign-up');
-      return;
-    }
-
-    // Starter or Pro plan - require auth
-    if (!isAuthenticated) {
-      router.push('/sign-in?redirect=/pricing');
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      if (planType === 'starter') {
-        // One-time purchase
-        const response = await fetch('/api/credits/purchase', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ refreshToken, package: 'starter' }),
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.error || 'Failed to create purchase');
-        }
-
-        // Redirect to PayPal approval page
-        if (data.approvalUrl) {
-          window.location.href = data.approvalUrl;
-        }
-      } else {
-        // Pro subscription
-        if (isPaid) {
-          toast.info('You already have an active subscription');
-          setIsLoading(false);
-          return;
-        }
-
-        const response = await fetch('/api/subscription/create', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId: user?.id, refreshToken }),
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.error || 'Failed to create subscription');
-        }
-
-        // Redirect to PayPal approval page
-        if (data.approvalUrl) {
-          window.location.href = data.approvalUrl;
-        }
-      }
-    } catch (error) {
-      toast.error('Failed to start purchase', {
-        description: error instanceof Error ? error.message : 'Please try again',
-      });
-      setIsLoading(false);
-    }
-  };
-
-  const getButtonText = () => {
-    if (isLoading) return 'Loading...';
-    if (planType === 'pro' && isPaid) return 'Current Plan';
-    return buttonText;
-  };
-
-  const isDisabled = isLoading || (planType === 'pro' && isPaid);
-
-  return (
-    <Card
-      className={`relative overflow-hidden ${highlighted ? 'border-primary shadow-xl scale-105 z-10' : 'border-border/50'}`}
-    >
-      {badge && (
-        <div className="absolute -right-12 top-6 rotate-45 bg-primary px-12 py-1 text-xs font-semibold text-primary-foreground">
-          {badge}
-        </div>
-      )}
-      <CardHeader className="pb-8">
-        <CardTitle className="text-xl">{name}</CardTitle>
-        <CardDescription>{description}</CardDescription>
-        <div className="mt-6">
-          <span className="text-5xl font-bold tracking-tight">{price}</span>
-          {period && <span className="text-muted-foreground">{period}</span>}
-        </div>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        {features.length > 0 && (
-          <ul className="space-y-3">
-            {features.map((feature, index) => (
-              <li key={index} className="flex items-center gap-3 text-sm">
-                {feature.included ? (
-                  <svg
-                    className="h-5 w-5 shrink-0 text-primary"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                ) : (
-                  <svg
-                    className="h-5 w-5 shrink-0 text-muted-foreground/50"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                )}
-                <span className={feature.included ? '' : 'text-muted-foreground'}>
-                  {feature.text}
-                  {feature.comingSoon && (
-                    <span className="ml-2 text-xs text-muted-foreground">(Coming soon)</span>
-                  )}
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
-        <Button
-          variant={buttonVariant}
-          className="w-full h-12 rounded-full"
-          onClick={handleClick}
-          disabled={isDisabled}
-        >
-          {getButtonText()}
-        </Button>
-      </CardContent>
-    </Card>
-  );
-}
 
 interface ComparisonRowProps {
   feature: string;
@@ -388,12 +254,22 @@ interface ComparisonRowProps {
 }
 
 function ComparisonRow({ feature, free, starter, pro }: ComparisonRowProps) {
+  const renderCell = (value: string, isPro = false) => {
+    if (value === '✓') {
+      return <Check className="h-5 w-5 mx-auto text-primary" />;
+    }
+    if (value === '—') {
+      return <Minus className="h-5 w-5 mx-auto text-muted-foreground/30" />;
+    }
+    return <span className={isPro ? 'text-primary font-medium' : ''}>{value}</span>;
+  };
+
   return (
-    <tr>
+    <tr className="hover:bg-muted/50 transition-colors">
       <td className="px-6 py-4 text-sm">{feature}</td>
-      <td className="px-6 py-4 text-center text-sm text-muted-foreground">{free}</td>
-      <td className="px-6 py-4 text-center text-sm text-muted-foreground">{starter}</td>
-      <td className="px-6 py-4 text-center text-sm text-muted-foreground">{pro}</td>
+      <td className="px-6 py-4 text-center text-sm text-muted-foreground">{renderCell(free)}</td>
+      <td className="px-6 py-4 text-center text-sm text-muted-foreground">{renderCell(starter)}</td>
+      <td className="px-6 py-4 text-center text-sm bg-primary/5">{renderCell(pro, true)}</td>
     </tr>
   );
 }
@@ -405,7 +281,7 @@ interface FaqItemProps {
 
 function FaqItem({ question, answer }: FaqItemProps) {
   return (
-    <div className="rounded-2xl border border-border/50 bg-card p-6 transition-colors hover:border-primary/50">
+    <div className="rounded-2xl border border-border/50 border-l-4 border-l-chart-2 bg-card p-6 transition-all hover:border-primary/50 hover:translate-y-[-2px]">
       <h3 className="font-semibold">{question}</h3>
       <p className="mt-2 text-muted-foreground">{answer}</p>
     </div>

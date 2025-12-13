@@ -12,6 +12,8 @@ import {
   DEFAULT_TYPOGRAPHY_STYLES,
   DEFAULT_BUTTONS,
   DEFAULT_BRAND_ASSETS,
+  DEFAULT_SEMANTIC_LIGHT_COLORS,
+  DEFAULT_SEMANTIC_DARK_COLORS,
 } from './brand-theme';
 
 export interface ThemePreset {
@@ -33,6 +35,10 @@ function createTheme(
     colors: {
       light: lightColors,
       dark: darkColors,
+    },
+    semanticColors: {
+      light: { ...DEFAULT_SEMANTIC_LIGHT_COLORS },
+      dark: { ...DEFAULT_SEMANTIC_DARK_COLORS },
     },
     spacing: { ...DEFAULT_SPACING },
     radius: { ...DEFAULT_RADIUS },

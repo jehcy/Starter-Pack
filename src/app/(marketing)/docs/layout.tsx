@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { ChevronRight, BookOpen, Shield, Zap, Database, Palette, Rocket } from 'lucide-react';
+import { ChevronRight, BookOpen, Shield, Zap, Database, Palette, Rocket, Sparkles, Download } from 'lucide-react';
 
 interface DocsSidebarItem {
   title: string;
@@ -56,6 +56,18 @@ const sidebarItems: DocsSidebarItem[] = [
     title: 'Actions',
     href: '#actions',
     icon: <Rocket className="h-4 w-4" />,
+    items: [],
+  },
+  {
+    title: 'AI Theme',
+    href: '#ai-theme',
+    icon: <Sparkles className="h-4 w-4" />,
+    items: [],
+  },
+  {
+    title: 'Downloads',
+    href: '#downloads',
+    icon: <Download className="h-4 w-4" />,
     items: [],
   },
   {

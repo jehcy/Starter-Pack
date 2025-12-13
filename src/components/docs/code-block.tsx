@@ -1,4 +1,9 @@
+'use client';
+
 import { cn } from '@/lib/utils';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { oneDark, oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { useTheme } from 'next-themes';
 
 interface CodeBlockProps {
   language: 'css' | 'tsx' | 'bash' | 'json' | 'typescript';
@@ -13,6 +18,9 @@ export function CodeBlock({
   code,
   className,
 }: CodeBlockProps) {
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
+
   return (
     <div
       className={cn(
@@ -27,10 +35,24 @@ export function CodeBlock({
           </span>
         </div>
       )}
-      <div className="overflow-x-auto p-4">
-        <pre className="font-mono text-sm">
-          <code className="text-foreground">{code}</code>
-        </pre>
+      <div className="overflow-x-auto">
+        <SyntaxHighlighter
+          language={language === 'tsx' ? 'typescript' : language}
+          style={isDark ? oneDark : oneLight}
+          customStyle={{
+            margin: 0,
+            padding: '1rem',
+            fontSize: '0.875rem',
+            background: 'transparent',
+          }}
+          codeTagProps={{
+            style: {
+              fontFamily: 'var(--font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
+            },
+          }}
+        >
+          {code}
+        </SyntaxHighlighter>
       </div>
     </div>
   );

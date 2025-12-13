@@ -6,7 +6,8 @@ import { useRouter, usePathname } from 'next/navigation';
 import { useUserProfile } from '@/hooks/useUserProfile';
 import { ModeToggle } from '@/components/mode-toggle';
 import { Button } from '@/components/ui/button';
-import { Users, Settings, LayoutDashboard, Shield } from 'lucide-react';
+import { Users, Settings, LayoutDashboard } from 'lucide-react';
+import { Logo } from '@/components/ui/logo';
 
 interface AdminShellProps {
   children: React.ReactNode;
@@ -53,9 +54,7 @@ export function AdminShell({ children }: AdminShellProps) {
         {/* Logo */}
         <div className="flex h-16 items-center border-b border-border/40 px-6">
           <Link href="/admin" className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-destructive text-destructive-foreground font-bold">
-              <Shield className="h-4 w-4" />
-            </div>
+            <Logo size="md" />
             <span className="text-xl font-bold">Admin</span>
           </Link>
         </div>

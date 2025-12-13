@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter, JetBrains_Mono } from 'next/font/google';
 import { ThemeProvider } from '@/components/theme-provider';
-import { Toaster } from '@/components/ui/sonner';
+import { ToasterWrapper } from '@/components/ui/toaster-wrapper';
 import './globals.css';
 
 // Brand Typography - Inter for sans-serif and headings
@@ -33,7 +33,7 @@ export default function RootLayout({
       <body className={`${inter.variable} ${jetbrainsMono.variable} antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           {children}
-          <Toaster />
+          <ToasterWrapper />
         </ThemeProvider>
       </body>
     </html>

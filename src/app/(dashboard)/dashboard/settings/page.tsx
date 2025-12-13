@@ -1,23 +1,82 @@
 'use client';
 
 import * as React from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/cards/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import { useUserProfile } from '@/hooks/useUserProfile';
 import { useCredits } from '@/hooks/useCredits';
 import { toast } from 'sonner';
-import { Sparkles, Infinity, Zap } from 'lucide-react';
+import { Sparkles, Infinity, Zap, ExternalLink, CheckCircle, Clock, AlertTriangle, XCircle } from 'lucide-react';
 
 export default function SettingsPage() {
+  const [activeTab, setActiveTab] = React.useState<'account' | 'billing'>('account');
   const [isSaving, setIsSaving] = React.useState(false);
   const [isActivating, setIsActivating] = React.useState(false);
+  const [isCancelling, setIsCancelling] = React.useState(false);
+  const [isDeleting, setIsDeleting] = React.useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = React.useState(false);
   const searchParams = useSearchParams();
-  const { refreshToken, isPaid } = useUserProfile();
+  const router = useRouter();
+  const { profile, refreshToken, isPaid, signOut } = useUserProfile();
   const { tier, creditsRemaining, isUnlimited, isLoading: creditsLoading } = useCredits();
+
+  // Helper to get status badge
+  const getStatusBadge = () => {
+    switch (profile?.subscriptionStatus) {
+      case 'active':
+        return (
+          <Badge className="bg-green-500 hover:bg-green-600">
+            <CheckCircle className="w-3 h-3 mr-1" /> Active
+          </Badge>
+        );
+      case 'cancelled':
+        return (
+          <Badge variant="secondary">
+            <Clock className="w-3 h-3 mr-1" /> Cancelled
+          </Badge>
+        );
+      case 'suspended':
+        return (
+          <Badge variant="destructive">
+            <AlertTriangle className="w-3 h-3 mr-1" /> Suspended
+          </Badge>
+        );
+      case 'expired':
+        return (
+          <Badge variant="outline">
+            <XCircle className="w-3 h-3 mr-1" /> Expired
+          </Badge>
+        );
+      default:
+        return <Badge variant="outline">Free</Badge>;
+    }
+  };
+
+  // Helper to get initials from display name
+  const getInitials = (name: string | null | undefined) => {
+    if (!name) return 'U';
+    return name
+      .split(' ')
+      .map((n) => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
 
   // Handle subscription success callback from PayPal
   React.useEffect(() => {
@@ -61,6 +120,75 @@ export default function SettingsPage() {
     setIsSaving(false);
   }
 
+  // Cancel subscription handler
+  const handleCancelSubscription = async () => {
+    if (!profile?.paypalSubscriptionId) return;
+
+    const confirmed = window.confirm(
+      'Are you sure you want to cancel your subscription? You will still have access until the end of your billing period.'
+    );
+
+    if (!confirmed) return;
+
+    setIsCancelling(true);
+    try {
+      const response = await fetch('/api/subscription/cancel', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          subscriptionId: profile.paypalSubscriptionId,
+          reason: 'User requested cancellation',
+          refreshToken,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to cancel subscription');
+      }
+
+      toast.success('Subscription cancelled', {
+        description: 'You will have access until the end of your billing period.',
+      });
+    } catch (error) {
+      toast.error('Failed to cancel subscription', {
+        description: error instanceof Error ? error.message : 'Please try again',
+      });
+    } finally {
+      setIsCancelling(false);
+    }
+  };
+
+  // Delete account handler
+  const handleDeleteAccount = async () => {
+    setIsDeleting(true);
+    try {
+      const response = await fetch('/api/account/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refreshToken }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to delete account');
+      }
+
+      toast.success('Account deleted successfully');
+      signOut();
+      router.push('/');
+    } catch (error) {
+      toast.error('Failed to delete account', {
+        description: error instanceof Error ? error.message : 'Please try again',
+      });
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteDialog(false);
+    }
+  };
+
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -71,162 +199,111 @@ export default function SettingsPage() {
 
       {/* Settings Navigation */}
       <div className="flex gap-2 overflow-x-auto pb-2">
-        <SettingsTab active>Profile</SettingsTab>
-        <SettingsTab>Account</SettingsTab>
-        <SettingsTab>Notifications</SettingsTab>
-        <SettingsTab>Billing</SettingsTab>
-        <SettingsTab>Security</SettingsTab>
+        <SettingsTab active={activeTab === 'account'} onClick={() => setActiveTab('account')}>
+          Account
+        </SettingsTab>
+        <SettingsTab active={activeTab === 'billing'} onClick={() => setActiveTab('billing')}>
+          Billing
+        </SettingsTab>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Main Settings */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Profile Settings */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Profile Information</CardTitle>
-              <CardDescription>Update your personal details and public profile.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Avatar */}
-                <div className="flex items-center gap-6">
-                  <div className="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-primary/80 to-primary text-2xl font-bold text-primary-foreground">
-                    JD
+          {/* Account Tab */}
+          {activeTab === 'account' && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Account Information</CardTitle>
+                <CardDescription>View your account details and subscription status.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  {/* Avatar & Basic Info */}
+                  <div className="flex items-center gap-6">
+                    <Avatar className="h-20 w-20">
+                      <AvatarImage src={profile?.avatarUrl || undefined} />
+                      <AvatarFallback className="text-xl">
+                        {getInitials(profile?.displayName)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="space-y-2">
+                      <h2 className="font-bold">{profile?.displayName || 'Anonymous'}</h2>
+                      <p className="text-sm text-muted-foreground">{profile?.email}</p>
+                      <Badge variant={profile?.userType === 'admin' ? 'default' : 'secondary'}>
+                        {profile?.userType || 'free'}
+                      </Badge>
+                    </div>
                   </div>
-                  <div className="space-y-2">
-                    <Button variant="outline" size="sm" className="rounded-xl">
-                      Change Avatar
-                    </Button>
-                    <p className="text-xs text-muted-foreground">
-                      JPG, GIF or PNG. Max size 2MB.
-                    </p>
-                  </div>
-                </div>
 
-                <Separator />
+                  <Separator />
 
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="firstName">First Name</Label>
-                    <Input
-                      id="firstName"
-                      placeholder="John"
-                      defaultValue="John"
-                      className="h-11 rounded-xl"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="lastName">Last Name</Label>
-                    <Input
-                      id="lastName"
-                      placeholder="Doe"
-                      defaultValue="Doe"
-                      className="h-11 rounded-xl"
-                    />
-                  </div>
-                </div>
+                  {/* Subscription Status */}
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-muted-foreground">Subscription Status</span>
+                      {getStatusBadge()}
+                    </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="john@example.com"
-                    defaultValue="john@example.com"
-                    className="h-11 rounded-xl"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="bio">Bio</Label>
-                  <textarea
-                    id="bio"
-                    rows={4}
-                    placeholder="Tell us about yourself..."
-                    className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary resize-none"
-                    defaultValue="Full-stack developer passionate about building great products."
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Brief description for your profile. Max 160 characters.
-                  </p>
-                </div>
-
-                <div className="flex justify-end">
-                  <Button type="submit" className="rounded-xl" disabled={isSaving}>
-                    {isSaving ? (
+                    {/* Plan Info - Paid Users */}
+                    {(profile?.userType === 'paid' || profile?.userType === 'admin') && (
                       <>
-                        <svg
-                          className="mr-2 h-4 w-4 animate-spin"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <circle className="opacity-25" cx="12" cy="12" r="10" strokeWidth="4" />
-                          <path
-                            className="opacity-75"
-                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                          />
-                        </svg>
-                        Saving...
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-muted-foreground">Plan</span>
+                          <span className="text-sm font-medium flex items-center gap-1">
+                            <Sparkles className="w-4 h-4 text-primary" />
+                            Pro ($7/month)
+                          </span>
+                        </div>
+                        {profile?.currentPeriodEnd && (
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm text-muted-foreground">
+                              {profile.cancelAtPeriodEnd ? 'Access until' : 'Next billing date'}
+                            </span>
+                            <span className="text-sm font-medium">
+                              {new Date(profile.currentPeriodEnd).toLocaleDateString()}
+                            </span>
+                          </div>
+                        )}
+                        {profile?.subscribedAt && (
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm text-muted-foreground">Member since</span>
+                            <span className="text-sm font-medium">
+                              {new Date(profile.subscribedAt).toLocaleDateString()}
+                            </span>
+                          </div>
+                        )}
+
+                        {/* Cancellation Notice */}
+                        {profile?.cancelAtPeriodEnd && (
+                          <div className="p-3 rounded-lg bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800">
+                            <p className="text-xs text-amber-900 dark:text-amber-200">
+                              Your subscription is cancelled and will end on{' '}
+                              {new Date(profile.currentPeriodEnd!).toLocaleDateString()}. You can
+                              continue using Pro features until then.
+                            </p>
+                          </div>
+                        )}
                       </>
-                    ) : (
-                      'Save Changes'
                     )}
-                  </Button>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
 
-          {/* Password Settings */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Change Password</CardTitle>
-              <CardDescription>Update your password to keep your account secure.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="currentPassword">Current Password</Label>
-                  <Input
-                    id="currentPassword"
-                    type="password"
-                    placeholder="••••••••"
-                    className="h-11 rounded-xl"
-                  />
-                </div>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="newPassword">New Password</Label>
-                    <Input
-                      id="newPassword"
-                      type="password"
-                      placeholder="••••••••"
-                      className="h-11 rounded-xl"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="confirmPassword">Confirm Password</Label>
-                    <Input
-                      id="confirmPassword"
-                      type="password"
-                      placeholder="••••••••"
-                      className="h-11 rounded-xl"
-                    />
+                    {/* Free Plan Message */}
+                    {profile?.userType === 'free' && (
+                      <div className="p-3 rounded-lg bg-muted border">
+                        <p className="text-sm text-muted-foreground">
+                          You're currently on the free plan. Upgrade to Pro for unlimited AI credits!
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
-                <div className="flex justify-end">
-                  <Button type="submit" variant="outline" className="rounded-xl">
-                    Update Password
-                  </Button>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          )}
 
-          {/* Credits & Billing */}
-          <Card>
+          {/* Billing Tab */}
+          {activeTab === 'billing' && (
+            <Card>
             <CardHeader>
               <CardTitle>Credits & Billing</CardTitle>
               <CardDescription>Manage your AI generation credits and subscription.</CardDescription>
@@ -284,8 +361,82 @@ export default function SettingsPage() {
                   </div>
                 </div>
 
-                {/* Actions */}
-                <div className="flex flex-col gap-3">
+                {/* Subscription Status & Management */}
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Status</span>
+                    {getStatusBadge()}
+                  </div>
+
+                  {/* Plan Info - Paid Users */}
+                  {(profile?.userType === 'paid' || profile?.userType === 'admin') && (
+                    <>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-muted-foreground">Plan</span>
+                        <span className="text-sm font-medium flex items-center gap-1">
+                          <Sparkles className="w-4 h-4 text-primary" />
+                          Pro ($7/month)
+                        </span>
+                      </div>
+                      {profile?.currentPeriodEnd && (
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-muted-foreground">
+                            {profile.cancelAtPeriodEnd ? 'Access until' : 'Next billing date'}
+                          </span>
+                          <span className="text-sm font-medium">
+                            {new Date(profile.currentPeriodEnd).toLocaleDateString()}
+                          </span>
+                        </div>
+                      )}
+                      {profile?.subscribedAt && (
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-muted-foreground">Member since</span>
+                          <span className="text-sm font-medium">
+                            {new Date(profile.subscribedAt).toLocaleDateString()}
+                          </span>
+                        </div>
+                      )}
+
+                      {/* Manage Payment on PayPal */}
+                      <Button variant="outline" className="w-full" asChild>
+                        <a
+                          href="https://www.paypal.com/myaccount/autopay"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Manage Payment on PayPal
+                          <ExternalLink className="ml-2 h-4 w-4" />
+                        </a>
+                      </Button>
+
+                      {/* Cancel Subscription */}
+                      {profile?.subscriptionStatus === 'active' &&
+                        !profile.cancelAtPeriodEnd &&
+                        profile.userType !== 'admin' && (
+                          <Button
+                            variant="outline"
+                            className="w-full"
+                            onClick={handleCancelSubscription}
+                            disabled={isCancelling}
+                          >
+                            {isCancelling ? 'Cancelling...' : 'Cancel Subscription'}
+                          </Button>
+                        )}
+
+                      {/* Cancellation Notice */}
+                      {profile?.cancelAtPeriodEnd && (
+                        <div className="p-3 rounded-lg bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800">
+                          <p className="text-xs text-amber-900 dark:text-amber-200">
+                            Your subscription is cancelled and will end on{' '}
+                            {new Date(profile.currentPeriodEnd!).toLocaleDateString()}. You can
+                            continue using Pro features until then.
+                          </p>
+                        </div>
+                      )}
+                    </>
+                  )}
+
+                  {/* Free Plan Actions */}
                   {!isPaid && (
                     <Button
                       variant="default"
@@ -296,44 +447,61 @@ export default function SettingsPage() {
                       {tier === 'free' ? 'Buy Credits or Upgrade' : 'Buy More Credits'}
                     </Button>
                   )}
-                  {isPaid && (
-                    <Button
-                      variant="outline"
-                      className="w-full"
-                      onClick={() => {
-                        toast.info('Subscription management coming soon!');
-                      }}
-                    >
-                      Manage Subscription
-                    </Button>
-                  )}
                 </div>
               </div>
             </CardContent>
-          </Card>
+            </Card>
+          )}
 
-          {/* Danger Zone */}
-          <Card className="border-destructive/50">
-            <CardHeader>
-              <CardTitle className="text-destructive">Danger Zone</CardTitle>
-              <CardDescription>
-                Irreversible and destructive actions. Please proceed with caution.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between rounded-xl border border-destructive/20 bg-destructive/5 p-4">
-                <div>
-                  <h4 className="font-medium">Delete Account</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Permanently delete your account and all data.
-                  </p>
+          {/* Danger Zone - Show on Account tab only */}
+          {activeTab === 'account' && profile?.userType !== 'admin' && (
+            <Card className="border-destructive/50">
+              <CardHeader>
+                <CardTitle className="text-destructive">Danger Zone</CardTitle>
+                <CardDescription>
+                  Irreversible and destructive actions. Please proceed with caution.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between rounded-xl border border-destructive/20 bg-destructive/5 p-4">
+                  <div>
+                    <h4 className="font-medium">Delete Account</h4>
+                    <p className="text-sm text-muted-foreground">
+                      Permanently delete your account and all data.
+                    </p>
+                  </div>
+                  <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+                    <DialogTrigger asChild>
+                      <Button variant="destructive" className="rounded-xl">
+                        Delete Account
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Are you absolutely sure?</DialogTitle>
+                        <DialogDescription>
+                          This action cannot be undone. This will permanently delete your account and
+                          remove all your data from our servers.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <DialogFooter>
+                        <Button variant="outline" onClick={() => setShowDeleteDialog(false)}>
+                          Cancel
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          onClick={handleDeleteAccount}
+                          disabled={isDeleting}
+                        >
+                          {isDeleting ? 'Deleting...' : 'Yes, delete my account'}
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
                 </div>
-                <Button variant="destructive" className="rounded-xl">
-                  Delete Account
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          )}
         </div>
 
         {/* Sidebar */}
@@ -353,12 +521,8 @@ export default function SettingsPage() {
                 <span className="text-sm font-medium">Jan 2024</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Projects</span>
-                <span className="text-sm font-medium">12</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Team members</span>
-                <span className="text-sm font-medium">5</span>
+                <span className="text-sm text-muted-foreground">Themes</span>
+                <span className="text-sm font-medium">0</span>
               </div>
               <Separator />
               <Button variant="outline" className="w-full rounded-xl" size="sm">
@@ -450,11 +614,13 @@ export default function SettingsPage() {
 interface SettingsTabProps {
   children: React.ReactNode;
   active?: boolean;
+  onClick?: () => void;
 }
 
-function SettingsTab({ children, active }: SettingsTabProps) {
+function SettingsTab({ children, active, onClick }: SettingsTabProps) {
   return (
     <button
+      onClick={onClick}
       className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-colors ${
         active
           ? 'bg-primary text-primary-foreground'
